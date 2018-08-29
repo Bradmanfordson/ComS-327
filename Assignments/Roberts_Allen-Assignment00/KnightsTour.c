@@ -48,8 +48,6 @@ int tour(int x, int y){
         }
     }
 
-
-
     board[x][y] = 0; // unmark start
 
 
@@ -59,9 +57,9 @@ int tour(int x, int y){
     My thought process is that I need to check if all of the tiles in the board have been hit
     and if they have been then print the board and reset the board to all 0's.
 
-    Getting segmentation faults...
+    Getting segmentation faults.
 
-*/
+
     int temp = 0;
     
     for( int i = 0; i < 5; i++){
@@ -71,11 +69,16 @@ int tour(int x, int y){
             }
         }
     }
-    if(temp == 24){
+
+    // I figure, once the board is full then I need to print the board... 
+
+    if(temp == 25){
         printBoard();
     }
     printf("\n");
     count = 0;
+
+*/
     
     return 0;
 }
