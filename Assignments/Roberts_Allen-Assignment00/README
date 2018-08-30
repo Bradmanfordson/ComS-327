@@ -1,0 +1,19 @@
+So I grabbed the professors pseudocode from Piazza and started writting it in C.
+The idea is the same as the professors but to handle bookkeeping my idea is to create
+a 2D array and when I "mark start as visited" I mark the location in the 2D array with
+the number of that move. When I get to 25 moves then reset the counter, print the 2D array
+and restart. 
+
+The code prints a single line of 25 numbers, however, it does not print any correct solution 
+and I'm not sure how to get this to run more than once. I looked over an algorithm I 
+found online and it was very similar to the algorithm I wrote but had a few fixes that
+I thought were really good so I implemented them on my own and still can't get it to work.
+
+My thought process is that I'm not handling the recursion correctly the problem is that
+I don't know how to fix it. I've tried several solutions and found some help online but
+still can't get it working correctly. I believe I have most of the code there and that it's
+good but I'm just missing a few key elements. On the bright side, my C environemnt setup
+is excellent.
+
+
+
