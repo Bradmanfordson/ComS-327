@@ -4,31 +4,32 @@
 #define True 0
 #define False 1
 
-int tour(int x, int y, int index);
+int tour(int x, int y);
 int validMove(int x, int y);
+void zeroBoard();
 void printBoard();
 
 int board[5][5];
-int count = 0; 
+int count = 0;
 
 
 int main(int argc, char *argv[]){
 
-    // for(int i = 0; i < 5; i++){
-    //     for( int j = 0; j < 5; j++){
-    //         board[i][j] = 0;
-    //     }
-    // }
+    zeroBoard();
 
-    if( tour(0,0,0) == True){
-        printBoard();
+    for(int x = 0; x < 5; x++){
+        for(int y = 0; y < 5; y++){
+            if( tour(x,y) == True){
+                printBoard();
+            }
+        }
     }
     
     return 0;
 }
 
 
-int tour(int x, int y, int index){
+int tour(int x, int y){
 
     if( board[x][y] != 0){
         return False;
@@ -37,32 +38,32 @@ int tour(int x, int y, int index){
     board[x][y] = count;  // mark start as visited
     count++;
 
-    if( index == 24){
+    if( count == 24){
         return True;
     }
 
-    if(validMove( x+1, y+2) == True && tour(x+1, y+2, index+1) == True ){
+    if(validMove(x+1, y+2) == True && tour(x+1, y+2) == True ){
         return True;
     }
-    if(validMove( x+1, y-2) == True && tour(x+1, y-2, index+1) == True ){
+    if(validMove(x+1, y-2) == True && tour(x+1, y-2) == True ){
         return True;
     }
-    if(validMove( x-1, y+2) == True && tour(x-1, y+2, index+1) == True ){
+    if(validMove(x-1, y+2) == True && tour(x-1, y+2) == True ){
         return True;
     }
-    if(validMove( x-1, y-2) == True && tour(x-1, y-2, index+1) == True ){
+    if(validMove(x-1, y-2) == True && tour(x-1, y-2) == True ){
         return True;
     }
-    if(validMove( x+2, y+1) == True && tour(x+2, y+1, index+1) == True ){
+    if(validMove(x+2, y+1) == True && tour(x+2, y+1) == True ){
         return True;
     }
-    if(validMove( x+2, y-1) == True && tour(x+2, y-1, index+1) == True ){
+    if(validMove(x+2, y-1) == True && tour(x+2, y-1) == True ){
         return True;
     }
-    if(validMove( x-2, y+1) == True && tour(x-2, y+1, index+1) == True ){
+    if(validMove(x-2, y+1) == True && tour(x-2, y+1) == True ){
         return True;
     }
-    if(validMove( x-2, y-1) == True && tour(x-2, y-1, index+1) == True ){
+    if(validMove(x-2, y-1) == True && tour(x-2, y-1) == True ){
         return True;
     }
 
@@ -78,6 +79,15 @@ int validMove(int x, int y){
         return True;
     } else {
         return False;
+    }
+}
+
+
+void zeroBoard(){
+    for(int i = 0; i < 5; i++){
+        for( int j = 0; j < 5; j++){
+            board[i][j] = 0;
+        }
     }
 }
 
