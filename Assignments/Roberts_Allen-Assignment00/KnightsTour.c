@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define True 1
+#define False 0
+
 void tour(int x, int y);
 void zeroBoard();
 void printBoard();
@@ -67,3 +70,58 @@ void printBoard(){
     printf("\n");
     zeroBoard();
 }
+
+int validMove(int x, int y){
+    if( x > 0 && x <= 5 && y > 0 && y <= 5 ){
+        return True;
+    } else {
+        return False;
+    }
+}
+
+
+/*
+
+int board[5][5];
+int path = 0;
+
+zeroboard();
+
+void solve(){
+    if ( findpath( 0,0,0) == 1){
+        printBoard();
+    }
+}
+
+int findpath(int row, int col, int index){
+    if( board[row][col] != 0 ){
+        return 0;false
+    }
+
+    board[row][col] = path++;
+
+    if( index = 24){
+        return 1;true
+    }
+
+    if(canMove(row-1,col-2) == 1 && findPath(row-1, col-2, index+1) == 1 ){
+        return 1; true
+    } ... do this for the rest{}{}{}{}
+
+    solution[row][col] = 0;
+    path--;
+
+    return 0; false
+}
+
+int canMove(int row, int col){
+    if(row >= 0 && col >= 0 && row < 5 && col < 5){
+        return 1; true
+    } else{
+        return 0; false
+    }
+}
+
+*/
+
+
