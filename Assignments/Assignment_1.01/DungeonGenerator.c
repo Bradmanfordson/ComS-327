@@ -23,17 +23,28 @@ int main(int argc, char *argv[]){
 }
 
 void CreateBoard(){
-    for(int we=0; we < 21; we++){
-        for(int ns = 0; ns < 80; ns++){
+    for(int we = 0; we < 21; we++){
+        for(int ns = 0; ns < 79; ns++){
+            
+            
             if(we == 0 || we == 20){
-                printf("-");
+                printf("_");
+            } else {
+                printf(".");
             }
-            if(ns == 0 || ns == 79){
-                printf("|");
-            }
-            if(ns == 80 || we == 20){
-                printf("\n");
-            }
+            
+            // if(ns == 0 || ns == 77){
+            //     printf("|");
+            // }
+
+            // if(we == 0 || we == 20){
+            //     printf("-");
+            // }
+            
+            
+        
         }
+        printf("\n");
     }
 }
+
