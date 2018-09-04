@@ -24,4 +24,5 @@ August 29, 2018 9:45PM - Initialized DungeonGenerator project and added high lev
 September 2, 2018 9:00PM - Started creating pseudocode for project
 
 September 3. 2018 7:00PM - Starting code of project
-September 3, 2018 7:30PM - 80x21 wall created correctly
+September 3, 2018 7:30PM - 80x21 wall created correctly 
+September 3, 2018 8:15PM - Created int fetchRand(int N) which creates a random number between 0 and N
