@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "DungeonGenerator.h"
 
 /*  TODO
     1. Create 80x21 boarder
@@ -29,19 +28,15 @@ void CreateBoard(){
             
             if(we == 0 || we == 20){
                 printf("_");
-            } else {
-                printf(".");
-            }
-            
-            // if(ns == 0 || ns == 77){
-            //     printf("|");
-            // }
+            } 
 
-            // if(we == 0 || we == 20){
-            //     printf("-");
-            // }
-            
-            
+            if((ns == 0 || ns == 78) && we != 0 && we != 20){
+                printf("|");
+            } 
+
+            if( we != 0 && we != 20 && ns < 77) {
+                printf("&");
+            }           
         
         }
         printf("\n");
