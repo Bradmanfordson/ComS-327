@@ -1,7 +1,7 @@
-all: clean PROGRAM
+all: clean DungeonGenerator
 
-PROGRAM: PROGRAMFILE 
-	gcc -Wall PROGRAMFILE -o OUTPUT
+DungeonGenerator: DungeonGenerator.c 
+	gcc -Wall DungeonGenerator.c -o Dungeon
 
 clean:
 	rm -rf OUTPUT
