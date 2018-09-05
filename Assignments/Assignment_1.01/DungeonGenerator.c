@@ -14,16 +14,38 @@
 
 */
 
+#define True 0
+#define False 1
+
+struct Room{
+    int xSize;
+    int ySize;
+    int position;
+};
+
 void CreateBoard();
 int fetchRand();
+struct Room createRoom();\
+void makeRoom(struct Room r);
+
 
 int main(int argc, char *argv[]){
     //int count = 0;
+    //CreateBoard();
 
     srand(time(NULL));
 
     for(int i = 0; i < 5; i++){
-        printf("%d\n", fetchRand(80));
+        struct Room r = createRoom();
+
+        if(r.xSize > 2 && r.ySize > 1){
+            printf("X = %d \t Y = %d \t pos = %d\n", r.xSize, r.ySize, r.position);
+            makeRoom(r);
+            printf("\n");
+        } else {
+            i--;
+        }
+
     }
 
     // Okay, We're creating 5 random numbers between 0 and 80, so that'll make
@@ -35,14 +57,21 @@ int main(int argc, char *argv[]){
 
 }
 
+
 int fetchRand(int N){
     return (rand() % N );
 }
 
+
 void CreateBoard(){
+    struct Room r0 = createRoom();
+    // struct Room r1 = createRoom();
+    // struct Room r2 = createRoom();
+    // struct Room r3 = createRoom();
+    // struct Room r4 = createRoom();
+
     for(int we = 0; we < 21; we++){
         for(int ns = 0; ns < 79; ns++){
-            
             
             if(we == 0 || we == 20){
                 printf("_");
@@ -58,6 +87,34 @@ void CreateBoard(){
 
 
         
+        }
+        printf("\n");
+    }
+}
+
+
+struct Room createRoom(){
+    struct Room r;
+    do{
+        r.position = fetchRand(80);
+        r.xSize = fetchRand(10);
+        r.ySize = fetchRand(10);
+    } while (r.xSize < 3 && r.ySize < 2);
+
+    return r;
+}
+
+
+int roomsNotTouching(){
+
+    return True;
+}
+
+
+void makeRoom(struct Room r){
+    for(int i = 0; i < r.ySize; i++){
+        for(int j = 0; j < r.xSize; j++){
+            printf("*");
         }
         printf("\n");
     }
