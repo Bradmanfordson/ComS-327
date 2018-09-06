@@ -92,13 +92,14 @@ void CreateBoard(){
             //     printf("~");
 
             // } else 
-            if(we == (rooms[0].yPos-1) && ns == (rooms[4].xPos -2)){
+           
+            if(we == (rooms[0].yPos-1) && ns == (rooms[0].xPos -2)){
                 printf("~");
-            } else if(we == (rooms[1].yPos-1) && ns == (rooms[4].xPos -2)){
+            } else if(we == (rooms[1].yPos-1) && ns == (rooms[1].xPos -2)){
                 printf("~");
-            } else if(we == (rooms[2].yPos-1) && ns == (rooms[4].xPos -2)){
+            } else if(we == (rooms[2].yPos-1) && ns == (rooms[2].xPos -2)){
                 printf("~");
-            } else if(we == (rooms[3].yPos-1) && ns == (rooms[4].xPos -2)){
+            } else if(we == (rooms[3].yPos-1) && ns == (rooms[3].xPos -2)){
                 printf("~");
             } else if(we == (rooms[4].yPos-1) && ns == (rooms[4].xPos -2)){
                 printf("~");
@@ -120,18 +121,30 @@ void printRoomStats(struct Room r){
 
 struct Room createRoom(){
     struct Room r;
+    int ret = False;
     do{
         r.xPos = fetchRand(80);
         r.yPos = fetchRand(21);
         r.xSize = fetchRand(10);
         r.ySize = fetchRand(10);
-    } while (r.xSize < 3 && r.ySize < 2 && (r.xPos + r.xSize) < 80 && (r.yPos + r.ySize) < 21);
+
+        if(r.xSize > 3 && 
+             r.ySize > 2 && 
+             (r.xPos + r.xSize) < 80 && 
+             (r.yPos + r.ySize) < 21 && 
+             r.xPos > 1 && 
+             r.yPos > 1
+          ){
+              ret = True;
+     }
+
+    } while (ret != True);
 
     return r;
 }
 
 
-int roomsNotTouching(){
+int roomsPersonalSpace(){
 
     return True;
 }
