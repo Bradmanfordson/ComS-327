@@ -24,6 +24,8 @@ struct Room{
     int ySize;
     int xPos;
     int yPos;
+    int xItter;
+    int yItter;
 };
 
 
@@ -93,16 +95,66 @@ void CreateBoard(){
 
             // } else 
            
-            if(we == (rooms[0].yPos-1) && ns == (rooms[0].xPos -2)){
+            if(we == (rooms[0].yPos - 1) && ns == (rooms[0].xPos - 2)){
                 printf("~");
-            } else if(we == (rooms[1].yPos-1) && ns == (rooms[1].xPos -2)){
+                if(rooms[0].xPos < rooms[0].xItter - 1 && 
+                   rooms[0].yPos < rooms[0].yItter){
+                    rooms[0].xPos++;
+                } else {
+                    rooms[0].xPos = rooms[0].xItter - rooms[0].xSize;
+                    if(rooms[0].yPos < rooms[0].yItter - 1){
+                        rooms[0].yPos++;
+                    }
+                    
+                }
+            } else if(we == (rooms[1].yPos - 1) && ns == (rooms[1].xPos - 2)){
                 printf("~");
-            } else if(we == (rooms[2].yPos-1) && ns == (rooms[2].xPos -2)){
+                if(rooms[1].xPos < rooms[1].xItter - 1 && 
+                   rooms[1].yPos < rooms[1].yItter){
+                    rooms[1].xPos++;
+                } else {
+                    rooms[1].xPos = rooms[1].xItter - rooms[1].xSize;
+                    if(rooms[1].yPos < rooms[1].yItter - 1){
+                        rooms[1].yPos++;
+                    }
+                    
+                }
+            } else if(we == (rooms[2].yPos - 1) && ns == (rooms[2].xPos - 2)){
                 printf("~");
-            } else if(we == (rooms[3].yPos-1) && ns == (rooms[3].xPos -2)){
+                if(rooms[2].xPos < rooms[2].xItter - 1 && 
+                   rooms[2].yPos < rooms[2].yItter){
+                    rooms[2].xPos++;
+                } else {
+                    rooms[2].xPos = rooms[2].xItter - rooms[2].xSize;
+                    if(rooms[2].yPos < rooms[2].yItter - 1){
+                        rooms[2].yPos++;
+                    }
+                    
+                }
+            } else if(we == (rooms[3].yPos - 1) && ns == (rooms[3].xPos - 2)){
                 printf("~");
-            } else if(we == (rooms[4].yPos-1) && ns == (rooms[4].xPos -2)){
+                if(rooms[3].xPos < rooms[3].xItter - 1 && 
+                   rooms[3].yPos < rooms[3].yItter){
+                    rooms[3].xPos++;
+                } else {
+                    rooms[3].xPos = rooms[3].xItter - rooms[3].xSize;
+                    if(rooms[3].yPos < rooms[3].yItter - 1){
+                        rooms[3].yPos++;
+                    }
+                    
+                }
+            } else if(we == (rooms[4].yPos - 1) && ns == (rooms[4].xPos - 2)){
                 printf("~");
+                if(rooms[4].xPos < rooms[4].xItter - 1 && 
+                   rooms[4].yPos < rooms[4].yItter){
+                    rooms[4].xPos++;
+                } else {
+                    rooms[4].xPos = rooms[4].xItter - rooms[4].xSize;
+                    if(rooms[4].yPos < rooms[4].yItter - 1){
+                        rooms[4].yPos++;
+                    }
+                    
+                }
             } else if( we != 0 && we != 20 && ns < 77) {
                 printf("@");
             }
@@ -116,8 +168,9 @@ void CreateBoard(){
 }
 
 void printRoomStats(struct Room r){
-    printf("X = %d \t Y = %d \t xpos = %d \t ypos = %d\n", r.xSize, r.ySize, r.xPos, r.yPos);
+    printf("xPos = %d \t yPos = %d \t xSize = %d \t ySize = %d\n", r.xPos, r.yPos, r.xSize, r.ySize);
 }
+
 
 struct Room createRoom(){
     struct Room r;
@@ -127,6 +180,8 @@ struct Room createRoom(){
         r.yPos = fetchRand(21);
         r.xSize = fetchRand(10);
         r.ySize = fetchRand(10);
+        r.xItter = r.xPos + r.xSize;
+        r.yItter = r.yPos + r.ySize;
 
         if(r.xSize > 3 && 
              r.ySize > 2 && 
