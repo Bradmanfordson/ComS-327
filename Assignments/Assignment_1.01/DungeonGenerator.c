@@ -17,36 +17,41 @@
 #define True 0
 #define False 1
 
+
+
 struct Room{
     int xSize;
     int ySize;
-    int position;
+    int xPos;
+    int yPos;
 };
+
 
 void CreateBoard();
 int fetchRand();
-struct Room createRoom();\
+struct Room createRoom();
 void makeRoom(struct Room r);
+void printRoomStats();
 
 
 int main(int argc, char *argv[]){
     //int count = 0;
-    //CreateBoard();
-
     srand(time(NULL));
 
-    for(int i = 0; i < 5; i++){
-        struct Room r = createRoom();
+    CreateBoard();
 
-        if(r.xSize > 2 && r.ySize > 1){
-            printf("X = %d \t Y = %d \t pos = %d\n", r.xSize, r.ySize, r.position);
-            makeRoom(r);
-            printf("\n");
-        } else {
-            i--;
-        }
+    // for(int i = 0; i < 5; i++){
+    //     struct Room r = createRoom();
 
-    }
+    //     if(r.xSize > 2 && r.ySize > 1){
+    //         printf("X = %d \t Y = %d \t xpos = %d \t ypos = %d\n", r.xSize, r.ySize, r.xPos, r.yPos);
+    //         makeRoom(r);
+    //         printf("\n");
+    //     } else {
+    //         i--;
+    //     }
+
+    // }
 
     // Okay, We're creating 5 random numbers between 0 and 80, so that'll make
     // our base coordinates. SO, now generate random numbers between specifications
@@ -64,11 +69,13 @@ int fetchRand(int N){
 
 
 void CreateBoard(){
-    struct Room r0 = createRoom();
-    // struct Room r1 = createRoom();
-    // struct Room r2 = createRoom();
-    // struct Room r3 = createRoom();
-    // struct Room r4 = createRoom();
+    
+    struct Room rooms[5];
+
+    for(int i = 0; i < 5; i++){
+        rooms[i] = createRoom();
+        printRoomStats(rooms[i]);
+    }
 
     for(int we = 0; we < 21; we++){
         for(int ns = 0; ns < 79; ns++){
@@ -81,9 +88,24 @@ void CreateBoard(){
                 printf("|");
             } 
 
-            if( we != 0 && we != 20 && ns < 77) {
-                printf("*");
+            // if(we == (r0.yPos - 1) && ns == (r0.xPos - 2)){
+            //     printf("~");
+
+            // } else 
+            if(we == (rooms[0].yPos-1) && ns == (rooms[4].xPos -2)){
+                printf("~");
+            } else if(we == (rooms[1].yPos-1) && ns == (rooms[4].xPos -2)){
+                printf("~");
+            } else if(we == (rooms[2].yPos-1) && ns == (rooms[4].xPos -2)){
+                printf("~");
+            } else if(we == (rooms[3].yPos-1) && ns == (rooms[4].xPos -2)){
+                printf("~");
+            } else if(we == (rooms[4].yPos-1) && ns == (rooms[4].xPos -2)){
+                printf("~");
+            } else if( we != 0 && we != 20 && ns < 77) {
+                printf("@");
             }
+
 
 
         
@@ -92,14 +114,18 @@ void CreateBoard(){
     }
 }
 
+void printRoomStats(struct Room r){
+    printf("X = %d \t Y = %d \t xpos = %d \t ypos = %d\n", r.xSize, r.ySize, r.xPos, r.yPos);
+}
 
 struct Room createRoom(){
     struct Room r;
     do{
-        r.position = fetchRand(80);
+        r.xPos = fetchRand(80);
+        r.yPos = fetchRand(21);
         r.xSize = fetchRand(10);
         r.ySize = fetchRand(10);
-    } while (r.xSize < 3 && r.ySize < 2);
+    } while (r.xSize < 3 && r.ySize < 2 && (r.xPos + r.xSize) < 80 && (r.yPos + r.ySize) < 21);
 
     return r;
 }
