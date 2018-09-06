@@ -34,3 +34,4 @@ September 5, 2018 6:45PM - Creating random sized and located rooms correctly, no
 September 5, 2018 7:30PM - Trying to put the dungeon starting x,y position in the dungeon but it's not working correctly
 September 5, 2018 7:45PM - Okay, fixed bug, now it's creating the coordinates correctly WITHOUT collision detection. Next step is to print the boxes without colDetection.
 September 5, 2018 8:15PM - Rooms are created randomly in the dungeon without collision detection
+September 5, 2018 9:00PM - Rooms are goooood, refactored code a bit to make it better

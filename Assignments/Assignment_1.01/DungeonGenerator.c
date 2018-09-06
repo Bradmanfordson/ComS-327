@@ -31,15 +31,18 @@ struct Room{
 
 void CreateBoard();
 int fetchRand();
-struct Room createRoom();
+void createRooms();
 void makeRoom(struct Room r);
 void printRoomStats();
+void checkCollision();
 
+struct Room rooms[5];
 
 int main(int argc, char *argv[]){
     //int count = 0;
     srand(time(NULL));
-
+    createRooms();
+    //checkCollision();
     CreateBoard();
 
     // for(int i = 0; i < 5; i++){
@@ -65,20 +68,12 @@ int main(int argc, char *argv[]){
 }
 
 
-int fetchRand(int N){
-    return (rand() % N );
-}
-
-
 void CreateBoard(){
-    
-    struct Room rooms[5];
 
     for(int i = 0; i < 5; i++){
-        rooms[i] = createRoom();
-        printRoomStats(rooms[i]);
+       printRoomStats(rooms[i]); 
     }
-
+    
     for(int we = 0; we < 21; we++){
         for(int ns = 0; ns < 79; ns++){
             
@@ -167,41 +162,14 @@ void CreateBoard(){
     }
 }
 
+
+int fetchRand(int N){
+    return (rand() % N );
+}
+
+
 void printRoomStats(struct Room r){
-    printf("xPos = %d \t yPos = %d \t xSize = %d \t ySize = %d\n", r.xPos, r.yPos, r.xSize, r.ySize);
-}
-
-
-struct Room createRoom(){
-    struct Room r;
-    int ret = False;
-    do{
-        r.xPos = fetchRand(80);
-        r.yPos = fetchRand(21);
-        r.xSize = fetchRand(10);
-        r.ySize = fetchRand(10);
-        r.xItter = r.xPos + r.xSize;
-        r.yItter = r.yPos + r.ySize;
-
-        if(r.xSize > 3 && 
-             r.ySize > 2 && 
-             (r.xPos + r.xSize) < 80 && 
-             (r.yPos + r.ySize) < 21 && 
-             r.xPos > 1 && 
-             r.yPos > 1
-          ){
-              ret = True;
-     }
-
-    } while (ret != True);
-
-    return r;
-}
-
-
-int roomsPersonalSpace(){
-
-    return True;
+    printf("xPos = %3d || yPos = %3d   ||  xSize = %3d || ySize = %3d  ||  xItter = %3d || yItter = %3d\n", r.xPos, r.yPos, r.xSize, r.ySize, r.xItter, r.yItter);
 }
 
 
@@ -214,3 +182,36 @@ void makeRoom(struct Room r){
     }
 }
 
+
+void createRooms(){
+    for(int i = 0; i < 5; i++){
+        int ret = False;
+        do{
+            rooms[i].xPos = fetchRand(80);
+            rooms[i].yPos = fetchRand(21);
+            rooms[i].xSize = fetchRand(10);
+            rooms[i].ySize = fetchRand(10);
+            rooms[i].xItter = rooms[i].xPos + rooms[i].xSize;
+            rooms[i].yItter = rooms[i].yPos + rooms[i].ySize;
+
+            if(rooms[i].xSize > 3 && 
+                rooms[i].ySize > 2 && 
+                (rooms[i].xPos + rooms[i].xSize) < 80 && 
+                (rooms[i].yPos + rooms[i].ySize) < 21 && 
+                rooms[i].xPos > 1 && 
+                rooms[i].yPos > 1
+            ){
+                ret = True;
+        }
+
+        } while (ret != True);
+    }
+}
+
+void checkCollision(){
+    for(int i = 0; i < 5; i++){
+        for(int j = 0; j < 5; j++){
+            //do nothing...
+        }
+    }
+}
