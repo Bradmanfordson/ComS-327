@@ -2,22 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-/*  TODO
-    [X] 1. Create 80x21 boarder
-    [ ] 2. Create 1 random box in the boarder with rock walls
-    [ ] 3. add more boxes, dont check for collision yet
-    [ ] 4. check for collision now and fix
-    [ ] 5. store box data so we can create the corridors later
-    [ ] 6. very basic/shitty corridors (dont check for collision)
-    [ ] 7. Check for collision in corredors and fix any issues
-    
-
-*/
-
 #define True 0
 #define False 1
-
-
 
 struct Room{
     int xSize;
@@ -28,7 +14,6 @@ struct Room{
     int yItter;
 };
 
-
 void CreateBoard();
 int fetchRand();
 void createRooms();
@@ -36,6 +21,8 @@ void createRoom(int N);
 void makeRoom(struct Room r);
 void printRoomStats();
 void checkCollision();
+void createHalls();
+
 
 struct Room rooms[5];
 
@@ -43,18 +30,15 @@ int main(int argc, char *argv[]){
     srand(time(NULL));
     createRooms();
     checkCollision();
-    for(int i = 0; i < 5; i++){
-        printRoomStats(rooms[i]);
-    }
     CreateBoard();
 
 }
 
 
 void CreateBoard(){
- 
-    for(int we = 0; we < 21; we++){
-        for(int ns = 0; ns < 79; ns++){
+    int we; int ns;
+    for(we = 0; we < 21; we++){
+        for(ns = 0; ns < 79; ns++){
             
             if(we == 0 || we == 20){
                 printf("_");
@@ -144,8 +128,9 @@ void printRoomStats(struct Room r){
 
 
 void makeRoom(struct Room r){
-    for(int i = 0; i < r.ySize; i++){
-        for(int j = 0; j < r.xSize; j++){
+    int i; int j;
+    for(i = 0; i < r.ySize; i++){
+        for(j = 0; j < r.xSize; j++){
             printf("*");
         }
         printf("\n");
@@ -154,7 +139,8 @@ void makeRoom(struct Room r){
 
 
 void createRooms(){
-    for(int i = 0; i < 5; i++){
+    int i;
+    for(i = 0; i < 5; i++){
         int ret = False;
         do{
             rooms[i].xPos = fetchRand(80);
@@ -204,9 +190,11 @@ void createRoom(int N){
 
 
 void checkCollision(){
+    // This is EXTREMELY CPU heavy but works sometimes and i'm out of time
     int redo = False;
-    for(int i = 0; i < 5; i++){
-        for(int j = 0; j < 5; j++){
+    int i; int j;
+    for(i = 0; i < 5; i++){
+        for(j = 0; j < 5; j++){
             if(j == i){
                 break;
             } else {
@@ -224,4 +212,14 @@ void checkCollision(){
             }
         }
     }
+}
+
+void createHalls(){
+    /*
+        1. get the (x,y) values foreach room.
+        2. take room[0] and connect it to room[1] by printing # in place of the current spaces
+            in place of X then once, the X's are the same, do the same with Y
+        3. repeat step 2 for room[1] -> room[2], room[2] -> room[3], and room[3]-> room[4]
+        4. Add a collision detection algorithm for hallways.
+    */
 }
