@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
     //int count = 0;
     srand(time(NULL));
     createRooms();
-    //checkCollision();
+    checkCollision();
     CreateBoard();
 
     // for(int i = 0; i < 5; i++){
@@ -208,10 +208,19 @@ void createRooms(){
     }
 }
 
+
 void checkCollision(){
     for(int i = 0; i < 5; i++){
         for(int j = 0; j < 5; j++){
-            //do nothing...
+            if(j == i){
+                break;
+            } else {
+                if(rooms[i].xPos == rooms[j].xPos || rooms[i].yPos == rooms[j].yPos){
+                    createRooms();
+                    i = 0;
+                    j = 0;
+                } 
+            }
         }
     }
 }

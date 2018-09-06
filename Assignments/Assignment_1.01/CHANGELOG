@@ -35,3 +35,4 @@ September 5, 2018 7:30PM - Trying to put the dungeon starting x,y position in th
 September 5, 2018 7:45PM - Okay, fixed bug, now it's creating the coordinates correctly WITHOUT collision detection. Next step is to print the boxes without colDetection.
 September 5, 2018 8:15PM - Rooms are created randomly in the dungeon without collision detection
 September 5, 2018 9:00PM - Rooms are goooood, refactored code a bit to make it better
+September 5, 2018 9:15PM - Crappy colDetection for rooms made, kinda works, working on the corradors now
