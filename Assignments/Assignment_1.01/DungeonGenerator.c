@@ -32,6 +32,7 @@ struct Room{
 void CreateBoard();
 int fetchRand();
 void createRooms();
+void createRoom(int N);
 void makeRoom(struct Room r);
 void printRoomStats();
 void checkCollision();
@@ -39,41 +40,19 @@ void checkCollision();
 struct Room rooms[5];
 
 int main(int argc, char *argv[]){
-    //int count = 0;
     srand(time(NULL));
     createRooms();
     checkCollision();
+    for(int i = 0; i < 5; i++){
+        printRoomStats(rooms[i]);
+    }
     CreateBoard();
-
-    // for(int i = 0; i < 5; i++){
-    //     struct Room r = createRoom();
-
-    //     if(r.xSize > 2 && r.ySize > 1){
-    //         printf("X = %d \t Y = %d \t xpos = %d \t ypos = %d\n", r.xSize, r.ySize, r.xPos, r.yPos);
-    //         makeRoom(r);
-    //         printf("\n");
-    //     } else {
-    //         i--;
-    //     }
-
-    // }
-
-    // Okay, We're creating 5 random numbers between 0 and 80, so that'll make
-    // our base coordinates. SO, now generate random numbers between specifications
-    // in the assignment and whatever we want to have be the max.
-    // This will be our room size, so then we can create a room generator with
-    // these specs and figure out how to use structs so we can store it?
-    // 
 
 }
 
 
 void CreateBoard(){
-
-    for(int i = 0; i < 5; i++){
-       printRoomStats(rooms[i]); 
-    }
-    
+ 
     for(int we = 0; we < 21; we++){
         for(int ns = 0; ns < 79; ns++){
             
@@ -84,14 +63,9 @@ void CreateBoard(){
             if((ns == 0 || ns == 78) && we != 0 && we != 20){
                 printf("|");
             } 
-
-            // if(we == (r0.yPos - 1) && ns == (r0.xPos - 2)){
-            //     printf("~");
-
-            // } else 
            
             if(we == (rooms[0].yPos - 1) && ns == (rooms[0].xPos - 2)){
-                printf("~");
+                printf(".");
                 if(rooms[0].xPos < rooms[0].xItter - 1 && 
                    rooms[0].yPos < rooms[0].yItter){
                     rooms[0].xPos++;
@@ -103,7 +77,7 @@ void CreateBoard(){
                     
                 }
             } else if(we == (rooms[1].yPos - 1) && ns == (rooms[1].xPos - 2)){
-                printf("~");
+                printf(".");
                 if(rooms[1].xPos < rooms[1].xItter - 1 && 
                    rooms[1].yPos < rooms[1].yItter){
                     rooms[1].xPos++;
@@ -115,7 +89,7 @@ void CreateBoard(){
                     
                 }
             } else if(we == (rooms[2].yPos - 1) && ns == (rooms[2].xPos - 2)){
-                printf("~");
+                printf(".");
                 if(rooms[2].xPos < rooms[2].xItter - 1 && 
                    rooms[2].yPos < rooms[2].yItter){
                     rooms[2].xPos++;
@@ -127,7 +101,7 @@ void CreateBoard(){
                     
                 }
             } else if(we == (rooms[3].yPos - 1) && ns == (rooms[3].xPos - 2)){
-                printf("~");
+                printf(".");
                 if(rooms[3].xPos < rooms[3].xItter - 1 && 
                    rooms[3].yPos < rooms[3].yItter){
                     rooms[3].xPos++;
@@ -139,7 +113,7 @@ void CreateBoard(){
                     
                 }
             } else if(we == (rooms[4].yPos - 1) && ns == (rooms[4].xPos - 2)){
-                printf("~");
+                printf(".");
                 if(rooms[4].xPos < rooms[4].xItter - 1 && 
                    rooms[4].yPos < rooms[4].yItter){
                     rooms[4].xPos++;
@@ -151,12 +125,8 @@ void CreateBoard(){
                     
                 }
             } else if( we != 0 && we != 20 && ns < 77) {
-                printf("@");
+                printf(" ");
             }
-
-
-
-        
         }
         printf("\n");
     }
@@ -209,17 +179,48 @@ void createRooms(){
 }
 
 
+void createRoom(int N){
+    int ret = False;
+        do{
+            rooms[N].xPos = fetchRand(80);
+            rooms[N].yPos = fetchRand(21);
+            rooms[N].xSize = fetchRand(10);
+            rooms[N].ySize = fetchRand(10);
+            rooms[N].xItter = rooms[N].xPos + rooms[N].xSize;
+            rooms[N].yItter = rooms[N].yPos + rooms[N].ySize;
+
+            if(rooms[N].xSize > 3 && 
+                rooms[N].ySize > 2 && 
+                (rooms[N].xPos + rooms[N].xSize) < 80 && 
+                (rooms[N].yPos + rooms[N].ySize) < 21 && 
+                rooms[N].xPos > 1 && 
+                rooms[N].yPos > 1
+            ){
+                ret = True;
+        }
+
+        } while (ret != True);
+}
+
+
 void checkCollision(){
+    int redo = False;
     for(int i = 0; i < 5; i++){
         for(int j = 0; j < 5; j++){
             if(j == i){
                 break;
             } else {
                 if(rooms[i].xPos == rooms[j].xPos || rooms[i].yPos == rooms[j].yPos){
-                    createRooms();
-                    i = 0;
-                    j = 0;
-                } 
+                    redo = True;
+                } else if( (rooms[i].xPos+1 > rooms[j].xPos && rooms[j].xPos > rooms[i].xItter+1) ||
+                           (rooms[i].yPos+1 > rooms[j].yPos && rooms[j].yPos > rooms[i].yItter+1) ){
+                    redo = True;
+                }
+            }
+
+            if(redo == True){
+                createRoom(j);
+                j = 0;
             }
         }
     }
