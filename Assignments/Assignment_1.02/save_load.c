@@ -4,9 +4,6 @@
 // if this file goes as planned then it'll be included in my src
 // and be implemented in the main program.
 
-void write_file();
-void read_file();
-
 
 enum Action{
     save, // --save the dungeon
@@ -22,6 +19,9 @@ struct GameData_tester{
     char *footer;
 };
 
+
+void write_file(struct GameData_tester data);
+void read_file(struct GameData_tester data);
 // struct GameData{
 //     char *header;  // bits  0   -   11: Header file-type
 //     int version;   // bits 12   -   15: unsigned 32-bit int file version marker with the value 0
@@ -34,42 +34,45 @@ struct GameData_tester{
 
 int main(int argc, char *argv[]){
 
-        if(argv[1][0] == 'w'){
-            write_file();
-        } else if(argv[1][0] == 'r'){
-            read_file();
-        } else{
-            printf("Bad arguments.\n");
-        }
-    
+    struct GameData_tester init_data;
+    init_data.header = 'Hello';
+    init_data.footer = 'World';
+
+    printf("Size of data MAIN: %ld\n", sizeof(init_data));
+
+    if(argv[1][0] == 'w'){
+        write_file(init_data);
+    } else if(argv[1][0] == 'r'){
+        read_file(init_data);
+    } else {
+        printf("Bad arguments.\n");
+    }
+
     return 0;
 }
 
 
-void write_file(){
+void write_file(struct GameData_tester data){
     FILE *file;
-    struct GameData_tester data;
-    data.header = "Hello";
-    data.footer = "world";
-
-    printf("Writing: %s %s\n", data.header, data.footer);
-
     file = fopen("test.bin", "w");
-    
+
+    printf("Size of data WRITE: %ld\n", sizeof(data));
+    printf("Writing: %s %s\n", &data.header, &data.footer);
+
     fwrite(&data, sizeof(data), 1, file);
+
     fclose(file);
 }
 
-void read_file(){
+void read_file(struct GameData_tester data){
     FILE *file_test;
-    printf("hit1\n");
-    struct GameData_tester data_test;
 
     file_test = fopen("test.bin", "r");
-    printf("hit2\n");
-    fread(&data_test, sizeof(data_test), 1, file_test);
-    printf("hit3\n");
-    printf("Reading: %s %s\n", data_test.header, data_test.footer);
-    printf("hit4\n");
+
+    fread(&data, sizeof(data), 1, file_test);
+    printf("Size of data READ: %ld\n", sizeof(data));
+
+    printf("Reading: %s %s \n", &data.header, &data.footer);
+
     fclose(file_test);
 }
