@@ -1,7 +1,7 @@
 all: clean save_load
 
 save_load: save_load.c 
-	gcc -Wall save_load.c -o save_load -ggdb -std=c99
+	gcc -Wall save_load.c -o save_load -ggdb
 
 clean:
 	rm -rf OUTPUT

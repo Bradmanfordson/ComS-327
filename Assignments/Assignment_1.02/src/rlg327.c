@@ -605,7 +605,8 @@ static int place_rooms(dungeon_t *d)
           }
         }
       }
-    }
+      
+    }printf("pos: X%d  Y%d\n", r->position[dim_x], r->position[dim_y]);
   }
 
   return 0;
@@ -620,6 +621,7 @@ static int make_rooms(dungeon_t *d)
   for (i = MIN_ROOMS; i < MAX_ROOMS && rand_under(6, 8); i++)
     ;
   d->num_rooms = i;
+  printf("Num of Rooms: %d\n", d->num_rooms);
 
   for (i = 0; i < d->num_rooms; i++) {
     d->rooms[i].size[dim_x] = ROOM_MIN_X;
@@ -630,7 +632,11 @@ static int make_rooms(dungeon_t *d)
     while (rand_under(3, 4) && d->rooms[i].size[dim_y] < ROOM_MAX_Y) {
       d->rooms[i].size[dim_y]++;
     }
+    //This prints the individual room size
+   // printf("Size: X%d  Y%d\n", d->rooms[i].size[dim_x], d->rooms[i].size[dim_y]);
   }
+
+
 
   return 0;
 }
@@ -656,17 +662,17 @@ void render_dungeon(dungeon_t *d)
       switch (mappair(p)) {
       case ter_wall:
       case ter_wall_immutable:
-        putchar(' ');
+        putchar('+'); // space
         break;
       case ter_floor:
       case ter_floor_room:
-        putchar('.');
+        putchar('.'); // .
         break;
       case ter_floor_hall:
-        putchar('#');
+        putchar('0'); // $
         break;
       case ter_debug:
-        putchar('*');
+        putchar('*'); // *
         fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
         break;
       }
@@ -705,7 +711,7 @@ int main(int argc, char *argv[])
   init_dungeon(&d);
   gen_dungeon(&d);
   render_dungeon(&d);
-  delete_dungeon(&d);
+  //delete_dungeon(&d);
 
   return 0;
 }
