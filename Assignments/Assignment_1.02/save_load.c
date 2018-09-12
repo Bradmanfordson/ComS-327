@@ -10,18 +10,11 @@ enum Action{
     load // --load the dungeon
 }; 
 
-struct var{
-    // Place holder for something. Need to figure that out
-};
-
-struct GameData_tester{
-    char *header;
-    char *footer;
-};
 
 
-void write_file(struct GameData_tester data);
-void read_file(struct GameData_tester data);
+
+void write_file();
+void read_file();
 // struct GameData{
 //     char *header;  // bits  0   -   11: Header file-type
 //     int version;   // bits 12   -   15: unsigned 32-bit int file version marker with the value 0
@@ -31,19 +24,38 @@ void read_file(struct GameData_tester data);
 //     struct var;    // bits 22   - 1701: The row-major dungeon matrix from top to bottom, with one byte, containing cell hardness, per cell.
 //     struct var;    // bits 1702 -  end: position of all the rooms in the dungeon, given with 4 unsigned 8-bit integers each
 // };
+char header[] = "RLG327-F2018";
 
 int main(int argc, char *argv[]){
 
-    struct GameData_tester init_data;
-    init_data.header = 'Hello';
-    init_data.footer = 'World';
+    // struct GameData_tester init_data;
+    // init_data.header = 'Hello';
+    // init_data.footer = 'World';
+    
 
-    printf("Size of data MAIN: %ld\n", sizeof(init_data));
+    printf("Header: %s \n", header);
+
+    // FILE *file;
+    // file = fopen("test.bin", "w");
+
+   
+
+    // fwrite(&header, sizeof(header), 1, file);
+
+    // fclose(file);
+
+    
+
+
+
+    // printf("Size of data MAIN: %ld\n", sizeof(init_data));
+
+    // printf("%s %s", init_data.header, init_data.footer);
 
     if(argv[1][0] == 'w'){
-        write_file(init_data);
+        write_file(header);
     } else if(argv[1][0] == 'r'){
-        read_file(init_data);
+        read_file(header);
     } else {
         printf("Bad arguments.\n");
     }
@@ -52,27 +64,28 @@ int main(int argc, char *argv[]){
 }
 
 
-void write_file(struct GameData_tester data){
+void write_file(){
     FILE *file;
     file = fopen("test.bin", "w");
 
-    printf("Size of data WRITE: %ld\n", sizeof(data));
-    printf("Writing: %s %s\n", &data.header, &data.footer);
+    printf("Size of data WRITE: %ld\n", sizeof(header));
+    printf("Writing: %s \n", header);
 
-    fwrite(&data, sizeof(data), 1, file);
+    fwrite(&header, sizeof(header), 1, file);
 
     fclose(file);
 }
 
-void read_file(struct GameData_tester data){
+
+void read_file(){
     FILE *file_test;
 
     file_test = fopen("test.bin", "r");
 
-    fread(&data, sizeof(data), 1, file_test);
-    printf("Size of data READ: %ld\n", sizeof(data));
+    fread(&header, sizeof(header), 1, file_test);
+    printf("Size of data READ: %ld\n", sizeof(header));
 
-    printf("Reading: %s %s \n", &data.header, &data.footer);
+    printf("Reading: %s \n", header);
 
     fclose(file_test);
 }
