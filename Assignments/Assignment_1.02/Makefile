@@ -1,10 +1,15 @@
-all: clean save_load
+all: clean save_load run
 
 save_load: save_load.c 
 	gcc -Wall save_load.c -o save_load -ggdb
 
 clean:
-	rm -rf OUTPUT
+	rm -rf save_load test.bin
+
+run: 
+	./save_load w
+	echo
+	hexdump -C test.bin
 
 # CC = gcc
 # CXX = g++

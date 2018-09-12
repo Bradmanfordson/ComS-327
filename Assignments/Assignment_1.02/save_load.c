@@ -6,84 +6,31 @@
 // if this file goes as planned then it'll be included in my src
 // and be implemented in the main program.
 
-
-enum Action{
-    save, // --save the dungeon
-    load // --load the dungeon
-}; 
-
-
-
-
 void write_file();
 void read_file();
-// struct GameData{
-//     char *header;  // bits  0   -   11: Header file-type
-//     int version;   // bits 12   -   15: unsigned 32-bit int file version marker with the value 0
-//     int file_size; // bits 16   -   19: unsigned 32-bit int size of the file
-//     int x;         // bit  20         : Character starting X position
-//     int y;         // bit  21         : Character staring Y position
-//     struct var;    // bits 22   - 1701: The row-major dungeon matrix from top to bottom, with one byte, containing cell hardness, per cell.
-//     struct var;    // bits 1702 -  end: position of all the rooms in the dungeon, given with 4 unsigned 8-bit integers each
-// };
+
 char header[] = "RLG327-F2018";
 uint32_t version = 0;
 uint8_t room[4];
+uint32_t size = 1702;
+uint8_t xpos = 65;
+uint8_t ypos = 53;
 
 int main(int argc, char *argv[]){
 
-    // struct GameData_tester init_data;
-    // init_data.header = 'Hello';
-    // init_data.footer = 'World';
     room[0] = 3;
     room[1] = 6;
     room[2] = 99;
     room[3] = 243;
 
-    uint32_t size = 1702;
 
-    printf("File Size: %d\n", size);
-
-    uint32_t be_size;
-    be_size = htobe32(size);
-
-    printf("BE File Size: %d\n",be_size);
-
-    uint32_t size_le;
-    size_le = be32toh(be_size);
-    printf("Back to host File Size: %d\n",size_le);
-
-    printf("Test: %d\n", htobe32(1702));
-
-
-    //printf("Room: %hhn\n", room);
-
-    //printf("Header: %s \n", header);
-
-    // FILE *file;
-    // file = fopen("test.bin", "w");
-
-   
-
-    // fwrite(&header, sizeof(header), 1, file);
-
-    // fclose(file);
-
-    
-
-
-
-    // printf("Size of data MAIN: %ld\n", sizeof(init_data));
-
-    // printf("%s %s", init_data.header, init_data.footer);
-
-    // if(argv[1][0] == 'w'){
-    //     write_file(header);
-    // } else if(argv[1][0] == 'r'){
-    //     read_file(header);
-    // } else {
-    //     printf("Bad arguments.\n");
-    // }
+    if(argv[1][0] == 'w'){
+        write_file(header);
+    } else if(argv[1][0] == 'r'){
+        read_file(header);
+    } else {
+        printf("Bad arguments.\n");
+    }
 
     return 0;
 }
@@ -93,30 +40,42 @@ void write_file(){
     FILE *file;
     file = fopen("test.bin", "w");
 
-    printf("Size of data WRITE: %ld\n", sizeof(header));
-    printf("Writing: %s \n", header);
+    // printf("Size of data WRITE: %ld\n vs %ld\n", sizeof(header), sizeof(&header));
+    // printf("Writing: %s \n", header);
 
-    fwrite(&header, sizeof(header), 1, file);
-
+    fwrite(header, sizeof(header) - 1, 1, file); // Header is minus 1 because it's a char array (string) and will have an extra terminating value at the end
     fwrite(&version, sizeof(version), 1, file);
-
-    fwrite(&room, sizeof(room), 1, file);
+    fwrite(&size, sizeof(size), 1, file);
+    fwrite(&xpos, sizeof(xpos), 1, file);
+    fwrite(&ypos, sizeof(ypos), 1, file);
 
     fclose(file);
-    printf(" Write Room: %hhn\n", room);
+
+    //printf(" Write Room: %hhn\n", room);
 }
 
 
 void read_file(){
     FILE *file_test;
-    char test[12];
+    char header[12];
+    uint32_t version;
+    uint32_t file_size;
+    uint8_t player_xpos;
+    uint8_t player_ypos;
+
     file_test = fopen("test.bin", "r");
 
-    fread(&test, sizeof(test), 1, file_test);
-    fread(&room, sizeof(room), 1, file_test);
-    printf("Size of data READ: %ld\n", sizeof(header));
+    fread(&header, sizeof(header), 1, file_test);
+    fread(&version, sizeof(version), 1, file_test);
+    fread(&file_size, sizeof(file_size), 1, file_test);
+    fread(&player_xpos, sizeof(player_xpos), 1, file_test);
+    fread(&player_ypos, sizeof(player_ypos), 1, file_test);
 
-    printf("Reading: %s %hhn \n", test, room);
+    printf("Header: %s\n \
+            Version: %d\n \
+            File Size: %d\n \
+            Player X Position: %d\n \
+            Player Y Position: %d\n", header, version, file_size, player_xpos, player_ypos);
 
     fclose(file_test);
 }
