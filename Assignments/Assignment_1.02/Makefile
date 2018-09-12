@@ -7,9 +7,9 @@ clean:
 	rm -rf save_load test.bin
 
 run: 
-	./save_load w
-	echo
-	hexdump -C test.bin
+	./save_load w ; echo
+	hexdump -C test.bin ; echo ; echo
+	./save_load r ; echo
 
 # CC = gcc
 # CXX = g++
