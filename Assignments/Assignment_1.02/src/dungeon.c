@@ -19,11 +19,10 @@ struct BinData{
   uint8_t xpos;     // byte  20
   uint8_t ypos;     // byte  21
   uint8_t hardness[1680];
+  uint8_t rooms[5][4];
 };
 
-
 struct BinData dungeon_bin;
-
 
 /* Returns true if random float in [0,1] is less than *
  * numerator/denominator.  Uses only integer math.    */
@@ -52,7 +51,7 @@ typedef int16_t pair_t[num_dims];
 #define DUNGEON_X              80
 #define DUNGEON_Y              21
 #define MIN_ROOMS              5
-#define MAX_ROOMS              9
+#define MAX_ROOMS              5
 #define ROOM_MIN_X             4
 #define ROOM_MIN_Y             2
 #define ROOM_MAX_X             14
@@ -597,15 +596,19 @@ static int place_rooms(dungeon_t *d)
   for (success = 0; !success; ) {
     success = 1;
     for (i = 0; success && i < d->num_rooms; i++) {
+
       r = d->rooms + i;
       r->position[dim_x] = 1 + rand() % (DUNGEON_X - 2 - r->size[dim_x]);
       r->position[dim_y] = 1 + rand() % (DUNGEON_Y - 2 - r->size[dim_y]);
+
       for (p[dim_y] = r->position[dim_y] - 1;
            success && p[dim_y] < r->position[dim_y] + r->size[dim_y] + 1;
            p[dim_y]++) {
+
         for (p[dim_x] = r->position[dim_x] - 1;
              success && p[dim_x] < r->position[dim_x] + r->size[dim_x] + 1;
              p[dim_x]++) {
+
           if (mappair(p) >= ter_floor) {
             success = 0;
             empty_dungeon(d);
@@ -618,10 +621,11 @@ static int place_rooms(dungeon_t *d)
           }
         }
       }
-      
+    dungeon_bin.rooms[i][0] = r->position[dim_x];
+    dungeon_bin.rooms[i][1] = r->position[dim_y];
     }
-    // this gives the rooms x,y position.
-    // printf("pos: X%d  Y%d\n", r->position[dim_x], r->position[dim_y]);
+
+    
   }
 
   return 0;
@@ -633,9 +637,7 @@ static int make_rooms(dungeon_t *d)
 
   memset(d->rooms, 0, sizeof (d->rooms));
 
-  for (i = MIN_ROOMS; i < MAX_ROOMS && rand_under(6, 8); i++)
-    ;
-  d->num_rooms = i;
+  d->num_rooms = 5;
   //printf("Num of Rooms: %d\n", d->num_rooms);
 
   for (i = 0; i < d->num_rooms; i++) {
@@ -647,8 +649,9 @@ static int make_rooms(dungeon_t *d)
     while (rand_under(3, 4) && d->rooms[i].size[dim_y] < ROOM_MAX_Y) {
       d->rooms[i].size[dim_y]++;
     }
-    //This prints the individual rooms x,y size
-   // printf("Size: X%d  Y%d\n", d->rooms[i].size[dim_x], d->rooms[i].size[dim_y]);
+     
+    dungeon_bin.rooms[i][2] = d->rooms[i].size[dim_x];
+    dungeon_bin.rooms[i][3] = d->rooms[i].size[dim_y];
   }
 
   return 0;
@@ -743,8 +746,9 @@ void save_dungeon(char *path, dungeon_t *d){
   strcpy(dungeon_bin.header, "RLG327-F2018");
   dungeon_bin.version = 0;
   dungeon_bin.size = 1702 + (d->num_rooms * 4);
-  dungeon_bin.xpos = 1; //change 
-  dungeon_bin.ypos = 2; //change
+  dungeon_bin.xpos = dungeon_bin.rooms[0][0]; //change 
+  dungeon_bin.ypos = dungeon_bin.rooms[0][1]; //change
+  //printf("X = %d \t Y = %d \n", dungeon_bin.xpos, dungeon_bin.ypos);
 
 
   fwrite(&dungeon_bin.header, sizeof(dungeon_bin.header), 1, file); // Header is minus 1 because it's a char array (string) and will have an extra terminating value at the end
@@ -753,7 +757,7 @@ void save_dungeon(char *path, dungeon_t *d){
   fwrite(&dungeon_bin.xpos, sizeof(dungeon_bin.xpos), 1, file);
   fwrite(&dungeon_bin.ypos, sizeof(dungeon_bin.ypos), 1, file);
   fwrite(&dungeon_bin.hardness, sizeof(dungeon_bin.hardness), 1, file);
-  //fwrite(&room, sizeof(room), 1, file);
+  fwrite(&dungeon_bin.rooms, sizeof(dungeon_bin.rooms), 1, file);
 
   fclose(file);
 
@@ -764,14 +768,7 @@ void load_dungeon(char *path){
   // TODO: PRINT corradors and rooms diffferently.
 
   FILE *file;
-  // char *path;
-  // char loc[] = "/test_dungeon_files/101.rlg327";
-
-  // path = malloc(strlen(getenv("HOME")) + strlen(loc) + 1);
-
-  // strcpy(path, getenv("HOME"));
-  // strcat(path, loc);
-   
+  
   file = fopen(path, "r");
 
   struct BinData fileInfo;
@@ -782,14 +779,18 @@ void load_dungeon(char *path){
   fread(&fileInfo.xpos,     sizeof(fileInfo.xpos),     1, file);
   fread(&fileInfo.ypos,     sizeof(fileInfo.ypos),     1, file);
   fread(&fileInfo.hardness, sizeof(fileInfo.hardness), 1, file);
-  //fread(&rooms,             sizeof(rooms),             1, file);
+  fread(&fileInfo.rooms,    sizeof(fileInfo.rooms),    1, file);
 
   int i;
   int j;
   int arr_pos; 
   for(i = 0; i < 21; i++){  
     for(j = 0; j < 80; j++){
-      arr_pos = (i*80)+j;
+      if(i == fileInfo.ypos && j == fileInfo.xpos){
+        printf("@");
+      }else{
+
+        arr_pos = (i*80)+j;
 
         if(fileInfo.hardness[arr_pos] == 0) { 
             printf(".");
@@ -810,10 +811,56 @@ void load_dungeon(char *path){
             printf(" ");
 
         }
+      }
     }
 
     printf("\n");
   }
+
+  //  switch (mappair(p)) {
+
+  //     case ter_wall:
+
+  //     case ter_wall_immutable:
+
+  //       if(p[dim_y] == 0 || p[dim_y] == 20){
+  //         putchar('-');
+  //         dungeon_bin.hardness[arr_pos] = 255;
+  //       } else if (p[dim_x] == 0 || p[dim_x] == 79){
+  //         putchar('|');
+  //         dungeon_bin.hardness[arr_pos] = 255;
+  //       } else{
+  //          putchar(' '); // space
+  //          int ran = rand() % 255;
+  //          if(ran == 0){
+  //            ran++;
+  //          } else if (ran == 255){
+  //            ran--;
+  //          }
+  //          dungeon_bin.hardness[arr_pos] = ran;
+  //       }
+
+  //       break;
+
+  //     case ter_floor:
+
+  //     case ter_floor_room:
+  //       putchar('.'); // .
+  //       dungeon_bin.hardness[arr_pos] = 0;
+  //       break;
+
+  //     case ter_floor_hall:
+  //       putchar('#'); // #
+  //       dungeon_bin.hardness[arr_pos] = 0;
+  //       break;
+
+  //     case ter_debug:
+  //       putchar('*'); // *
+  //       fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
+  //       break;
+
+  //     }
+  // }
   fclose(file);
 
 }
@@ -827,18 +874,15 @@ int main(int argc, char *argv[])
 
   UNUSED(in_room);
 
-  char *path;
-  char loc[] = "/test_dungeon_files/.dungeon";
+  char load[] = "--load";
+  char save[] = "--save";
 
+  char *path;
+  char loc[] = "/.rlg327/dungeon";
   path = malloc(strlen(getenv("HOME")) + strlen(loc) + 1);
 
   strcpy(path, getenv("HOME"));
   strcat(path, loc);
-
-  char load[] = "--load";
-  char save[] = "--save";
-
-  
 
   int i;
   if(argc > 1){
@@ -858,6 +902,9 @@ int main(int argc, char *argv[])
         gen_dungeon(&d);
         render_dungeon(&d);
 
+ 
+        mkdir(strcat(getenv("HOME"), "/.rlg327"), 0700);
+
         save_dungeon(path, &d);
       }
     }
@@ -873,13 +920,15 @@ int main(int argc, char *argv[])
 
   }
 
-  
-
-  
+  // for(int i = 0; i < 5; i++){
+  //   for(int j = 0; j < 4; j ++){
+  //     printf(" %d ", dungeon_bin.rooms[i][j]);
+  //   }
+  //   printf("\n");
+  // }
 
   printf("\n");
 
-  
 
   return 0;
 }

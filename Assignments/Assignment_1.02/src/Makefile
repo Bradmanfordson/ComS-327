@@ -3,12 +3,12 @@ CXX = g++
 ECHO = echo
 RM = rm -f
 
-CFLAGS = -Wall -ggdb -funroll-loops -pg #-Werror
-CXXFLAGS = -Wall -ggdb -funroll-loops   #-Werror                                
+CFLAGS = -Wall -ggdb -funroll-loops -pg -Werror
+CXXFLAGS = -Wall -ggdb -funroll-loops -Werror                                
 LDFLAGS = 
 
-BIN = rlg327
-OBJS = rlg327.o heap.o
+BIN = dungeon
+OBJS = dungeon.o heap.o
 
 all: $(BIN) etags
 
