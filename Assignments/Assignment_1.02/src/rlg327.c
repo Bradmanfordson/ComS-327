@@ -22,6 +22,7 @@ struct BinData{
 };
 
 
+struct BinData dungeon_bin;
 
 
 /* Returns true if random float in [0,1] is less than *
@@ -635,7 +636,7 @@ static int make_rooms(dungeon_t *d)
   for (i = MIN_ROOMS; i < MAX_ROOMS && rand_under(6, 8); i++)
     ;
   d->num_rooms = i;
-  printf("Num of Rooms: %d\n", d->num_rooms);
+  //printf("Num of Rooms: %d\n", d->num_rooms);
 
   for (i = 0; i < d->num_rooms; i++) {
     d->rooms[i].size[dim_x] = ROOM_MIN_X;
@@ -649,8 +650,6 @@ static int make_rooms(dungeon_t *d)
     //This prints the individual rooms x,y size
    // printf("Size: X%d  Y%d\n", d->rooms[i].size[dim_x], d->rooms[i].size[dim_y]);
   }
-
-
 
   return 0;
 }
@@ -671,24 +670,55 @@ void render_dungeon(dungeon_t *d)
 {
   pair_t p;
 
+
+  int arr_pos = 0;
+
   for (p[dim_y] = 0; p[dim_y] < DUNGEON_Y; p[dim_y]++) {
     for (p[dim_x] = 0; p[dim_x] < DUNGEON_X; p[dim_x]++) {
+      arr_pos = (p[dim_y]*80)+p[dim_x];
+
       switch (mappair(p)) {
+
       case ter_wall:
+
       case ter_wall_immutable:
-        putchar('+'); // space
+
+        if(p[dim_y] == 0 || p[dim_y] == 20){
+          putchar('-');
+          dungeon_bin.hardness[arr_pos] = 255;
+        } else if (p[dim_x] == 0 || p[dim_x] == 79){
+          putchar('|');
+          dungeon_bin.hardness[arr_pos] = 255;
+        } else{
+           putchar(' '); // space
+           int ran = rand() % 255;
+           if(ran == 0){
+             ran++;
+           } else if (ran == 255){
+             ran--;
+           }
+           dungeon_bin.hardness[arr_pos] = ran;
+        }
+
         break;
+
       case ter_floor:
+
       case ter_floor_room:
         putchar('.'); // .
+        dungeon_bin.hardness[arr_pos] = 0;
         break;
+
       case ter_floor_hall:
-        putchar('0'); // $
+        putchar('#'); // #
+        dungeon_bin.hardness[arr_pos] = 0;
         break;
+
       case ter_debug:
         putchar('*'); // *
         fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
         break;
+
       }
     }
     putchar('\n');
@@ -705,45 +735,66 @@ void init_dungeon(dungeon_t *d)
 }
 
 
-void save_dungeon(){
-  
-}
-
-void load_dungeon(){
+void save_dungeon(char *path, dungeon_t *d){
 
   FILE *file;
-  char *path;
-  char loc[] = "/test_dungeon_files/101.rlg327";
+  file = fopen(path, "w");
 
-  path = malloc(strlen(getenv("HOME")) + strlen(loc) + 1);
+  strcpy(dungeon_bin.header, "RLG327-F2018");
+  dungeon_bin.version = 0;
+  dungeon_bin.size = 1702 + (d->num_rooms * 4);
+  dungeon_bin.xpos = 1; //change 
+  dungeon_bin.ypos = 2; //change
 
-  strcpy(path, getenv("HOME"));
-  strcat(path, loc);
+
+  fwrite(&dungeon_bin.header, sizeof(dungeon_bin.header), 1, file); // Header is minus 1 because it's a char array (string) and will have an extra terminating value at the end
+  fwrite(&dungeon_bin.version, sizeof(dungeon_bin.version), 1, file);
+  fwrite(&dungeon_bin.size, sizeof(dungeon_bin.size), 1, file);
+  fwrite(&dungeon_bin.xpos, sizeof(dungeon_bin.xpos), 1, file);
+  fwrite(&dungeon_bin.ypos, sizeof(dungeon_bin.ypos), 1, file);
+  fwrite(&dungeon_bin.hardness, sizeof(dungeon_bin.hardness), 1, file);
+  //fwrite(&room, sizeof(room), 1, file);
+
+  fclose(file);
+
+}
+
+void load_dungeon(char *path){
+
+  // TODO: PRINT corradors and rooms diffferently.
+
+  FILE *file;
+  // char *path;
+  // char loc[] = "/test_dungeon_files/101.rlg327";
+
+  // path = malloc(strlen(getenv("HOME")) + strlen(loc) + 1);
+
+  // strcpy(path, getenv("HOME"));
+  // strcat(path, loc);
    
   file = fopen(path, "r");
 
   struct BinData fileInfo;
 
-  fread(&fileInfo.header,  sizeof(fileInfo.header),  1, file);
-  fread(&fileInfo.version, sizeof(fileInfo.version), 1, file);
-  fread(&fileInfo.size,    sizeof(fileInfo.size),    1, file);
-  fread(&fileInfo.xpos,    sizeof(fileInfo.xpos),    1, file);
-  fread(&fileInfo.ypos,    sizeof(fileInfo.ypos),    1, file);
+  fread(&fileInfo.header,   sizeof(fileInfo.header),   1, file);
+  fread(&fileInfo.version,  sizeof(fileInfo.version),  1, file);
+  fread(&fileInfo.size,     sizeof(fileInfo.size),     1, file);
+  fread(&fileInfo.xpos,     sizeof(fileInfo.xpos),     1, file);
+  fread(&fileInfo.ypos,     sizeof(fileInfo.ypos),     1, file);
   fread(&fileInfo.hardness, sizeof(fileInfo.hardness), 1, file);
-  //fread(&fileInfo.rooms, sizeof(fileInfo.rooms), 1, file);
+  //fread(&rooms,             sizeof(rooms),             1, file);
 
   int i;
   int j;
-  int arr_pos;
-  for(i = 0; i < 21; i++){
+  int arr_pos; 
+  for(i = 0; i < 21; i++){  
     for(j = 0; j < 80; j++){
       arr_pos = (i*80)+j;
 
-        if(fileInfo.hardness[arr_pos] == 0){
-
+        if(fileInfo.hardness[arr_pos] == 0) { 
             printf(".");
 
-        } else if( fileInfo.hardness[arr_pos] == 255){
+        } else if(fileInfo.hardness[arr_pos] == 255){
 
             if(i == 0 || i == 20){
 
@@ -763,7 +814,6 @@ void load_dungeon(){
 
     printf("\n");
   }
-
   fclose(file);
 
 }
@@ -777,30 +827,59 @@ int main(int argc, char *argv[])
 
   UNUSED(in_room);
 
-  if (argc == 2) {
-    seed = atoi(argv[1]);
-  } else {
-    gettimeofday(&tv, NULL);
-    seed = (tv.tv_usec ^ (tv.tv_sec << 20)) & 0xffffffff;
-  }
+  char *path;
+  char loc[] = "/test_dungeon_files/.dungeon";
 
-  printf("Using seed: %u\n", seed);
-  srand(seed);
+  path = malloc(strlen(getenv("HOME")) + strlen(loc) + 1);
 
-  init_dungeon(&d);
-  gen_dungeon(&d);
-  render_dungeon(&d);
-  //delete_dungeon(&d);
+  strcpy(path, getenv("HOME"));
+  strcat(path, loc);
 
-  // char *path;
-  // char temp[] = "/test_dungeon_files/101.rlg327";
-  // path = malloc(strlen(getenv("HOME")) + strlen(temp) + 1);
+  char load[] = "--load";
+  char save[] = "--save";
 
-  // strcpy(path, getenv("HOME"));
-  // strcat(path, temp);
   
 
-  load_dungeon();
+  int i;
+  if(argc > 1){
+    for(i = 0; i < argc; i++){
+
+      if(strcmp(argv[i], load) == 0){
+        seed = atoi(argv[1]);
+        load_dungeon(path);
+
+      }else if(strcmp(argv[i], save) == 0){
+        gettimeofday(&tv, NULL);
+        seed = (tv.tv_usec ^ (tv.tv_sec << 20)) & 0xffffffff;
+        printf("Using seed: %u\n", seed);
+        srand(seed);
+
+        init_dungeon(&d);
+        gen_dungeon(&d);
+        render_dungeon(&d);
+
+        save_dungeon(path, &d);
+      }
+    }
+  }else{
+    gettimeofday(&tv, NULL);
+    seed = (tv.tv_usec ^ (tv.tv_sec << 20)) & 0xffffffff;
+    printf("Using seed: %u\n", seed);
+    srand(seed);
+
+    init_dungeon(&d);
+    gen_dungeon(&d);
+    render_dungeon(&d);
+
+  }
+
+  
+
+  
+
+  printf("\n");
+
+  
 
   return 0;
 }
