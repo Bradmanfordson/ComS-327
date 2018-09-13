@@ -39,6 +39,19 @@ September 5, 2018 9:15PM - Crappy colDetection for rooms made, kinda works, work
 September 5, 2018 9:30PM - collision kind of works. It can be super hard on the computer though. it's pretty crappy in all honestly
 September 5, 2018 10:00PM - Couldn't get the hallways made, calling it so this assignment isn't late.
 
+September 7, 2018 10:00PM - Grabbed professors dungeon generator code
+
+September 9, 2018 6:00PM - Started reading and learning how professors code works
+September 9, 2018 8:00PM - Started save_load.c to learn how to use binary files
+
+September 10, 2018 5:00PM - Writing piece by piece different parts of a binary file by hand and evaluating it in hexdump
+September 10, 2018 9:00PM - Have most of the binary file saving properly.
+
+September 11, 2018 7:00PM - Started working on the load functionality
+September 12, 2018 3:00AM - Loading now works perfectly with in save_load
+
+September 12, 2018 5:00PM - Started writing code to test all of the professors dungeons in save_load.c
+September 12, 2018 5:30PM - Save load is perfect... on to implementing it in professors code.
 September 12, 2018 11:00PM - accidently deleted my changelog, going to get the program working then update this.
 September 12, 2018 11:00PM - everything works except difference between corrador and halls.
 September 12, 2018 11:55PM - Finally works!!!
