@@ -749,6 +749,7 @@ void save_dungeon(char *path, dungeon_t *d){
   dungeon_bin.xpos = dungeon_bin.rooms[0][0]; //change 
   dungeon_bin.ypos = dungeon_bin.rooms[0][1]; //change
   //printf("X = %d \t Y = %d \n", dungeon_bin.xpos, dungeon_bin.ypos);
+  dungeon_bin.size = htobe32(dungeon_bin.size);
 
 
   fwrite(&dungeon_bin.header, sizeof(dungeon_bin.header), 1, file); // Header is minus 1 because it's a char array (string) and will have an extra terminating value at the end
@@ -763,7 +764,7 @@ void save_dungeon(char *path, dungeon_t *d){
 
 }
 
-void load_dungeon(char *path){
+void load_dungeon(char *path, dungeon_t *d){
 
   // TODO: PRINT corradors and rooms diffferently.
 
@@ -773,6 +774,7 @@ void load_dungeon(char *path){
 
   struct BinData fileInfo;
 
+
   fread(&fileInfo.header,   sizeof(fileInfo.header),   1, file);
   fread(&fileInfo.version,  sizeof(fileInfo.version),  1, file);
   fread(&fileInfo.size,     sizeof(fileInfo.size),     1, file);
@@ -781,9 +783,12 @@ void load_dungeon(char *path){
   fread(&fileInfo.hardness, sizeof(fileInfo.hardness), 1, file);
   fread(&fileInfo.rooms,    sizeof(fileInfo.rooms),    1, file);
 
+  fileInfo.size = be32toh(fileInfo.size);
+
   int i;
   int j;
   int arr_pos; 
+
   for(i = 0; i < 21; i++){  
     for(j = 0; j < 80; j++){
       if(i == fileInfo.ypos && j == fileInfo.xpos){
@@ -793,22 +798,43 @@ void load_dungeon(char *path){
         arr_pos = (i*80)+j;
 
         if(fileInfo.hardness[arr_pos] == 0) { 
+          if((fileInfo.rooms[0][0] <= j) && ((fileInfo.rooms[0][2] + fileInfo.rooms[0][0] - 1) >= j) &&
+            (fileInfo.rooms[0][1] <= i) && ((fileInfo.rooms[0][3] + fileInfo.rooms[0][1] - 1) >= i)
+          ){
             printf(".");
-
+          } else if((fileInfo.rooms[1][0] <= j) && ((fileInfo.rooms[1][2] + fileInfo.rooms[1][0] - 1) >= j) &&
+            (fileInfo.rooms[1][1] <= i) && ((fileInfo.rooms[1][3] + fileInfo.rooms[1][1] - 1) >= i)
+          ){
+            printf(".");
+          } else if((fileInfo.rooms[2][0] <= j) && ((fileInfo.rooms[2][2] + fileInfo.rooms[2][0] - 1) >= j) &&
+            (fileInfo.rooms[2][1] <= i) && ((fileInfo.rooms[2][3] + fileInfo.rooms[2][1] - 1) >= i)
+          ){
+            printf(".");
+          } else if((fileInfo.rooms[3][0] <= j) && ((fileInfo.rooms[3][2] + fileInfo.rooms[3][0] - 1) >= j) &&
+            (fileInfo.rooms[3][1] <= i) && ((fileInfo.rooms[3][3] + fileInfo.rooms[3][1] - 1) >= i)
+          ){
+            printf(".");
+          } else if((fileInfo.rooms[4][0] <= j) && ((fileInfo.rooms[4][2] + fileInfo.rooms[4][0] - 1) >= j) &&
+            (fileInfo.rooms[4][1] <= i) && ((fileInfo.rooms[4][3] + fileInfo.rooms[4][1] - 1) >= i)
+          ){
+            printf(".");
+          } else {
+            printf("#");
+          }
         } else if(fileInfo.hardness[arr_pos] == 255){
 
-            if(i == 0 || i == 20){
+          if(i == 0 || i == 20){
 
-                printf("-");
+            printf("-");
 
-            } else {
+          } else {
 
-              printf("|");
+            printf("|");
 
-            }
+          }
         } else {
 
-            printf(" ");
+          printf(" ");
 
         }
       }
@@ -817,50 +843,6 @@ void load_dungeon(char *path){
     printf("\n");
   }
 
-  //  switch (mappair(p)) {
-
-  //     case ter_wall:
-
-  //     case ter_wall_immutable:
-
-  //       if(p[dim_y] == 0 || p[dim_y] == 20){
-  //         putchar('-');
-  //         dungeon_bin.hardness[arr_pos] = 255;
-  //       } else if (p[dim_x] == 0 || p[dim_x] == 79){
-  //         putchar('|');
-  //         dungeon_bin.hardness[arr_pos] = 255;
-  //       } else{
-  //          putchar(' '); // space
-  //          int ran = rand() % 255;
-  //          if(ran == 0){
-  //            ran++;
-  //          } else if (ran == 255){
-  //            ran--;
-  //          }
-  //          dungeon_bin.hardness[arr_pos] = ran;
-  //       }
-
-  //       break;
-
-  //     case ter_floor:
-
-  //     case ter_floor_room:
-  //       putchar('.'); // .
-  //       dungeon_bin.hardness[arr_pos] = 0;
-  //       break;
-
-  //     case ter_floor_hall:
-  //       putchar('#'); // #
-  //       dungeon_bin.hardness[arr_pos] = 0;
-  //       break;
-
-  //     case ter_debug:
-  //       putchar('*'); // *
-  //       fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
-  //       break;
-
-  //     }
-  // }
   fclose(file);
 
 }
@@ -890,7 +872,7 @@ int main(int argc, char *argv[])
 
       if(strcmp(argv[i], load) == 0){
         seed = atoi(argv[1]);
-        load_dungeon(path);
+        load_dungeon(path, &d);
 
       }else if(strcmp(argv[i], save) == 0){
         gettimeofday(&tv, NULL);
