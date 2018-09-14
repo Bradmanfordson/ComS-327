@@ -12,17 +12,7 @@
 
 #include "heap.h"
 
-struct BinData{
-  char header[12];  // bytes  0 - 11
-  uint32_t version; // bytes 12 - 15
-  uint32_t size;    // bytes 16 - 19
-  uint8_t xpos;     // byte  20
-  uint8_t ypos;     // byte  21
-  uint8_t hardness[1680];
-  uint8_t rooms[5][4];
-};
 
-struct BinData dungeon_bin;
 
 /* Returns true if random float in [0,1] is less than *
  * numerator/denominator.  Uses only integer math.    */
@@ -51,11 +41,24 @@ typedef int16_t pair_t[num_dims];
 #define DUNGEON_X              80
 #define DUNGEON_Y              21
 #define MIN_ROOMS              5
-#define MAX_ROOMS              5
+#define MAX_ROOMS              9
 #define ROOM_MIN_X             4
 #define ROOM_MIN_Y             2
 #define ROOM_MAX_X             14
 #define ROOM_MAX_Y             8
+
+
+struct BinData{
+  char header[12];  // bytes  0 - 11
+  uint32_t version; // bytes 12 - 15
+  uint32_t size;    // bytes 16 - 19
+  uint8_t xpos;     // byte  20
+  uint8_t ypos;     // byte  21
+  uint8_t hardness[1680];
+  uint8_t rooms[MAX_ROOMS][4];
+};
+
+struct BinData dungeon_bin;
 
 #define mappair(pair) (d->map[pair[dim_y]][pair[dim_x]])
 #define mapxy(x, y) (d->map[y][x])
@@ -762,7 +765,22 @@ void save_dungeon(char *path, dungeon_t *d){
   fwrite(&dungeon_bin.xpos, sizeof(dungeon_bin.xpos), 1, file);
   fwrite(&dungeon_bin.ypos, sizeof(dungeon_bin.ypos), 1, file);
   fwrite(&dungeon_bin.hardness, sizeof(dungeon_bin.hardness), 1, file);
-  fwrite(&dungeon_bin.rooms, sizeof(dungeon_bin.rooms), 1, file);
+
+  for(int x = 0; x < d->num_rooms; x++){
+    if(dungeon_bin.rooms[x][0] != 0){
+      fwrite(&dungeon_bin.rooms[x][0], sizeof(dungeon_bin.rooms[x][0]), 1, file);
+    }
+    if(dungeon_bin.rooms[x][1] != 0){
+      fwrite(&dungeon_bin.rooms[x][1], sizeof(dungeon_bin.rooms[x][1]), 1, file);
+    }
+    if(dungeon_bin.rooms[x][2] != 0){
+      fwrite(&dungeon_bin.rooms[x][2], sizeof(dungeon_bin.rooms[x][2]), 1, file);
+    }
+    if(dungeon_bin.rooms[x][3] != 0){
+      fwrite(&dungeon_bin.rooms[x][3], sizeof(dungeon_bin.rooms[x][3]), 1, file);
+    }
+  }
+  //fwrite(&dungeon_bin.rooms, sizeof(dungeon_bin.rooms), 1, file);
 
   fclose(file);
 
@@ -810,31 +828,18 @@ void load_dungeon(char *path, dungeon_t *d){
       }else{
 
         arr_pos = (i*80)+j;
-
+        char val;
         if(fileInfo.hardness[arr_pos] == 0) { 
-          if((fileInfo.rooms[0][0] <= j) && ((fileInfo.rooms[0][2] + fileInfo.rooms[0][0] - 1) >= j) &&
-            (fileInfo.rooms[0][1] <= i) && ((fileInfo.rooms[0][3] + fileInfo.rooms[0][1] - 1) >= i)
-          ){
-            printf(".");
-          } else if((fileInfo.rooms[1][0] <= j) && ((fileInfo.rooms[1][2] + fileInfo.rooms[1][0] - 1) >= j) &&
-            (fileInfo.rooms[1][1] <= i) && ((fileInfo.rooms[1][3] + fileInfo.rooms[1][1] - 1) >= i)
-          ){
-            printf(".");
-          } else if((fileInfo.rooms[2][0] <= j) && ((fileInfo.rooms[2][2] + fileInfo.rooms[2][0] - 1) >= j) &&
-            (fileInfo.rooms[2][1] <= i) && ((fileInfo.rooms[2][3] + fileInfo.rooms[2][1] - 1) >= i)
-          ){
-            printf(".");
-          } else if((fileInfo.rooms[3][0] <= j) && ((fileInfo.rooms[3][2] + fileInfo.rooms[3][0] - 1) >= j) &&
-            (fileInfo.rooms[3][1] <= i) && ((fileInfo.rooms[3][3] + fileInfo.rooms[3][1] - 1) >= i)
-          ){
-            printf(".");
-          } else if((fileInfo.rooms[4][0] <= j) && ((fileInfo.rooms[4][2] + fileInfo.rooms[4][0] - 1) >= j) &&
-            (fileInfo.rooms[4][1] <= i) && ((fileInfo.rooms[4][3] + fileInfo.rooms[4][1] - 1) >= i)
-          ){
-            printf(".");
-          } else {
-            printf("#");
+          for(int x = 0; x < numOfRooms; x++){
+              if((fileInfo.rooms[x][0] <= j) && ((fileInfo.rooms[x][2] + fileInfo.rooms[x][0] - 1) >= j) &&
+                (fileInfo.rooms[x][1] <= i) && ((fileInfo.rooms[x][3] + fileInfo.rooms[x][1] - 1) >= i)){
+                val = '.';
+                break;
+              } else { 
+                val = '#';
+              }
           }
+          printf("%c", val); 
         } else if(fileInfo.hardness[arr_pos] == 255){
 
           if(i == 0 || i == 20){
@@ -898,7 +903,7 @@ int main(int argc, char *argv[])
         gen_dungeon(&d);
         render_dungeon(&d);
 
-        uint8_t rooms[d.num_rooms][4];
+       // uint8_t rooms[d.num_rooms][4];
 
  
         mkdir(strcat(getenv("HOME"), "/.rlg327"), 0700);
