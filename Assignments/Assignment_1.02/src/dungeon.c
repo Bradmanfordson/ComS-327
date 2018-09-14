@@ -776,6 +776,8 @@ void load_dungeon(char *path, dungeon_t *d){
 
   struct BinData fileInfo;
 
+  int numOfRooms;
+
 
   fread(&fileInfo.header,   sizeof(fileInfo.header),   1, file);
   fread(&fileInfo.version,  sizeof(fileInfo.version),  1, file);
@@ -785,7 +787,16 @@ void load_dungeon(char *path, dungeon_t *d){
   fread(&fileInfo.xpos,     sizeof(fileInfo.xpos),     1, file);
   fread(&fileInfo.ypos,     sizeof(fileInfo.ypos),     1, file);
   fread(&fileInfo.hardness, sizeof(fileInfo.hardness), 1, file);
-  fread(&fileInfo.rooms,    sizeof(fileInfo.rooms),    1, file);
+
+  numOfRooms = (fileInfo.size - 1702) / 4;
+
+  for(int i = 0; i < numOfRooms; i++){
+    fread(&fileInfo.rooms[i][0], sizeof(fileInfo.rooms[i][0]), 1, file);
+    fread(&fileInfo.rooms[i][1], sizeof(fileInfo.rooms[i][1]), 1, file);
+    fread(&fileInfo.rooms[i][2], sizeof(fileInfo.rooms[i][2]), 1, file);
+    fread(&fileInfo.rooms[i][3], sizeof(fileInfo.rooms[i][3]), 1, file);
+  }
+  //fread(&fileInfo.rooms,    sizeof(fileInfo.rooms),    1, file);
 
   int i;
   int j;
