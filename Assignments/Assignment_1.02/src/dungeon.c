@@ -637,7 +637,9 @@ static int make_rooms(dungeon_t *d)
 
   memset(d->rooms, 0, sizeof (d->rooms));
 
-  d->num_rooms = 5;
+  for (i = MIN_ROOMS; i < MAX_ROOMS && rand_under(6, 8); i++)
+    ;
+  d->num_rooms = i;
   //printf("Num of Rooms: %d\n", d->num_rooms);
 
   for (i = 0; i < d->num_rooms; i++) {
@@ -796,7 +798,6 @@ void load_dungeon(char *path, dungeon_t *d){
     fread(&fileInfo.rooms[i][2], sizeof(fileInfo.rooms[i][2]), 1, file);
     fread(&fileInfo.rooms[i][3], sizeof(fileInfo.rooms[i][3]), 1, file);
   }
-  //fread(&fileInfo.rooms,    sizeof(fileInfo.rooms),    1, file);
 
   int i;
   int j;
@@ -896,6 +897,8 @@ int main(int argc, char *argv[])
         init_dungeon(&d);
         gen_dungeon(&d);
         render_dungeon(&d);
+
+        uint8_t rooms[d.num_rooms][4];
 
  
         mkdir(strcat(getenv("HOME"), "/.rlg327"), 0700);
