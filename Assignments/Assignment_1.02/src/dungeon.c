@@ -749,7 +749,9 @@ void save_dungeon(char *path, dungeon_t *d){
   dungeon_bin.xpos = dungeon_bin.rooms[0][0]; //change 
   dungeon_bin.ypos = dungeon_bin.rooms[0][1]; //change
   //printf("X = %d \t Y = %d \n", dungeon_bin.xpos, dungeon_bin.ypos);
+
   dungeon_bin.size = htobe32(dungeon_bin.size);
+  dungeon_bin.version = htobe32(dungeon_bin.version);
 
 
   fwrite(&dungeon_bin.header, sizeof(dungeon_bin.header), 1, file); // Header is minus 1 because it's a char array (string) and will have an extra terminating value at the end
@@ -777,13 +779,13 @@ void load_dungeon(char *path, dungeon_t *d){
 
   fread(&fileInfo.header,   sizeof(fileInfo.header),   1, file);
   fread(&fileInfo.version,  sizeof(fileInfo.version),  1, file);
+  fileInfo.version = be32toh(fileInfo.version);
   fread(&fileInfo.size,     sizeof(fileInfo.size),     1, file);
+  fileInfo.size = be32toh(fileInfo.size);
   fread(&fileInfo.xpos,     sizeof(fileInfo.xpos),     1, file);
   fread(&fileInfo.ypos,     sizeof(fileInfo.ypos),     1, file);
   fread(&fileInfo.hardness, sizeof(fileInfo.hardness), 1, file);
   fread(&fileInfo.rooms,    sizeof(fileInfo.rooms),    1, file);
-
-  fileInfo.size = be32toh(fileInfo.size);
 
   int i;
   int j;
