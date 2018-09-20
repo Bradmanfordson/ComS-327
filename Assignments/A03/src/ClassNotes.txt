@@ -1,0 +1,142 @@
+Thursday, September 20th, 2018
+
+"extern" can be used to have a variable declared in a header file and have access to it in the .c file. (super global variable)
+In general, everything in a header file should be extern.
+
+HW 1.04:
+--------
+4 possible personalities of monsters:
+    1. smart 
+    2. telepathic
+    3. tunnelling
+    4. eratic 
+
+So 16 different monsters represented by a '0' -> 'f'.
+
+hardcode individual monsters with personalities and test it out, then once everything works, randomize it.
+They also have a speed in the range(5, 20);
+PC ( player character ) speed is always 10.
+
+Next turn is @ game turn (1000/speed + current turn)
+
+Example:
+    Monster | Speed | Next turn
+    ---------------------------
+        @   |  10   |  0
+        F   |  10   |  0
+        7   |   5   |  0
+        9   |  20   |  0
+
+        PC goes first - pull it out of heap, pc's turn is its current turn + 1000/speed. So it's next turn is going to be 100.
+        Pull next thing (F) - do the same as above
+        Loop through all monsters taking the lowest value of Next turn and doing the above. PC always starts first then it's the lowest turn value
+
+    AFTER first loop of checking turns is taken:
+
+    Monster | Speed | Next turn
+    ---------------------------
+        @   |  10   |  100
+        F   |  10   |  100
+        7   |   5   |  200
+        9   |  20   |  50
+
+    Then move 9 again. because it's the smallest. Then it'll be 100, so move up to the lowest turn value at the highest point ( PC ).
+
+    When we decide where the monster moves, it is going to check the surrounding blocks value from dykstras algorithm and randomly decide where to move
+    Visualization:
+    2 2 2 2 2
+    2 1 1 1 2
+    2 1 F 1 2
+    2 1 1 1 2
+    2 2 2 2 2
+
+    After each time the PC moves, the gradient has to update (run dykstras again to get the updated values)
+
+    currently the attacker will always win, and monsters can kill eachother. basically they just take over each other.
+
+    "remove top thing in the heap, do a move based on what was removed, then add the after move monsters back onto the heap"
+
+What happens when a monster is in the heap and gets killed?
+        A: Mark that monster as being dead somewhere, and once it's removed from the heap to do it's "next" move, just throw it away instead of doing it's turn.
+
+a PriorityQueue drives the monster|speed|nextturn map
+create a charactermap(of pointer to characters)
+
+Instructor reccomends:
+    Character Struct { 
+        PC Struct (pointer)
+        NPC Struct (pointer)
+    } // One of theses will have a value and the other will have a NULL (this just tells whether or not the Character is the PC or NPC)
+
+Final note: They are starting to check valgrind.
+
+
+
+
+NEW MATERIAL:
+-------------
+    Representation:
+        Basically just a rehash of what we learned in CS 321 and CE 281 with number representation in binary
+
+    Bitwise Operators:
+        AND - ( logical AND is && Bitwise AND is & )
+            takes 2 operands and compairs then bit by bit, and does a logical AND on those bits:
+                EX:
+                        1 0 1 1
+                        1 1 0 1 &  
+                        ---------
+                        1 0 0 1
+
+        OR - ( Logical OR is || Bitwise OR is | )
+            Works the same as AND except for OR
+        
+        Exclusive OR - ( Bitwise is ^ )
+
+        NOT - (Bitwise is ~)
+            Reverse every bit
+
+        Right Shift - ( >> )
+            whatYourShifting >> howFarItsShifting
+            Equal/Similar to multiplication by 2.
+            Example:
+                1101 1010 >> 3 = 0001 1011 ( 000 1101 1 ) 
+
+        Left Shift - ( << )
+            Example:
+                1101 1010 << 3 =  1101 0000 ( 1 1010 000 )
+
+    BitFields:
+        Allows us to manipulate numbers as though they are arrays of boolean values. 
+        Example:
+            # define NPC_SMART      0x00000001
+            # define NPC_TELEPATH   0x00000002
+
+            This lets us do bitwise operations on monsters with multiple characteristics to see what they can do.
+            if ( characteristics & (NPC_SMART | NPC_TELEPATH)){
+                DoSomething();
+            }
+
+            Example: 
+                10 | 20 | 40 = 70 ( 0111 0000 ) 
+
+                So if the characteristics AND THIS so   
+                    let characteristic = 0000 0001
+
+                    0000 0001
+                    0111 0000 &
+                    -----------
+                    0000 0000 So it doesn't have any of these characteristics
+
+                    0000 0001
+                    0101 0101 &
+                    -----------
+                    0000 0001 So it has whatever thing that is... kinda lost
+
+            More often then not you'd do something like:
+                if ( !( characteristics & NPC_SMART)) { // if monster is not smart
+                    dosomething();
+                } 
+
+
+
+
