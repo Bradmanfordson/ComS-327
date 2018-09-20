@@ -41,4 +41,5 @@ etags:
 	@etags *.[ch]
 
 # Brad's Makefile additions.
-
+sub:
+	tar cvfz roberts_allen.assignment-1.03.tar.gz src/
