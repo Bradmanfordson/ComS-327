@@ -1,4 +1,5 @@
 Thursday, September 20th, 2018
+------------------------------
 
 "extern" can be used to have a variable declared in a header file and have access to it in the .c file. (super global variable)
 In general, everything in a header file should be extern.
@@ -138,5 +139,110 @@ NEW MATERIAL:
                 } 
 
 
+Tuesday September 25, 2018 Lecture
+----------------------------------
+Generics: C doesn't really have generics they are just "void pointers".
+---------
+    void pointers:
+        - Cannot be dereferenced
+        - Can store anything in it
+        - Example: we're going to make a generic insertion sort
+        - cannot index because we cannot dereference, so we need to know the size of what is in it so we know how far to read data
 
+        Integer version:
+        ----------------
+            void insertion_sort(int *a, int n){
+                int i, j, t; // t = temporary
+
+                for(i = 1; i < n; i++){
+                    for(t = a[i], j = i-1; j > 1 && a[j] > t; j--){
+                        a[j+1] = a[j];
+                    }
+                    a[j+1] = t;
+                }
+            } 
+
+        Generic (void pointer) version:
+        -------------------------------
+            void generic_insertion_sort(void *data, int n, size_t s, 
+                                        int (*compare)(void *, void *))  // type signiature for a function pointer "compare", takes 2 void arguments, and returns an int
+            {
+                char *a; // indexable and 4 bytes
+                int i, j; // t (temp) isn't quite as straight forward because it can be anything
+                void *t;
+
+                t = malloc(s); // so t is the same size as the values in the void array
+                a = data;
+                
+                for(i = 1; i < n; i++){ // for the next loop, cannot do assignment statements or comparators, so improvise with memcpy     
+                    for(memcpy(t, a + (i * s), s), j = i -1; // assign
+                        j > -1 && compare( a + (j * s ), t ) > 0; //compare
+                        j--) // increment/decrement
+                        {
+                            memcpy(a + (( j + 1 ) * s), a + ( j * s ), s);
+                        }
+                    memcpy(a + (( j + 1 ) * s), t, s);
+                }
+            } 
+
+            - memcpy - look at man page: takes 2 pointers and a size; first is destination, then source, then size; memcpy(Destination, Source, sizeof)
+            - memcpy(t, a + (i * s), s) is the generics way of doing t = a[i]
+            - there is a memcpy assembly instruction in x86. It is impossible for a loop to be faster than this, so just use memcpy
+
+
+        Test code:
+        ----------
+
+            int compare_int(void *v1, void *v2){
+                return *((int *) v1) - *((int *) v2);
+                // comparater got the address of the ints, So we tell the compiler "this is an int" (int *) then we dereference to get the value ( *(int *) )
+            }
+
+            int compare_string(void *v1, void *v2){
+                return strcmp(*(char **) v1, *(char **) v2); // dereference
+                // we're getting the address, so first we cast to the reference it is, so it's a character pointer pointer (char array) ( char ** ) then dereference *(char **), 
+                // The value in *(value **) doesnt neccesarilly matter, it just has to be large enough to hold the address
+            }
+
+            int main( int argc, char *argv[]){
+                int a[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+                int i;
+
+                for (i = 0; i < 10; i++){ // Print normal
+                    printf("%d ", a[i]);
+                }
+                printf("\n");
+                
+                generic_insertion_sort(a, (sizeof(a) / sizeof(a[0])), sizeof(a[0]), compare_int);
+
+                for (i = 0; i < 10; i++){ // print post sort
+                    printf("%d ", a[i]);
+                }
+                printf("\n");            
+
+                // Now we're testing with strings
+                char *s[] = { // needs to be a pointer to the array so it doesnt just assign values to S but instead to the memory? 
+                    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+                };
+
+                for (i = 0; i < 10; i++){ // print pre sort
+                    printf("%d ", a[i]);
+                }
+                printf("\n");
+                
+                generic_insertion_sort(s, (sizeof(s) / sizeof(s[0])), sizeof(s[0]), compare_string);
+                /* or use the following:
+                    qsort(s, (sizeof(s) / sizeof(s[0])), sizeof(s[0]), compare_string));
+                */
+                for (i = 0; i < 10; i++){ // print post sort
+                    printf("%d ", a[i]);
+                }
+                printf("\n"); // or putchar('\n');
+            }
+
+        End Test
+        --------
+
+        - Stdlib has something identical called qsort which does the same thing as our generic_insertion_sort
+        - qsort_r - Thread safe version
 

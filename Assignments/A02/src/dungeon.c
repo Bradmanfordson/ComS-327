@@ -787,7 +787,7 @@ void save_dungeon(char *path, dungeon_t *d){
 
 }
 
-void load_dungeon(char *path, dungeon_t *d){
+void load_dungeon(char *path){
 
   // TODO: PRINT corradors and rooms diffferently.
 
@@ -881,19 +881,39 @@ int main(int argc, char *argv[])
   char save[] = "--save";
 
   char *path;
-  char loc[] = "/.rlg327/dungeon";
-  path = malloc(strlen(getenv("HOME")) + strlen(loc) + 1);
+  // char loc[] = "/.rlg327/dungeon";
+  //path = malloc(strlen(getenv("HOME")) + strlen(loc) + 1);
+
+  // strcpy(path, getenv("HOME"));
+  // strcat(path, loc);
+
+  char hellotest[] = "/Downloads/test_dungeon_files/102.rlg327";
+
+  path = malloc(strlen(getenv("HOME")) + strlen(hellotest) + 1 );
 
   strcpy(path, getenv("HOME"));
-  strcat(path, loc);
+  strcat(path, hellotest);
+
+  load_dungeon(path);
 
   int i;
   if(argc > 1){
     for(i = 0; i < argc; i++){
 
       if(strcmp(argv[i], load) == 0){
+        /* PseudoCode
+         if (strcmp(argv[ i + 1], save) == 0){
+           load_dungeon(path); 
+           // Going to have to change how this works to instead of printing as we read to instead create a new dungeon with the values.
+           render_dungeon()
+           save(path, &d;)
+         } 
+
+            My first thought would be to add a new dungeon and pass that through load_dungeon(path, &d) to assign all of the values to that dungeon then
+            have to render that dungeon and save it back
+         */
         seed = atoi(argv[1]);
-        load_dungeon(path, &d);
+        load_dungeon(path);
 
       }else if(strcmp(argv[i], save) == 0){
         gettimeofday(&tv, NULL);
@@ -914,14 +934,14 @@ int main(int argc, char *argv[])
       }
     }
   }else{
-    gettimeofday(&tv, NULL);
-    seed = (tv.tv_usec ^ (tv.tv_sec << 20)) & 0xffffffff;
-    printf("Using seed: %u\n", seed);
-    srand(seed);
+    // gettimeofday(&tv, NULL);
+    // seed = (tv.tv_usec ^ (tv.tv_sec << 20)) & 0xffffffff;
+    // printf("Using seed: %u\n", seed);
+    // srand(seed);
 
-    init_dungeon(&d);
-    gen_dungeon(&d);
-    render_dungeon(&d);
+    // init_dungeon(&d);
+    // gen_dungeon(&d);
+    // render_dungeon(&d);
 
   }
 
