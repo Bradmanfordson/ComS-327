@@ -90,6 +90,7 @@ typedef struct dungeon
    * of overhead to the memory system.                                    */
 	uint8_t hardness[DUNGEON_Y][DUNGEON_X];
 	pair_t pc;
+	uint8_t weight[DUNGEON_Y][DUNGEON_X];
 } dungeon_t;
 
 static uint32_t in_room(dungeon_t *d, int16_t y, int16_t x)
@@ -1275,7 +1276,7 @@ void usage(char *name)
 /*                                My Code                                    */
 ///////////////////////////////////////////////////////////////////////////////
 
-void my_Dijkstra(dungeon_t *d, pair_t from, pair_t to)
+void my_Dijkstra_ntm(dungeon_t *d, pair_t from, pair_t to)
 {
 	static corridor_path_t path[DUNGEON_Y][DUNGEON_X];
 	static corridor_path_t *p;
@@ -1373,6 +1374,7 @@ void my_Dijkstra(dungeon_t *d, pair_t from, pair_t to)
 			(path[p->pos[dim_y]][p->pos[dim_x] + 1].cost >
 			 p->cost + hardnesspair(p->pos)))
 		{
+\
 			path[p->pos[dim_y]][p->pos[dim_x] + 1].cost = p->cost + hardnesspair(p->pos);
 			path[p->pos[dim_y]][p->pos[dim_x] + 1].from[dim_y] = p->pos[dim_y];
 			path[p->pos[dim_y]][p->pos[dim_x] + 1].from[dim_x] = p->pos[dim_x];
@@ -1391,10 +1393,27 @@ void my_Dijkstra(dungeon_t *d, pair_t from, pair_t to)
 	}
 }
 
-void render_dijkstra(dungeon_t *d)
+void render_dijkstra_ntm(dungeon_t *d)
 {
-	printf("\nDijkstra's Rendering.\n");
+	printf("\nDijkstra's Rendering for Non-Tunneling Monsters.\n");
 	pair_t p;
+	
+	int i;
+
+	// printf("Num of rooms = %d\n", d->num_rooms);
+
+	for(i = 0; i < d->num_rooms; i++){
+		printf("Room positions x: %d \t y: %d\n\n", d->rooms[i].position[dim_x], d->rooms[i].position[dim_y]);
+	}
+
+	pair_t from, to;
+	from[dim_y] = d->rooms[1].position[dim_y];
+	from[dim_x] = d->rooms[1].position[dim_x];
+
+	to[dim_y] = d->pc[dim_y];
+	to[dim_x] = d->pc[dim_x];
+	
+	my_Dijkstra_ntm(d, from, to);
 
 	for (p[dim_y] = 0; p[dim_y] < DUNGEON_Y; p[dim_y]++)
 	{
@@ -1417,34 +1436,82 @@ void render_dijkstra(dungeon_t *d)
 				else
 				{
 					putchar(' '); // space
-					int ran = rand() % 255;
-					if (ran == 0)
-					{
-						ran++;
-					}
-					else if (ran == 255)
-					{
-						ran--;
-					}
 				}
 				break;
 
 			case ter_floor:
 
 			case ter_floor_room:
-				if (p[dim_x] == d->pc[0] && p[dim_y] == d->pc[1])
+				if (p[dim_x] == d->pc[dim_x] && p[dim_y] == d->pc[dim_y])
 				{
 					putchar('@');
 					break;
 				}
 				else
 				{
-					putchar('.');
+					printf("%d", d->hardness[p[dim_y]][p[dim_x]] % 10);
 					break;
 				}
 
 			case ter_floor_hall:
-				putchar('#');
+				printf("%d", d->hardness[p[dim_y]][p[dim_x]] % 10);
+				break;
+
+			case ter_debug:
+				putchar('*');
+				fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
+				break;
+			}
+		}
+		putchar('\n');
+	}
+}
+
+void render_dijkstra_tm(dungeon_t *d)
+{
+	printf("\nDijkstra's Rendering for Tunneling Monsters.\n");
+	pair_t p;
+
+	for (p[dim_y] = 0; p[dim_y] < DUNGEON_Y; p[dim_y]++)
+	{
+		for (p[dim_x] = 0; p[dim_x] < DUNGEON_X; p[dim_x]++)
+		{
+
+			switch (mappair(p))
+			{
+			case ter_wall:
+
+			case ter_wall_immutable:
+				if (p[dim_y] == 0 || p[dim_y] == 20)
+				{
+					putchar('-');
+				}
+				else if (p[dim_x] == 0 || p[dim_x] == 79)
+				{
+					putchar('|');
+				}
+				else
+				{
+					printf("%d", d->hardness[p[dim_y]][p[dim_x]] % 10);
+				}
+				break;
+
+			case ter_floor:
+
+			case ter_floor_room:
+				if (p[dim_x] == d->pc[dim_x] && p[dim_y] == d->pc[dim_y])
+				{
+					putchar('@');
+					break;
+				}
+				else
+				{
+					printf("%d", d->hardness[p[dim_y]][p[dim_x]] % 10);
+					break;
+				}
+
+			case ter_floor_hall:
+				printf("%d", d->hardness[p[dim_y]][p[dim_x]] % 10);
 				break;
 
 			case ter_debug:
@@ -1615,9 +1682,10 @@ int main(int argc, char *argv[])
 	/* Set a valid position for the PC */
 	d.pc[dim_x] = d.rooms[0].position[dim_x];
 	d.pc[dim_y] = d.rooms[0].position[dim_y];
-	render_dungeon(&d);
 
-	render_dijkstra(&d);
+	render_dungeon(&d);
+	render_dijkstra_ntm(&d);
+	render_dijkstra_tm(&d);
 
 	if (do_save)
 	{
