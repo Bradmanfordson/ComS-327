@@ -672,8 +672,13 @@ void render_dungeon(dungeon_t *d)
         break;
       case ter_floor:
       case ter_floor_room:
-        putchar('.');
-        break;
+        if(p[dim_x] == d->pc[0] && p[dim_y] == d->pc[1]){
+          putchar('@');
+          break;
+        }else{
+          putchar('.');
+          break;
+        }
       case ter_floor_hall:
         putchar('#');
         break;
@@ -1223,7 +1228,6 @@ int main(int argc, char *argv[])
   /* Set a valid position for the PC */
   d.pc[dim_x] = d.rooms[0].position[dim_x];
   d.pc[dim_y] = d.rooms[0].position[dim_y];
-
   render_dungeon(&d);
 
   if (do_save) {

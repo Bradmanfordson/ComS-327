@@ -31,6 +31,8 @@ $(BIN): $(OBJS)
 clean:
 	@$(ECHO) Removing all generated files
 	@$(RM) *.o $(BIN) *.d TAGS core vgcore.* gmon.out
+	#remove this before submission
+	clear
 
 clobber: clean
 	@$(ECHO) Removing backup files
