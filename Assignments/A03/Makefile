@@ -31,6 +31,8 @@ $(BIN): $(OBJS)
 clean:
 	@$(ECHO) Removing all generated files
 	@$(RM) *.o $(BIN) *.d TAGS core vgcore.* gmon.out
+	#remove this before submission
+	clear
 
 clobber: clean
 	@$(ECHO) Removing backup files
@@ -42,4 +44,17 @@ etags:
 
 # Brad's Makefile additions.
 sub:
-	tar cvfz roberts_allen.assignment-1.03.tar.gz src/
+	mkdir roberts_allen.assignment-1.03/
+	cp src/* roberts_allen.assignment-1.03/
+	tar cvfz roberts_allen.assignment-1.03.tar.gz roberts_allen.assignment-1.03
+
+testsub:
+	make sub
+	mkdir tmp/
+	cp roberts_allen.assignment-1.03.tar.gz tmp/
+	gzip -dc tmp/roberts_allen.assignment-1.03.tar.gz | tar xvf -
+
+removesub:
+	rm -rf tmp/
+	rm -rf roberts_allen.assignment-1.03
+	rm roberts_allen.assignment-1.03.tar.gz
