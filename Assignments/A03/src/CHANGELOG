@@ -70,3 +70,6 @@ September 26, 2018 2:30AM - Figured out how it works better, Have tunneling mobs
 September 26, 2018 3:30AM - Got non-tunneling map working. Believe it's 100% correct.
 September 26, 2018 3:45AM - Pushed everything to GitHub and updating README/CHANGELOG
 September 26, 2018 4:00AM - Running with Valgrind to make sure I handle memory correctly.
+September 26, 2018 4:00AM part 2 - No memleaks! Also had to install valgrind on ubuntu. 
+September 26, 2018 4:00AM part 3 - Actually upon further inspection, I believe this works perfectly.
+September 26, 2018 4:00AM part 4 - Turning it in! 
