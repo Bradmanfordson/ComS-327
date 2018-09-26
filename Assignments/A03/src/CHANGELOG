@@ -63,7 +63,7 @@ September 20, 2018 5:30PM - met with a TA to help get a better grade on 1.02
 September 25, 2018 6:00PM - Started assignment 1.03
 September 25, 2018 6:30PM - Reformatted professors code because it looks like crappy
 September 25, 2018 8:00PM - Can't figure out how Dijkstra's works, so looking at other GitHub solutions
-
+September 25, 2018 11:00PM - Tried to be smart and break up the professors code into .c and .h files and have a main.c run everything... Didnt work at all
 September 26, 2018 1:00AM - I understand Dijkstra's better, also wrote some base code to work with that does a basic print of 3 dungeons
 September 26, 2018 2:00AM - Copied some code from GitHub to see if it even works and better understand how it works
 September 26, 2018 2:30AM - Figured out how it works better, Have tunneling mobs version working, however it has a bug, I think it doesn't display correctly
