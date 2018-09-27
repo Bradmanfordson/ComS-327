@@ -246,3 +246,83 @@ Generics: C doesn't really have generics they are just "void pointers".
         - Stdlib has something identical called qsort which does the same thing as our generic_insertion_sort
         - qsort_r - Thread safe version
 
+Thursday September 27, 2018 Lecture
+---------------------------------
+    HW 1.04
+    -------
+        Monsters:
+        ---------
+            50% chance for each of theses:
+                1) Intelligent ( knows the map of the dungeon )
+                2) Telepathic ( Knows PC location (i.e. Dijkstra's) ) Tried to take a straight path, if mixed with Int then it'll follow dijkstra's
+                3) tunnelling
+                4) eratic ( runs around randomly )
+        - They need to have line-of-site somehow around them. Prof used Bresenhams line drawing algorithm.
+
+    New Material:
+    -------------
+        Preprocessor:
+        -------------
+            - Preprocess code with gcc switch -E and pipe through less ( gcc program -E | less )
+            - When we start a line with a # then the preprocessor is doing something
+            - Conditional Compilation: At compile time check what symbols we want and use them.
+            - Macro's such as mapxy(x,y) are basically super simple functions without the overhaul of a function call.
+            - Just make sure you use macro's as they're intended or else strange errors will occur.
+                Example Code:
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                    #include <stdio.h>
+
+                    #define FOO 5 // use this over const
+                    const int FOO = 5; //Same behavior as #define but is new to C
+                        // advantage to macro vs const: macro is a litteral, const int is a variable so for variables we'd have to put into cache
+                        // so "technically" it's slower.
+
+                    // Function type macro:
+                    // -----------------------------------------------------------------------------------------------------------
+                        #define min(x, y) (x < y ? x : y)
+                            // this doesnt know to take int or double, so it'll have error messages if this isn't used correctly
+                            // Example Bad usage:
+                                // min(foo(x), bar(y)) --> (foo(x) < bar(y) ? foo(x) : bar(y))
+                            //Example good usage:
+                                // min(3,5) --> (3 < 5 ? 3 : 5)
+
+                        // Basic blocks get the value of their last line
+                            // typeof(Var) VarName = Var
+                            // Macro's have to be on the same line... but can use \ to show it continues
+                            // This is the better choice in general
+                        #define max(x, y) ({  \
+                            typeof(x) _x = x; \
+                            typeof(y) _y = y; \
+                            (_x > _y ? _x : _ y); \
+                        })
+                            // Example with foo/bar
+                                // max( foo(x), bar(y) ) --> _x = foo(x); _y = bar(y); (_x > _y ? _x : _ y)
+
+                    // -----------------------------------------------------------------------------------------------------------
+                    
+                    // Concatination
+                    #define concatinate(x, y) (x ## y) // Concatinates x and y together
+                        // Don't use this unless necessary
+
+                    // Stringification?
+                    #define to_string(s) #s // turns the thing to a string
+                        // how is it useful? lookup tables.... I guess 
+
+                    int main(){
+                        printf("%d \n", FOO); // Will print "5"
+                        printf("%d \n", min(3, 5 )); // Should print the lowest number... 3
+                        printf("%f \n", min(8.777, 7.5)); // Prints 7.5
+                        //printf("%d \n", min(foo(x), bar(y))); // Bad because it'll run the functions several times, and could possibly not return the same thing everytime
+                        printf("%d \n", max(foo(x), bar(y))); // this fixes the whole "bad because blah blah blah" 
+
+                        concatinate(print,f)("Hello world!\n"); // same as 'printf("Hello world!\n");'
+                        printf(to_string(Hello World)); // when preprocessing
+                        return 0;
+                    }
+
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+
+
+            
