@@ -45,7 +45,7 @@ etags:
 # Brad's Makefile additions.
 sub:
 	mkdir roberts_allen.assignment-1.03/
-	cp src/* roberts_allen.assignment-1.03/
+	cp -r src/* roberts_allen.assignment-1.03/
 	tar cvfz roberts_allen.assignment-1.03.tar.gz roberts_allen.assignment-1.03
 
 testsub:
