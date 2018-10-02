@@ -3,12 +3,12 @@ CXX = g++
 ECHO = echo
 RM = rm -f
 
-CFLAGS = -Wall -Werror -ggdb -funroll-loops -pg
-CXXFLAGS = -Wall -Werror -ggdb -funroll-loops                                           
+CFLAGS = -Wall -Werror -ggdb3 -funroll-loops -pg
+CXXFLAGS = -Wall -Werror -ggdb3 -funroll-loops                                           
 LDFLAGS = 
 
-BIN = main
-OBJS = dungeon.o heap.o main.o
+BIN = dungeon
+OBJS = main.o heap.o dungeon.o path.o utils.o
 
 all: $(BIN) etags
 
@@ -39,7 +39,3 @@ clobber: clean
 etags:
 	@$(ECHO) Updating TAGS
 	@etags *.[ch]
-
-# Brad's Makefile additions.
-sub:
-	tar cvfz roberts_allen.assignment-1.03.tar.gz src/
