@@ -1,0 +1,20 @@
+Function: 
+    Builds 3 dungeon maps
+        1) The normal map
+        2) The map for non-tunneling monsters
+        3) The map for tunneling monsters
+
+Use:
+    'make'
+    './dungeon'
+
+First, I grabbed the professors code solution for 1.02. I then worked on
+understanding how his dijkstra's algorithm implamentation worked and tried to
+make my own version. I wasn't sure where exactly to start so I searched and 
+read a bunch of solutions to this on GitHub. After understanding this better
+from what I saw on GitHub I grabbed pieces from several different solutions
+and put them together in my own way. Honestly, quite a bit of the dijkstra's
+algorithm is copied from those solutions that I found. I am under the 
+impression that this is fine as long as it isn't straight copy/paste, I used
+the GitHub solutions to help understand how Dijkstra's worked and how to 
+implament it in the dungeon.
