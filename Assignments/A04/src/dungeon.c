@@ -588,7 +588,12 @@ void render_dungeon(dungeon_t *d){
             } else {
               putchar('X');
             }
-        
+      } else if(p[dim_x] == d->tmob.position[dim_x] && 
+                p[dim_y] == d->tmob.position[dim_y]) {
+                  putchar('T');
+      } else if(p[dim_x] == d->ntmob.position[dim_x] && 
+                p[dim_y] == d->ntmob.position[dim_y]){
+                  putchar('N');
       } else {
         switch (mappair(p)) {
         case ter_wall:

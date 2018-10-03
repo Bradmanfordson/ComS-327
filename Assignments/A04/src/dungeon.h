@@ -42,6 +42,14 @@ typedef struct pc {
   int alive;
 } pc_t;
 
+typedef struct tunnelling_monster{
+  pair_t position;
+} tmob_t;
+
+typedef struct non_tunnelling_monster{
+  pair_t position;
+} ntmob_t;
+
 typedef struct dungeon {
   uint32_t num_rooms;
   room_t *rooms;
@@ -57,6 +65,8 @@ typedef struct dungeon {
   uint8_t hardness[DUNGEON_Y][DUNGEON_X];
   uint8_t pc_distance[DUNGEON_Y][DUNGEON_X];
   uint8_t pc_tunnel[DUNGEON_Y][DUNGEON_X];
+  tmob_t tmob;
+  ntmob_t ntmob;
   pc_t pc;
 } dungeon_t;
 
