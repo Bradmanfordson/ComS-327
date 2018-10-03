@@ -7,12 +7,27 @@
 
 #include "dungeon.h"
 #include "path.h"
+#include "utils.h"
 
-#define pc_x d->pc.position[dim_x]
-#define pc_y d->pc.position[dim_y]
+#define pc_x(x) d->pc.position[dim_x + x]
+#define pc_y(y) d->pc.position[dim_y + y]
+
 
 #define TRUE  1
 #define FALSE 0
+
+enum test{
+  up,
+  down,
+  left,
+  right,
+  up_left,
+  up_right,
+  down_left,
+  down_right
+};
+
+int canMove(dungeon_t *d, int x, int y);
 
 void usage(char *name)
 {
@@ -29,37 +44,100 @@ void usage(char *name)
 ///////////////////////////////////////////////////////////////////////////////
 
 void move_pc(dungeon_t *d){
-  pc_x++;
-  //d->pc.position[dim_x]++;
-  // d->pc.position[dim_y]++;
-  printf("PC X: %d \t PC Y: %d\n", pc_x, pc_y);
-  printf("Position Hardness: %d\n", d->hardness[pc_y][pc_x]);
-}
+  int r = rand_range(0,6);
 
-int canMove(dungeon_t *d){
-  if(d->hardness[pc_y][(pc_x) + 1 ] == 0){
-    return TRUE;
-  } else {
-    return FALSE;
+  switch(r){
+    case up: // [ 0, -1]
+      if(d->hardness[d->pc.position[dim_y] - 1][d->pc.position[dim_x]] == 0){
+        d->pc.position[dim_x] = d->pc.position[dim_x];
+        d->pc.position[dim_y] = d->pc.position[dim_y] - 1; 
+      }else {
+        move_pc(d);
+      }
+      break;
+
+    case down: // [ 0, 1]
+      if(d->hardness[d->pc.position[dim_y] + 1][d->pc.position[dim_x]] == 0){
+        d->pc.position[dim_x] = d->pc.position[dim_x];
+        d->pc.position[dim_y] = d->pc.position[dim_y]  + 1;
+      } else {
+        move_pc(d);
+      }
+      break;
+      
+    case left: // [ -1, 0]
+      if(d->hardness[d->pc.position[dim_y]][d->pc.position[dim_x] - 1] == 0){
+        d->pc.position[dim_x] = d->pc.position[dim_x] - 1;
+        d->pc.position[dim_y] = d->pc.position[dim_y];
+      } else {
+        move_pc(d);
+      }
+      break;
+
+    case right: // [ 1, 0]
+      if(d->hardness[d->pc.position[dim_y]][d->pc.position[dim_x] + 1] == 0){
+        d->pc.position[dim_x] = d->pc.position[dim_x] + 1;
+        d->pc.position[dim_y] = d->pc.position[dim_y];
+      } else {
+        move_pc(d);
+      }
+      break;
+
+    case up_left: // [ -1, -1]
+      if(d->hardness[d->pc.position[dim_y] - 1][d->pc.position[dim_x] - 1] == 0){
+        d->pc.position[dim_x] = d->pc.position[dim_x] - 1;
+        d->pc.position[dim_y] = d->pc.position[dim_y] - 1;
+      } else {
+        move_pc(d);
+      }
+      break;
+
+    case up_right: // [ 1, -1]
+      if(d->hardness[d->pc.position[dim_y] - 1][d->pc.position[dim_x] + 1] == 0){
+        d->pc.position[dim_x] = d->pc.position[dim_x] + 1;
+        d->pc.position[dim_y] = d->pc.position[dim_y] - 1;
+      } else {
+        move_pc(d);
+      }
+      break;
+
+    case down_left: // [ -1, 1]
+      if(d->hardness[d->pc.position[dim_y] + 1][d->pc.position[dim_x] - 1] == 0){
+        d->pc.position[dim_x] = d->pc.position[dim_x] - 1;
+        d->pc.position[dim_y] = d->pc.position[dim_y] + 1;
+      } else {
+        move_pc(d);
+      }
+      break;
+
+    case down_right: // [ 1, 1]
+      if(d->hardness[d->pc.position[dim_y] + 1][d->pc.position[dim_x] + 1] == 0){
+        d->pc.position[dim_x] = d->pc.position[dim_x] + 1;
+        d->pc.position[dim_y] = d->pc.position[dim_y] + 1;
+      } else {
+        move_pc(d);
+      }
+      break;
+
+    default:
+      break;
   }
 }
 
-
-
 void print_game_over(){
-  printf("       ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n \
-      ┼███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀┼\n \
-      ┼██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼┼\n \
-      ┼██┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼██┼██▀▀▀┼\n \
-      ┼██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼\n \
-      ┼███▄▄▄██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██▄▄▄┼\n \
-      ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n \
-      ┼███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼┼\n \
-      ┼██┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼██┼┼┼┼┼██┼┼\n \
-      ┼██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼┼\n \
-      ┼██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼┼\n \
-      ┼███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄┼\n \
-      ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n\n ");
+  printf("\n \
+                     ██▀▀▀▀██ ███▀▀▀███ ███▀█▄█▀███ ██▀▀▀ \n \
+                     ██    ██ ██     ██ ██   █   ██ ██    \n \
+                     ██   ▄▄▄ ██▄▄▄▄▄██ ██   ▀   ██ ██▀▀▀ \n \
+                     ██    ██ ██     ██ ██       ██ ██    \n \
+                     ██▄▄▄▄██ ██     ██ ██       ██ ██▄▄▄ \n \
+                                                          \n \
+                     ██▀▀▀▀▀██ ▀███  ██▀ ██▀▀▀ ██▀▀▀▀▀█▄  \n \
+                     ██     ██   ██  ██  ██    ██     ██  \n \
+                     ██     ██   ██  ██  ██▀▀▀ ██▄▄▄▄▄▀▀  \n \
+                     ██     ██   ██  █▀  ██    ██    ██   \n \
+                     ██▄▄▄▄▄██    ▀█▀    ██▄▄▄ ██     ██▄ \n \
+  \n\n ");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -206,17 +284,23 @@ int main(int argc, char *argv[])
   printf("PC is at (y, x): %d, %d\n",
          d.pc.position[dim_y], d.pc.position[dim_x]);
 
-  render_dungeon(&d);
+  d.pc.alive = TRUE;
+  int count = 0;
 
-  dijkstra(&d);
-  dijkstra_tunnel(&d);
-
-  while(canMove(&d)){
-    sleep(1);
+  while(d.pc.alive){
+    usleep(250000);
     move_pc(&d);
+    dijkstra(&d);
+    dijkstra_tunnel(&d);
     render_dungeon(&d);
+    count++;
+
+    if(count == 10){
+      d.pc.alive = FALSE;
+    }
   }
 
+  render_dungeon(&d);
   print_game_over();
 
   

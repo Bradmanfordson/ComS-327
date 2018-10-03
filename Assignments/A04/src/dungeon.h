@@ -39,6 +39,7 @@ typedef struct room {
 
 typedef struct pc {
   pair_t position;
+  int alive;
 } pc_t;
 
 typedef struct dungeon {
