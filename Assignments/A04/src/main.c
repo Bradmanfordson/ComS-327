@@ -29,7 +29,8 @@ void usage(char *name)
 {
   fprintf(stderr,
           "Usage: %s [-r|--rand <seed>] [-l|--load [<file>]]\n"
-          "          [-s|--save [<file>]] [-i|--image <pgm file>]\n",
+          "          [-s|--save [<file>]] [-i|--image <pgm file>]\n"
+          "          [-n|--nummon <num_of_monster>]\n",
           name);
 
   exit(-1);
@@ -319,7 +320,7 @@ int main(int argc, char *argv[])
   time_t seed;
   struct timeval tv;
   uint32_t i;
-  uint32_t do_load, do_save, do_seed, do_image, do_save_seed, do_save_image;
+  uint32_t do_load, do_save, do_seed, do_image, do_save_seed, do_save_image, do_nummon, nummons;
   uint32_t long_arg;
   char *save_file;
   char *load_file;
@@ -330,7 +331,7 @@ int main(int argc, char *argv[])
   
   /* Default behavior: Seed with the time, generate a new dungeon, *
    * and don't write to disk.                                      */
-  do_load = do_save = do_image = do_save_seed = do_save_image = 0;
+  do_load = do_save = do_image = do_save_seed = do_save_image = do_nummon = 0;
   do_seed = 1;
   save_file = load_file = NULL;
 
@@ -356,6 +357,16 @@ int main(int argc, char *argv[])
           long_arg = 1; /* handle long and short args at the same place.  */
         }
         switch (argv[i][1]) {
+        case 'n':
+          if ((!long_arg && argv[i][2]) ||
+              (long_arg && strcmp(argv[i], "-nummon")) ||
+              argc < ++i + 1 /* No more arguments */ ||
+              !sscanf(argv[i], "%lu", &seed) /* Argument is not an integer */) {
+            usage(argv[0]);
+          }
+          nummons = atoi(argv[i++]);
+          do_nummon = 1;
+          break;
         case 'r':
           if ((!long_arg && argv[i][2]) ||
               (long_arg && strcmp(argv[i], "-rand")) ||
@@ -453,6 +464,11 @@ int main(int argc, char *argv[])
                             (rand() % d.rooms[1].size[dim_y]));
     d.tmob.position[dim_y] = 1;
     d.tmob.position[dim_x] = 1;          
+  }
+
+  if(do_nummon){
+    printf("Nummons: %d\n", nummons);
+    //create_mobs();
   }
 
   printf("PC is at (y, x): %d, %d\n",
