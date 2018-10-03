@@ -1,11 +1,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 /* Very slow seed: 686846853 */
 
 #include "dungeon.h"
 #include "path.h"
+
+#define pc_x d->pc.position[dim_x]
+#define pc_y d->pc.position[dim_y]
+
+#define TRUE  1
+#define FALSE 0
 
 void usage(char *name)
 {
@@ -17,6 +24,47 @@ void usage(char *name)
   exit(-1);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+/*                                My Code                                    */
+///////////////////////////////////////////////////////////////////////////////
+
+void move_pc(dungeon_t *d){
+  pc_x++;
+  //d->pc.position[dim_x]++;
+  // d->pc.position[dim_y]++;
+  printf("PC X: %d \t PC Y: %d\n", pc_x, pc_y);
+  printf("Position Hardness: %d\n", d->hardness[pc_y][pc_x]);
+}
+
+int canMove(dungeon_t *d){
+  if(d->hardness[pc_y][(pc_x) + 1 ] == 0){
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
+
+
+
+void print_game_over(){
+  printf("       ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n \
+      ┼███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀┼\n \
+      ┼██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼┼\n \
+      ┼██┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼██┼██▀▀▀┼\n \
+      ┼██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼┼\n \
+      ┼███▄▄▄██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██▄▄▄┼\n \
+      ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n \
+      ┼███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼┼\n \
+      ┼██┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼██┼┼┼┼┼██┼┼\n \
+      ┼██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼┼\n \
+      ┼██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼┼\n \
+      ┼███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄┼\n \
+      ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n\n ");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/*                                My Code End                                */
+///////////////////////////////////////////////////////////////////////////////
 
 
 int main(int argc, char *argv[])
@@ -124,7 +172,7 @@ int main(int argc, char *argv[])
         usage(argv[0]);
       }
     }
-  }
+ }
 
 
   if (do_seed) {
@@ -141,9 +189,9 @@ int main(int argc, char *argv[])
 
   if (do_load) {
     read_dungeon(&d, load_file);
-  } else if (do_image) {
+   } else if (do_image) {
     read_pgm(&d, pgm_file);
-  } else {
+   } else {
     gen_dungeon(&d);
   }
 
@@ -162,6 +210,16 @@ int main(int argc, char *argv[])
 
   dijkstra(&d);
   dijkstra_tunnel(&d);
+
+  while(canMove(&d)){
+    sleep(1);
+    move_pc(&d);
+    render_dungeon(&d);
+  }
+
+  print_game_over();
+
+  
  // render_distance_map(&d);
  // render_tunnel_distance_map(&d);
  // render_hardness_map(&d);
@@ -176,13 +234,13 @@ int main(int argc, char *argv[])
     }
     if (do_save_image) {
       if (!pgm_file) {
-	fprintf(stderr, "No image file was loaded.  Using default.\n");
-	do_save_image = 0;
+        fprintf(stderr, "No image file was loaded.  Using default.\n");
+        do_save_image = 0;
       } else {
-	/* Extension of 3 characters longer than image extension + null. */
-	save_file = malloc(strlen(pgm_file) + 4);
-	strcpy(save_file, pgm_file);
-	strcpy(strchr(save_file, '.') + 1, "rlg327");
+        /* Extension of 3 characters longer than image extension + null. */
+        save_file = malloc(strlen(pgm_file) + 4);
+        strcpy(save_file, pgm_file);
+        strcpy(strchr(save_file, '.') + 1, "rlg327");
       }
     }
     write_dungeon(&d, save_file);
