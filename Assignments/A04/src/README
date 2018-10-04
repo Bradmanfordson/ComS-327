@@ -1,0 +1,15 @@
+Usage: 
+    ./dungeon
+    ./dungeon --nummon <integer>
+
+./dungeon
+    - will spawn a dungeon with the PC at a random location and he'll drunkenly move around
+./dungeon --nummon <integer>
+    - will create monsters equal to the integer provided.
+    - There will only be 1 Non tunnelling mob/room if integer > number of rooms
+    - Non-Tunnelling monsters will run around randomly until they run into the PC
+    - When the PC is hit by a monster, he'll die and you'll get a GAME OVER screen.
+
+The professor said we will only be graded on tunnelling and nontunnelling monsters so I omitted
+attributes for sake of time. For this first submission, I cannot get Tmonsters to work correctly
+however, NTmonsters work just fine. So i'm spawning Tmonsters but they don't move.
