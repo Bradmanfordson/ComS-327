@@ -595,21 +595,24 @@ void render_dungeon(dungeon_t *d){
         case ter_wall:
 
         case ter_wall_immutable:
-          if(d->hardness[p[dim_y]][p[dim_x]] == 0){
-            putchar('#');
-            break;
-          } 
+
           for(i = 0; i < d->num_t_mobs; i++){
             if(p[dim_x] == d->tmob[i].position[dim_x] && 
-               p[dim_y] == d->tmob[i].position[dim_y]){
-                  putchar('T');
-                  break;
+                p[dim_y] == d->tmob[i].position[dim_y]){
+                    putchar('T');
+                    j = 1;
+                    break;
             }
           }
-
-          putchar(' ');
-          break;
-
+          if (j == 1){
+            break;
+          } else if(d->hardness[p[dim_y]][p[dim_x]] == 0){
+            putchar('#');
+            break;
+          } else {
+            putchar(' ');
+            break;
+          }
         case ter_floor:
 
         case ter_floor_room:
@@ -659,7 +662,7 @@ void render_dungeon(dungeon_t *d){
             putchar('#');
           }
           break;
-          
+
         case ter_debug:
           putchar('*');
           fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
@@ -670,6 +673,7 @@ void render_dungeon(dungeon_t *d){
     putchar('\n');
   }
 }
+
 
 void delete_dungeon(dungeon_t *d)
 {
