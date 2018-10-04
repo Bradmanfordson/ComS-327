@@ -578,9 +578,11 @@ int gen_dungeon(dungeon_t *d)
 void render_dungeon(dungeon_t *d){
 
   pair_t p;
+  int i;
 
   for (p[dim_y] = 0; p[dim_y] < DUNGEON_Y; p[dim_y]++) {
     for (p[dim_x] = 0; p[dim_x] < DUNGEON_X; p[dim_x]++) {
+      int j = 0;
       if (p[dim_x] ==  d->pc.position[dim_x] &&
           p[dim_y] ==  d->pc.position[dim_y]) {
             if(d->pc.alive){
@@ -588,25 +590,76 @@ void render_dungeon(dungeon_t *d){
             } else {
               putchar('X');
             }
-      } else if(p[dim_x] == d->tmob.position[dim_x] && 
-                p[dim_y] == d->tmob.position[dim_y]) {
-                  putchar('T');
-      } else if(p[dim_x] == d->ntmob.position[dim_x] && 
-                p[dim_y] == d->ntmob.position[dim_y]){
-                  putchar('N');
       } else {
         switch (mappair(p)) {
         case ter_wall:
+
         case ter_wall_immutable:
+          if(d->hardness[p[dim_y]][p[dim_x]] == 0){
+            putchar('#');
+            break;
+          } 
+          for(i = 0; i < d->num_t_mobs; i++){
+            if(p[dim_x] == d->tmob[i].position[dim_x] && 
+               p[dim_y] == d->tmob[i].position[dim_y]){
+                  putchar('T');
+                  break;
+            }
+          }
+
           putchar(' ');
           break;
+
         case ter_floor:
+
         case ter_floor_room:
-          putchar('.');
+          for(i = 0; i < d->num_nt_mobs; i++){
+            if(p[dim_x] == d->ntmob[i].position[dim_x] && 
+               p[dim_y] == d->ntmob[i].position[dim_y]){
+                  putchar('N');
+                  j = 1;
+                  break;
+            }
+          }
+          
+          for(i = 0; i < d->num_t_mobs; i++){
+            if(p[dim_x] == d->tmob[i].position[dim_x] && 
+               p[dim_y] == d->tmob[i].position[dim_y]){
+                  putchar('T');
+                  j = 1;
+                  break;
+            }
+          }
+
+          if(j == 0){
+            putchar('.');
+          }
           break;
+
         case ter_floor_hall:
-          putchar('#');
+          for(i = 0; i < d->num_nt_mobs; i++){
+            if(p[dim_x] == d->ntmob[i].position[dim_x] && 
+               p[dim_y] == d->ntmob[i].position[dim_y]){
+                  putchar('N');
+                  j = 1;
+                  break;
+            }
+          }
+          
+          for(i = 0; i < d->num_t_mobs; i++){
+            if(p[dim_x] == d->tmob[i].position[dim_x] && 
+               p[dim_y] == d->tmob[i].position[dim_y]){
+                  putchar('T');
+                  j = 1;
+                  break;
+            }
+          }
+
+          if(j == 0){
+            putchar('#');
+          }
           break;
+          
         case ter_debug:
           putchar('*');
           fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
@@ -621,6 +674,8 @@ void render_dungeon(dungeon_t *d){
 void delete_dungeon(dungeon_t *d)
 {
   free(d->rooms);
+  free(d->ntmob);
+  free(d->tmob);
 }
 
 void init_dungeon(dungeon_t *d)
@@ -1013,6 +1068,7 @@ void render_movement_cost_map(dungeon_t *d)
       if (p[dim_x] ==  d->pc.position[dim_x] &&
           p[dim_y] ==  d->pc.position[dim_y]) {
         putchar('@');
+
       } else {
         if (hardnesspair(p) == 255) {
           printf("X");

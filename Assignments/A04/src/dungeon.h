@@ -65,8 +65,10 @@ typedef struct dungeon {
   uint8_t hardness[DUNGEON_Y][DUNGEON_X];
   uint8_t pc_distance[DUNGEON_Y][DUNGEON_X];
   uint8_t pc_tunnel[DUNGEON_Y][DUNGEON_X];
-  tmob_t tmob;
-  ntmob_t ntmob;
+  tmob_t *tmob;
+  ntmob_t *ntmob;
+  uint32_t num_nt_mobs;
+  uint32_t num_t_mobs;
   pc_t pc;
 } dungeon_t;
 
