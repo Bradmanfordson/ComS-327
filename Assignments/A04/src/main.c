@@ -125,200 +125,236 @@ void move_pc(dungeon_t *d){
 }
 
 void move_ntmob(dungeon_t *d,ntmob_t *ntmob){
-   int r = rand_range(0,6);
-  switch(r){
-    case up: // [ 0, -1]
-      if(d->hardness[ntmob->position[dim_y] - 1][ntmob->position[dim_x]] == 0){
-        ntmob->position[dim_x] = ntmob->position[dim_x];
-        ntmob->position[dim_y] = ntmob->position[dim_y] - 1; 
-      }
-      break;
+  int r = rand_range(0,6);
+    switch(r){
+      case up: // [ 0, -1]
+        if(d->hardness[ntmob->position[dim_y] - 1][ntmob->position[dim_x]] == 0){
+          ntmob->position[dim_x] = ntmob->position[dim_x];
+          ntmob->position[dim_y] = ntmob->position[dim_y] - 1; 
+        }
+        break;
 
-    case down: // [ 0, 1]
-      if(d->hardness[ntmob->position[dim_y] + 1][ntmob->position[dim_x]] == 0){
-        ntmob->position[dim_x] = ntmob->position[dim_x];
-        ntmob->position[dim_y] = ntmob->position[dim_y]  + 1;
-      }
-      break; 
-      
-    case left: // [ -1, 0]
-      if(d->hardness[ntmob->position[dim_y]][ntmob->position[dim_x] - 1] == 0){
-        ntmob->position[dim_x] = ntmob->position[dim_x] - 1;
-        ntmob->position[dim_y] = ntmob->position[dim_y];
-      }
-      break;
+      case down: // [ 0, 1]
+        if(d->hardness[ntmob->position[dim_y] + 1][ntmob->position[dim_x]] == 0){
+          ntmob->position[dim_x] = ntmob->position[dim_x];
+          ntmob->position[dim_y] = ntmob->position[dim_y]  + 1;
+        }
+        break; 
+        
+      case left: // [ -1, 0]
+        if(d->hardness[ntmob->position[dim_y]][ntmob->position[dim_x] - 1] == 0){
+          ntmob->position[dim_x] = ntmob->position[dim_x] - 1;
+          ntmob->position[dim_y] = ntmob->position[dim_y];
+        }
+        break;
 
-    case right: // [ 1, 0]
-      if(d->hardness[ntmob->position[dim_y]][ntmob->position[dim_x] + 1] == 0){
-        ntmob->position[dim_x] = ntmob->position[dim_x] + 1;
-        ntmob->position[dim_y] = ntmob->position[dim_y];
+      case right: // [ 1, 0]
+        if(d->hardness[ntmob->position[dim_y]][ntmob->position[dim_x] + 1] == 0){
+          ntmob->position[dim_x] = ntmob->position[dim_x] + 1;
+          ntmob->position[dim_y] = ntmob->position[dim_y];
+        }
+        break;
+
+      case up_left: // [ -1, -1]
+        if(d->hardness[ntmob->position[dim_y] - 1][ntmob->position[dim_x] - 1] == 0){
+          ntmob->position[dim_x] = ntmob->position[dim_x] - 1;
+          ntmob->position[dim_y] = ntmob->position[dim_y] - 1;
+        }
+        break;
+
+      case up_right: // [ 1, -1]
+        if(d->hardness[ntmob->position[dim_y] - 1][ntmob->position[dim_x] + 1] == 0){
+          ntmob->position[dim_x] = ntmob->position[dim_x] + 1;
+          ntmob->position[dim_y] = ntmob->position[dim_y] - 1;
+        }
+        break; 
+
+      case down_left: // [ -1, 1]
+        if(d->hardness[ntmob->position[dim_y] + 1][ntmob->position[dim_x] - 1] == 0){
+          ntmob->position[dim_x] = ntmob->position[dim_x] - 1;
+          ntmob->position[dim_y] = ntmob->position[dim_y] + 1;
+        }
+        break;
+
+      case down_right: // [ 1, 1]
+        if(d->hardness[ntmob->position[dim_y] + 1][ntmob->position[dim_x] + 1] == 0){
+          ntmob->position[dim_x] = ntmob->position[dim_x] + 1;
+          ntmob->position[dim_y] = ntmob->position[dim_y] + 1;
+        }
+        break;
+
+      default:
+        move_ntmob(d, ntmob);
+        break;
+    }
+
+    if(ntmob->position[dim_x] == d->pc.position[dim_x] && 
+      ntmob->position[dim_y] == d->pc.position[dim_y] ){
+        d->pc.alive = FALSE;
+    }
+    int i;
+    int count;
+    count = 0;
+    for(i = 0; i < d->num_nt_mobs; i++){
+      if (d->ntmob[i].position[dim_x] == ntmob->position[dim_x] && d->ntmob[i].position[dim_y] == ntmob->position[dim_y] && d->ntmob[i].alive == TRUE){
+        count++;
       }
-      break;
+    }
+    if(count > 1){
+      ntmob->alive = FALSE;
+    }
 
-    case up_left: // [ -1, -1]
-      if(d->hardness[ntmob->position[dim_y] - 1][ntmob->position[dim_x] - 1] == 0){
-        ntmob->position[dim_x] = ntmob->position[dim_x] - 1;
-        ntmob->position[dim_y] = ntmob->position[dim_y] - 1;
+      if(is_t_mob(d, ntmob->position[dim_x], ntmob->position[dim_y])){
+        // is = is_t_mob(d, ntmob->position[dim_x], ntmob->position[dim_y]);
+        // d->tmob[is].alive = FALSE;
+        ntmob->alive = FALSE;
       }
-      break;
-
-    case up_right: // [ 1, -1]
-      if(d->hardness[ntmob->position[dim_y] - 1][ntmob->position[dim_x] + 1] == 0){
-        ntmob->position[dim_x] = ntmob->position[dim_x] + 1;
-        ntmob->position[dim_y] = ntmob->position[dim_y] - 1;
-      }
-      break; 
-
-    case down_left: // [ -1, 1]
-      if(d->hardness[ntmob->position[dim_y] + 1][ntmob->position[dim_x] - 1] == 0){
-        ntmob->position[dim_x] = ntmob->position[dim_x] - 1;
-        ntmob->position[dim_y] = ntmob->position[dim_y] + 1;
-      }
-      break;
-
-    case down_right: // [ 1, 1]
-      if(d->hardness[ntmob->position[dim_y] + 1][ntmob->position[dim_x] + 1] == 0){
-        ntmob->position[dim_x] = ntmob->position[dim_x] + 1;
-        ntmob->position[dim_y] = ntmob->position[dim_y] + 1;
-      }
-      break;
-
-    default:
-      move_ntmob(d, ntmob);
-      break;
-  }
-
-  if(ntmob->position[dim_x] == d->pc.position[dim_x] && 
-     ntmob->position[dim_y] == d->pc.position[dim_y] ){
-       d->pc.alive = FALSE;
-  }
 }
 
 void move_tmob(dungeon_t *d,tmob_t *tmob){
-   int r = rand_range(0,6);
-  switch(r){
-    case up: // [ 0, -1]
-      if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] < 255){
-        if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] <= 85){
-          d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] = 0;
-          tmob->position[dim_x] = tmob->position[dim_x];
-          tmob->position[dim_y] = tmob->position[dim_y] - 1;
-        } else{
-          d->hardness[tmob->position[dim_y]][tmob->position[dim_x]] -= 85;
-        }
-      }
-      break;
-
-    case down: // [ 0, 1]
-      if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x]] < 255){
-        if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x]] <= 85){
-          d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x]] = 0;
-          tmob->position[dim_x] = tmob->position[dim_x];
-          tmob->position[dim_y] = tmob->position[dim_y] + 1;
-        } else{
-          d->hardness[tmob->position[dim_y]][tmob->position[dim_x]] -= 85;
-        }
-      }
-      break; 
-      
-    case left: // [ -1, 0]
-      if(d->hardness[tmob->position[dim_y]][tmob->position[dim_x] - 1] < 255){
-       if(d->hardness[tmob->position[dim_y]][tmob->position[dim_x] - 1] <= 85){
-          d->hardness[tmob->position[dim_y]][tmob->position[dim_x] - 1] = 0;
-          tmob->position[dim_x] = tmob->position[dim_x] - 1;
-          tmob->position[dim_y] = tmob->position[dim_y];
-        } else{
-          d->hardness[tmob->position[dim_y]][tmob->position[dim_x]] -= 85;
-        }
-      }
-      break;
-
-    case right: // [ 1, 0]
-      if(d->hardness[tmob->position[dim_y]][tmob->position[dim_x] + 1] < 255){
-        if(d->hardness[tmob->position[dim_y]][tmob->position[dim_x] + 1] <= 85){
-          d->hardness[tmob->position[dim_y]][tmob->position[dim_x] + 1] = 0;
-          tmob->position[dim_x] = tmob->position[dim_x] + 1;
-          tmob->position[dim_y] = tmob->position[dim_y];
-        } else{
-          d->hardness[tmob->position[dim_y]][tmob->position[dim_x]] -= 85;
-        }
-      }
-      break;
-
-    case up_left: // [ -1, -1]
-      if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] < 255){
-        if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] <= 85){
-            d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] = 0;
-            tmob->position[dim_x] = tmob->position[dim_x] - 1;
+  int r = rand_range(0,6);
+    switch(r){
+      case up: // [ 0, -1]
+        if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] < 255){
+          if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] <= 85){
+            d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] = 0;
+            tmob->position[dim_x] = tmob->position[dim_x];
             tmob->position[dim_y] = tmob->position[dim_y] - 1;
           } else{
-            d->hardness[tmob->position[dim_y]][tmob->position[dim_x]] -= 85;
+            d->hardness[tmob->position[dim_y -1]][tmob->position[dim_x]] -= 85;
           }
-      }
-      break;
-
-    case up_right: // [ 1, -1]
-      if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] < 255 ){
-        if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] <= 85){
-          d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] = 0;
-          tmob->position[dim_x] = tmob->position[dim_x] + 1;
-          tmob->position[dim_y] = tmob->position[dim_y] - 1;
-        } else{
-          d->hardness[tmob->position[dim_y]][tmob->position[dim_x]] -= 85;
         }
-      }
-      break;
+        break;
 
-    case down_left: // [ -1, 1]
-      if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] - 1] < 255){
-        if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] - 1] <= 85){
-          d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] - 1] = 0;
-          tmob->position[dim_x] = tmob->position[dim_x] - 1;
-          tmob->position[dim_y] = tmob->position[dim_y] + 1;
-        } else{
-          d->hardness[tmob->position[dim_y]][tmob->position[dim_x]] -= 85;
+      case down: // [ 0, 1]
+        if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x]] < 255){
+          if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x]] <= 85){
+            d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x]] = 0;
+            tmob->position[dim_x] = tmob->position[dim_x];
+            tmob->position[dim_y] = tmob->position[dim_y] + 1;
+          } else{
+            d->hardness[tmob->position[dim_y+1]][tmob->position[dim_x]] -= 85;
+          }
         }
-      }
-      break;
-
-    case down_right: // [ 1, 1]
-      if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] + 1] < 255){
-        if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x]+ 1] <= 85){
-          d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] + 1] = 0;
-          tmob->position[dim_x] = tmob->position[dim_x] + 1;
-          tmob->position[dim_y] = tmob->position[dim_y] + 1;
-        } else{
-          d->hardness[tmob->position[dim_y]][tmob->position[dim_x]] -= 85;
+        break; 
+        
+      case left: // [ -1, 0]
+        if(d->hardness[tmob->position[dim_y]][tmob->position[dim_x] - 1] < 255){
+        if(d->hardness[tmob->position[dim_y]][tmob->position[dim_x] - 1] <= 85){
+            d->hardness[tmob->position[dim_y]][tmob->position[dim_x] - 1] = 0;
+            tmob->position[dim_x] = tmob->position[dim_x] - 1;
+            tmob->position[dim_y] = tmob->position[dim_y];
+          } else{
+            d->hardness[tmob->position[dim_y]][tmob->position[dim_x] -1] -= 85;
+          }
         }
+        break;
+
+      case right: // [ 1, 0]
+        if(d->hardness[tmob->position[dim_y]][tmob->position[dim_x] + 1] < 255){
+          if(d->hardness[tmob->position[dim_y]][tmob->position[dim_x] + 1] <= 85){
+            d->hardness[tmob->position[dim_y]][tmob->position[dim_x] + 1] = 0;
+            tmob->position[dim_x] = tmob->position[dim_x] + 1;
+            tmob->position[dim_y] = tmob->position[dim_y];
+          } else{
+            d->hardness[tmob->position[dim_y]][tmob->position[dim_x] +1] -= 85;
+          }
+        }
+        break;
+
+      case up_left: // [ -1, -1]
+        if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] < 255){
+          if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] <= 85){
+              d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] = 0;
+              tmob->position[dim_x] = tmob->position[dim_x] - 1;
+              tmob->position[dim_y] = tmob->position[dim_y] - 1;
+            } else{
+              d->hardness[tmob->position[dim_y]-1][tmob->position[dim_x]-1] -= 85;
+            }
+        }
+        break;
+
+      case up_right: // [ 1, -1]
+        if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] < 255 ){
+          if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] <= 85){
+            d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] = 0;
+            tmob->position[dim_x] = tmob->position[dim_x] + 1;
+            tmob->position[dim_y] = tmob->position[dim_y] - 1;
+          } else{
+            d->hardness[tmob->position[dim_y]-1][tmob->position[dim_x]+1] -= 85;
+          }
+        }
+        break;
+
+      case down_left: // [ -1, 1]
+        if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] - 1] < 255){
+          if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] - 1] <= 85){
+            d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] - 1] = 0;
+            tmob->position[dim_x] = tmob->position[dim_x] - 1;
+            tmob->position[dim_y] = tmob->position[dim_y] + 1;
+          } else{
+            d->hardness[tmob->position[dim_y]+1][tmob->position[dim_x]-1] -= 85;
+          }
+        }
+        break;
+
+      case down_right: // [ 1, 1]
+        if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] + 1] < 255){
+          if(d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x]+ 1] <= 85){
+            d->hardness[tmob->position[dim_y] + 1][tmob->position[dim_x] + 1] = 0;
+            tmob->position[dim_x] = tmob->position[dim_x] + 1;
+            tmob->position[dim_y] = tmob->position[dim_y] + 1;
+          } else{
+            d->hardness[tmob->position[dim_y]+1][tmob->position[dim_x]+1] -= 85;
+          }
+        }
+        break;
+
+      default:
+        move_tmob(d, tmob);
+        break;
+    }
+    //int is;
+    if(tmob->position[dim_x] == d->pc.position[dim_x] && 
+      tmob->position[dim_y] == d->pc.position[dim_y] ){
+        d->pc.alive = FALSE;
+    }
+    int i;
+    int count;
+    count = 0;
+
+    for(i = 0; i < d->num_nt_mobs; i++){
+      if (d->tmob[i].position[dim_x] == tmob->position[dim_x] && d->tmob[i].position[dim_y] == tmob->position[dim_y] && d->tmob[i].alive == TRUE){
+        count++;
       }
-      break;
+    }
+    if(count > 1){
+      tmob->alive = FALSE;
+    }
 
-    default:
-      move_tmob(d, tmob);
-      break;
-  }
-
-  if(tmob->position[dim_x] == d->pc.position[dim_x] && 
-     tmob->position[dim_y] == d->pc.position[dim_y] ){
-       d->pc.alive = FALSE;
-  }
+    if(is_t_mob(d, tmob->position[dim_x], tmob->position[dim_y])){
+      tmob->alive = FALSE;
+    }
 }
 
 void place_mobs(dungeon_t *d){
   // Place Non-Tunnelling mobs
   int i;
-
+  printf("NUMMOBS: %d\n", d->num_nt_mobs);
   for(i = 0; i < d->num_nt_mobs; i++){
+    printf("hit1\n");
     if(i < d->num_rooms){
+      printf("hit\n");
       d->ntmob[i].position[dim_x] = (d->rooms[i].position[dim_x] + (rand() % d->rooms[i].size[dim_x]));
       d->ntmob[i].position[dim_y] = (d->rooms[i].position[dim_y] + (rand() % d->rooms[i].size[dim_y]));
     }
   }
 
   // Place Tunnelling mobs
-  for(int i = 0; i < d->num_t_mobs; i++){
-    d->tmob[i].position[dim_x] = i + i;
+  for(i = 0; i < d->num_t_mobs; i++){
+    d->tmob[i].position[dim_x] = i + 1;
     d->tmob[i].position[dim_y] = 1;
+    d->hardness[d->tmob[i].position[dim_y]][d->tmob[i].position[dim_x]] = 0;
   }
 }
 
@@ -326,7 +362,7 @@ int is_t_mob(dungeon_t *d, int x, int y){
   int i;
   for(i = 0; i < d->num_t_mobs; i++){
     if (d->tmob[i].position[dim_x] == x && d->tmob[i].position[dim_y] == y){
-      return FALSE;
+      return i * -1;
     }
   }
   return TRUE;
@@ -344,7 +380,6 @@ int is_nt_mob(dungeon_t *d, int x, int y){
 
 void create_mobs(dungeon_t *d, int num){
   int i;
-  //d->num_nt_mobs = num;
   int size;
   if(num <= d->num_rooms){
     size = rand_range(0,num);
@@ -362,11 +397,13 @@ void create_mobs(dungeon_t *d, int num){
   for(i = 0; i < d->num_nt_mobs; i++){
     d->ntmob[i].position[dim_x] = 0;
     d->ntmob[i].position[dim_y] = 0;
+    d->ntmob[i].alive = TRUE;
   }
 
   for(i = 0; i < d->num_t_mobs; i++){
-    d->tmob[i].position[dim_x] = 0;
-    d->tmob[i].position[dim_y] = 0;
+    d->tmob[i].position[dim_x] = i + 2;
+    d->tmob[i].position[dim_y] = 1;
+    d->tmob[i].alive = TRUE;
   }
 
   place_mobs(d);
@@ -543,28 +580,37 @@ int main(int argc, char *argv[])
     printf("Nummons: %d\n", nummons);
     create_mobs(&d, nummons);
   }
+  if(!do_nummon){
+    create_mobs(&d, d.num_rooms);
+  }
 
   printf("PC is at (y, x): %d, %d\n",
          d.pc.position[dim_y], d.pc.position[dim_x]);
 
   d.pc.alive = TRUE;
 
+  int counter = 0;
+
   while(d.pc.alive){
     usleep(300000);
     move_pc(&d);
-    render_dungeon(&d);
     dijkstra(&d);
     dijkstra_tunnel(&d);
     int i;
-
     for(i = 0; i < d.num_nt_mobs; i++){
-      //printf("i = %d\n", i);
-      move_ntmob(&d, &d.ntmob[i]);
+      if(d.ntmob[i].alive == TRUE){
+        move_ntmob(&d, &d.ntmob[i]);
+      }
     }
-
-    // for(i = 0; i < d.num_t_mobs; i++){
-    //   move_tmob(&d, &d.tmob[i]);
-    // }
+   if( counter % 2 == 0){
+      for(i = 0; i < d.num_t_mobs; i++){
+        if(d.tmob[i].alive == TRUE){
+          move_tmob(&d, &d.tmob[i]);
+        }
+        move_tmob(&d, &d.tmob[i]);
+      }
+    }
+    counter++;
 
     render_dungeon(&d);
   }

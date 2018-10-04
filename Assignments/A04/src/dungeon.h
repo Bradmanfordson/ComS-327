@@ -18,6 +18,9 @@
 #define DUNGEON_SAVE_SEMANTIC  "RLG327-F2018"
 #define DUNGEON_SAVE_VERSION   0U
 
+#define TRUE  1
+#define FALSE 0
+
 #define mappair(pair) (d->map[pair[dim_y]][pair[dim_x]])
 #define mapxy(x, y) (d->map[y][x])
 #define hardnesspair(pair) (d->hardness[pair[dim_y]][pair[dim_x]])
@@ -39,15 +42,17 @@ typedef struct room {
 
 typedef struct pc {
   pair_t position;
-  int alive;
+  char alive;
 } pc_t;
 
 typedef struct tunnelling_monster{
   pair_t position;
+  char alive;
 } tmob_t;
 
 typedef struct non_tunnelling_monster{
   pair_t position;
+  int alive;
 } ntmob_t;
 
 typedef struct dungeon {

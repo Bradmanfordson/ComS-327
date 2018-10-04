@@ -585,7 +585,7 @@ void render_dungeon(dungeon_t *d){
       int j = 0;
       if (p[dim_x] ==  d->pc.position[dim_x] &&
           p[dim_y] ==  d->pc.position[dim_y]) {
-            if(d->pc.alive){
+            if(d->pc.alive == TRUE){
               putchar('@');
             } else {
               putchar('X');
@@ -595,42 +595,53 @@ void render_dungeon(dungeon_t *d){
         case ter_wall:
 
         case ter_wall_immutable:
-
-          for(i = 0; i < d->num_t_mobs; i++){
-            if(p[dim_x] == d->tmob[i].position[dim_x] && 
-                p[dim_y] == d->tmob[i].position[dim_y]){
-                    putchar('T');
-                    j = 1;
-                    break;
+          // if (p[dim_y] == 0 || p[dim_y] == 20){
+					//   putchar('-');
+				  // } else if (p[dim_x] == 0 || p[dim_x] == 79){
+					//   putchar('|');
+				  // }else{
+            for(i = 0; i < d->num_t_mobs; i++){
+              if(p[dim_x] == d->tmob[i].position[dim_x] && 
+                  p[dim_y] == d->tmob[i].position[dim_y]){
+                    if(d->tmob[i].alive == TRUE){
+                      putchar('T');
+                      j = 1;
+                      break;
+                    }        
+              }
             }
-          }
-          if (j == 1){
-            break;
-          } else if(d->hardness[p[dim_y]][p[dim_x]] == 0){
-            putchar('#');
-            break;
-          } else {
-            putchar(' ');
-            break;
-          }
+            if (j == 1){
+              break;
+            } else if(d->hardness[p[dim_y]][p[dim_x]] == 0){
+              putchar('#');
+              break;
+            } else {
+              putchar(' ');
+              break;
+            }
+        // }
         case ter_floor:
 
         case ter_floor_room:
           for(i = 0; i < d->num_nt_mobs; i++){
             if(p[dim_x] == d->ntmob[i].position[dim_x] && 
                p[dim_y] == d->ntmob[i].position[dim_y]){
-                  putchar('N');
-                  j = 1;
-                  break;
+                  if(d->ntmob[i].alive == TRUE){
+                      putchar('N');
+                      j = 1;
+                      break;
+                    } 
             }
           }
           
           for(i = 0; i < d->num_t_mobs; i++){
             if(p[dim_x] == d->tmob[i].position[dim_x] && 
                p[dim_y] == d->tmob[i].position[dim_y]){
-                  putchar('T');
-                  j = 1;
-                  break;
+                  if(d->tmob[i].alive == TRUE){
+                      putchar('T');
+                      j = 1;
+                      break;
+                    } 
             }
           }
 
@@ -638,23 +649,28 @@ void render_dungeon(dungeon_t *d){
             putchar('.');
           }
           break;
+        
 
         case ter_floor_hall:
           for(i = 0; i < d->num_nt_mobs; i++){
             if(p[dim_x] == d->ntmob[i].position[dim_x] && 
                p[dim_y] == d->ntmob[i].position[dim_y]){
-                  putchar('N');
-                  j = 1;
-                  break;
+                  if(d->ntmob[i].alive){
+                      putchar('N');
+                      j = 1;
+                      break;
+                    } 
             }
           }
           
           for(i = 0; i < d->num_t_mobs; i++){
             if(p[dim_x] == d->tmob[i].position[dim_x] && 
                p[dim_y] == d->tmob[i].position[dim_y]){
-                  putchar('T');
-                  j = 1;
-                  break;
+                  if(d->tmob[i].alive){
+                      putchar('T');
+                      j = 1;
+                      break;
+                    } 
             }
           }
 
