@@ -603,45 +603,46 @@ void render_dungeon(dungeon_t *d){
             for(i = 0; i < d->num_t_mobs; i++){
               if(p[dim_x] == d->tmob[i].position[dim_x] && 
                   p[dim_y] == d->tmob[i].position[dim_y]){
-                    if(d->tmob[i].alive == TRUE){
+                   // if(d->tmob[i].alive == TRUE){
                       putchar('T');
                       j = 1;
                       break;
-                    }        
+                   // }        
               }
             }
-            if (j == 1){
-              break;
-            } else if(d->hardness[p[dim_y]][p[dim_x]] == 0){
+            if (j == 0){
+              if(d->hardness[p[dim_y]][p[dim_x]] == 0){
               putchar('#');
               break;
             } else {
               putchar(' ');
               break;
             }
-        // }
+         }
+         break;
+         
         case ter_floor:
 
         case ter_floor_room:
           for(i = 0; i < d->num_nt_mobs; i++){
             if(p[dim_x] == d->ntmob[i].position[dim_x] && 
                p[dim_y] == d->ntmob[i].position[dim_y]){
-                  if(d->ntmob[i].alive == TRUE){
+                 // if(d->ntmob[i].alive == TRUE){
                       putchar('N');
                       j = 1;
                       break;
-                    } 
+                    //} 
             }
           }
           
           for(i = 0; i < d->num_t_mobs; i++){
             if(p[dim_x] == d->tmob[i].position[dim_x] && 
                p[dim_y] == d->tmob[i].position[dim_y]){
-                  if(d->tmob[i].alive == TRUE){
+                  //if(d->tmob[i].alive == TRUE){
                       putchar('T');
                       j = 1;
                       break;
-                    } 
+                    //} 
             }
           }
 
@@ -655,22 +656,22 @@ void render_dungeon(dungeon_t *d){
           for(i = 0; i < d->num_nt_mobs; i++){
             if(p[dim_x] == d->ntmob[i].position[dim_x] && 
                p[dim_y] == d->ntmob[i].position[dim_y]){
-                  if(d->ntmob[i].alive){
+                  //if(d->ntmob[i].alive == TRUE){
                       putchar('N');
                       j = 1;
                       break;
-                    } 
+                  //  } 
             }
           }
           
           for(i = 0; i < d->num_t_mobs; i++){
             if(p[dim_x] == d->tmob[i].position[dim_x] && 
                p[dim_y] == d->tmob[i].position[dim_y]){
-                  if(d->tmob[i].alive){
+                 // if(d->tmob[i].alive == TRUE){
                       putchar('T');
                       j = 1;
                       break;
-                    } 
+                    //} 
             }
           }
 

@@ -215,15 +215,15 @@ void move_tmob(dungeon_t *d,tmob_t *tmob){
   int r = rand_range(0,6);
     switch(r){
       case up: // [ 0, -1]
-        if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] < 255){
-          if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] <= 85){
-            d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] = 0;
-            tmob->position[dim_x] = tmob->position[dim_x];
-            tmob->position[dim_y] = tmob->position[dim_y] - 1;
-          } else{
-            d->hardness[tmob->position[dim_y -1]][tmob->position[dim_x]] -= 85;
-          }
-        }
+        // if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] < 255){
+        //   if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] <= 85){
+        //     d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x]] = 0;
+        //     tmob->position[dim_x] = tmob->position[dim_x];
+        //     tmob->position[dim_y] = tmob->position[dim_y] - 1;
+        //   } else{
+        //     d->hardness[tmob->position[dim_y -1]][tmob->position[dim_x]] -= 85;
+        //   }
+        // }
         break;
 
       case down: // [ 0, 1]
@@ -263,27 +263,27 @@ void move_tmob(dungeon_t *d,tmob_t *tmob){
         break;
 
       case up_left: // [ -1, -1]
-        if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] < 255){
-          if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] <= 85){
-              d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] = 0;
-              tmob->position[dim_x] = tmob->position[dim_x] - 1;
-              tmob->position[dim_y] = tmob->position[dim_y] - 1;
-            } else{
-              d->hardness[tmob->position[dim_y]-1][tmob->position[dim_x]-1] -= 85;
-            }
-        }
+        // if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] < 255){
+        //   if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] <= 85){
+        //       d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] - 1] = 0;
+        //       tmob->position[dim_x] = tmob->position[dim_x] - 1;
+        //       tmob->position[dim_y] = tmob->position[dim_y] - 1;
+        //     } else{
+        //       d->hardness[tmob->position[dim_y]-1][tmob->position[dim_x]-1] -= 85;
+        //     }
+        // }
         break;
 
       case up_right: // [ 1, -1]
-        if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] < 255 ){
-          if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] <= 85){
-            d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] = 0;
-            tmob->position[dim_x] = tmob->position[dim_x] + 1;
-            tmob->position[dim_y] = tmob->position[dim_y] - 1;
-          } else{
-            d->hardness[tmob->position[dim_y]-1][tmob->position[dim_x]+1] -= 85;
-          }
-        }
+        // if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] < 255 ){
+        //   if(d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] <= 85){
+        //     d->hardness[tmob->position[dim_y] - 1][tmob->position[dim_x] + 1] = 0;
+        //     tmob->position[dim_x] = tmob->position[dim_x] + 1;
+        //     tmob->position[dim_y] = tmob->position[dim_y] - 1;
+        //   } else{
+        //     d->hardness[tmob->position[dim_y]-1][tmob->position[dim_x]+1] -= 85;
+        //   }
+        // }
         break;
 
       case down_left: // [ -1, 1]
@@ -340,11 +340,8 @@ void move_tmob(dungeon_t *d,tmob_t *tmob){
 void place_mobs(dungeon_t *d){
   // Place Non-Tunnelling mobs
   int i;
-  printf("NUMMOBS: %d\n", d->num_nt_mobs);
   for(i = 0; i < d->num_nt_mobs; i++){
-    printf("hit1\n");
     if(i < d->num_rooms){
-      printf("hit\n");
       d->ntmob[i].position[dim_x] = (d->rooms[i].position[dim_x] + (rand() % d->rooms[i].size[dim_x]));
       d->ntmob[i].position[dim_y] = (d->rooms[i].position[dim_y] + (rand() % d->rooms[i].size[dim_y]));
     }
@@ -481,6 +478,10 @@ int main(int argc, char *argv[])
             usage(argv[0]);
           }
           nummons = atoi(argv[i++]);
+          if(nummons > 30){
+            printf("Integer to large, MAX is 30. Using 30\n");
+            nummons = 30;
+          }
           do_nummon = 1;
           break;
         case 'r':
@@ -594,25 +595,24 @@ int main(int argc, char *argv[])
   while(d.pc.alive){
     usleep(300000);
     move_pc(&d);
+    render_dungeon(&d);
     dijkstra(&d);
     dijkstra_tunnel(&d);
     int i;
     for(i = 0; i < d.num_nt_mobs; i++){
-      if(d.ntmob[i].alive == TRUE){
+      //if(d.ntmob[i].alive == TRUE){
         move_ntmob(&d, &d.ntmob[i]);
-      }
+      //}
     }
-   if( counter % 2 == 0){
+   //if( counter % 3 == 0){
       for(i = 0; i < d.num_t_mobs; i++){
-        if(d.tmob[i].alive == TRUE){
+        //if(d.tmob[i].alive == TRUE){
           move_tmob(&d, &d.tmob[i]);
-        }
-        move_tmob(&d, &d.tmob[i]);
+        //}
+        //move_tmob(&d, &d.tmob[i]);
       }
-    }
+   // }
     counter++;
-
-    render_dungeon(&d);
   }
   //render_dungeon(&d);
 
