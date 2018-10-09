@@ -324,5 +324,64 @@ Thursday September 27, 2018 Lecture
                 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 --------------------------------------------------------------------------------------------------------------------------------------------------------------------    
 
+Tuesday October 2, 2018 Lecture Notes:
+--------------------------------------
+
+    HW 04:
+    ------
+        - PC doesnt have to move?
+        - only going to check some for some tunnelling monsters and some not tunnelling... if i cant get anything else working
+
+    Continue from Thursday:
+    -----------------------
+        Macros:
+        -------
+            - Code that causes GCC to crash
+                Released in professors lecture notes gcc_crash.c. It just makes a gigantic file.
+
+    New Notes:
+    ----------
+        Exam in a week and 2 days.
+
+        Declarations: (How they work and what they mean)
+        ------------------------------------------------
+            Scope - Where in a programs a variable is accessible
+            Lifetime - when in a program a variable exists
+
+            Keywords:
+            ---------
+                - auto
+                    everything is auto by default, using this is very rare, dont worry about it.
+                - consts
+                    Makes the variable immutable so it cannot be changed
+                - extern    
+                    compiler: dont allocate space "here" allocate space somewhere else. There is just a variable somewhere
+                - static
+                    scope doesn't change
+                    lifetime becomes the lifetime of the program
+                    it's perfectly safe to return the address of a static variable in a function
+                    think "Private"
+                - register
+                    ex: register int i;
+                    hint to compiler that we intend to use this variable a lot so map this into a register instead of in memory.
+                    not guaranteed to work, but if it works, the program will run much faster
+                - violate
+                    ex: violate int i;
+                    tells the compiler that this value could change outside of the control of normal program flow
+                    useful for multithreaded programming
+                - inline
+                    optimization. only for functions, Similar to function-type macros. puts function body inside caller without function call.
+                    another compiler hint, doesn't necessary work every time
+                - goto
+                    unconditional jump
+                    Generally DO NOT USE
+                    however, sometimes it can be okay
+
+            GDB:
+            ----
+            "call" whatever - runs the whatever code during debugging so we can test stuff
 
             
+Tuesday October 9th, 2018 - Test Review
+---------------------------------------
+    
