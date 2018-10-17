@@ -37,7 +37,8 @@ typedef enum __attribute__((__packed__)) terrain_type
   ter_floor,
   ter_floor_room,
   ter_floor_hall,
-  ter_stairs
+  ter_stairs_down,
+  ter_stairs_up
 } terrain_type_t;
 
 typedef struct room
@@ -88,5 +89,6 @@ void render_distance_map(dungeon_t *d);
 void render_tunnel_distance_map(dungeon_t *d);
 void render_hardness_map(dungeon_t *d);
 void render_movement_cost_map(dungeon_t *d);
+int make_stairs(dungeon_t *d);
 
 #endif

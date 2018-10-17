@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <ncurses.h>
 
 #include "dungeon.h"
 #include "heap.h"
@@ -246,10 +247,25 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir, uint32_t pause)
       nextMove[dim_y]++;
       break;
 
-    // Stairs
+    // Up Stairs
     case '<':
+      if (mappair(d->pc.position) == ter_stairs_up)
+      {
+        stairs = 1;
+        uint32_t seq = d->character_sequence_number;
+        delete_dungeon(d);
+        init_dungeon(d);
+        gen_dungeon(d);
+        d->character_sequence_number = seq;
+        config_pc(d);
+        gen_monsters(d);
+      }
+      stairs = 0;
+      break;
+
+    // Down Stairs
     case '>':
-      if (mappair(d->pc.position) == ter_stairs)
+      if (mappair(d->pc.position) == ter_stairs_down)
       {
         stairs = 1;
         uint32_t seq = d->character_sequence_number;
@@ -267,6 +283,7 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir, uint32_t pause)
     case '5':
     case ' ': // space, may need to fix
       break;
+
     default:
       break;
     }
@@ -276,24 +293,12 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir, uint32_t pause)
   {
     switch (dir)
     {
-    // Pause and display monsters in the dungeon
-    case 'm':
-      break;
-
     // Scroll up while in monsters list
-    case '^': //up arrow, fix
+    case KEY_UP: //up arrow, fix
       break;
 
     // Scroll down while in monsters list
-    case '_': // down arrow, fix
-      break;
-
-    // When displaying monsters list, return to character control
-    case 'E': //escape, fix
-      break;
-
-    // Quit game.
-    case 'Q':
+    case KEY_DOWN: // down arrow, fix
       break;
 
     default:

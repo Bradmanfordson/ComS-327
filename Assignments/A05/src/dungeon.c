@@ -661,6 +661,7 @@ int gen_dungeon(dungeon_t *d)
     make_rooms(d);
   } while (place_rooms(d));
   connect_rooms(d);
+  make_stairs(d);
 
   return 0;
 }
@@ -682,7 +683,10 @@ void render_dungeon(dungeon_t *d)
       {
         switch (mappair(p))
         {
-        case ter_stairs:
+        case ter_stairs_down:
+          putchar('>');
+          break;
+        case ter_stairs_up:
           putchar('<');
           break;
         case ter_wall:
@@ -1194,7 +1198,10 @@ void render_distance_map(dungeon_t *d)
       {
         switch (mappair(p))
         {
-        case ter_stairs:
+        case ter_stairs_down:
+          putchar('>');
+          break;
+        case ter_stairs_up:
           putchar('<');
           break;
         case ter_wall:
@@ -1242,7 +1249,10 @@ void render_tunnel_distance_map(dungeon_t *d)
       {
         switch (mappair(p))
         {
-        case ter_stairs:
+        case ter_stairs_down:
+          putchar('>');
+          break;
+        case ter_stairs_up:
           putchar('<');
           break;
         case ter_wall_immutable:
@@ -1271,4 +1281,26 @@ void render_tunnel_distance_map(dungeon_t *d)
     }
     putchar('\n');
   }
+}
+
+int make_stairs(dungeon_t *d)
+{
+  pair_t position;
+  int room, type;
+  type = rand_range(0, 1);
+  room = rand_range(1, d->num_rooms - 1);
+  position[dim_y] = rand_range(d->rooms[room].position[dim_y],
+                               (d->rooms[room].position[dim_y] +
+                                d->rooms[room].size[dim_y] - 1));
+  position[dim_x] = rand_range(d->rooms[room].position[dim_x],
+                               (d->rooms[room].position[dim_x] +
+                                d->rooms[room].size[dim_x] - 1));
+  if (type)
+  {
+    mappair(position) = ter_stairs_up;
+  }
+  else
+    mappair(position) = ter_stairs_down;
+
+  return 0;
 }

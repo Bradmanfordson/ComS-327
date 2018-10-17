@@ -253,12 +253,14 @@ int main(int argc, char *argv[])
   curs_set(0);
   keypad(stdscr, TRUE);
   refresh();
+
   uint32_t pause = False;
+
   do
   {
     render_dungeon(&d);
     dir = getchar();
-    if (pause == True && dir == 'E')
+    if (pause == True && dir == 27)
     {
       pause = False;
     }
@@ -266,7 +268,6 @@ int main(int argc, char *argv[])
     {
       pause = True;
     }
-
     do_moves(&d, dir, pause);
 
     if (!(pc_is_alive(&d) && dungeon_has_npcs(&d) && dir != 'Q'))
