@@ -1,26 +1,26 @@
 #ifndef DUNGEON_H
-# define DUNGEON_H
+#define DUNGEON_H
 
-# include "heap.h"
-# include "macros.h"
-# include "dims.h"
-# include "character.h"
+#include "heap.h"
+#include "macros.h"
+#include "dims.h"
+#include "character.h"
 
-#define DUNGEON_X              80
-#define DUNGEON_Y              21
-#define MIN_ROOMS              5
-#define MAX_ROOMS              9
-#define ROOM_MIN_X             4
-#define ROOM_MIN_Y             2
-#define ROOM_MAX_X             14
-#define ROOM_MAX_Y             8
-#define VISUAL_RANGE           15
-#define PC_SPEED               10
-#define MAX_MONSTERS           12
-#define SAVE_DIR               ".rlg327"
-#define DUNGEON_SAVE_FILE      "dungeon"
-#define DUNGEON_SAVE_SEMANTIC  "RLG327-F2018"
-#define DUNGEON_SAVE_VERSION   0U
+#define DUNGEON_X 80
+#define DUNGEON_Y 21
+#define MIN_ROOMS 5
+#define MAX_ROOMS 9
+#define ROOM_MIN_X 4
+#define ROOM_MIN_Y 2
+#define ROOM_MAX_X 14
+#define ROOM_MAX_Y 8
+#define VISUAL_RANGE 15
+#define PC_SPEED 10
+#define MAX_MONSTERS 12
+#define SAVE_DIR ".rlg327"
+#define DUNGEON_SAVE_FILE "dungeon"
+#define DUNGEON_SAVE_SEMANTIC "RLG327-F2018"
+#define DUNGEON_SAVE_VERSION 0U
 
 #define mappair(pair) (d->map[pair[dim_y]][pair[dim_x]])
 #define mapxy(x, y) (d->map[y][x])
@@ -29,21 +29,25 @@
 #define charpair(pair) (d->character[pair[dim_y]][pair[dim_x]])
 #define charxy(x, y) (d->character[y][x])
 
-typedef enum __attribute__ ((__packed__)) terrain_type {
+typedef enum __attribute__((__packed__)) terrain_type
+{
   ter_debug,
   ter_wall,
   ter_wall_immutable,
   ter_floor,
   ter_floor_room,
   ter_floor_hall,
+  ter_stairs
 } terrain_type_t;
 
-typedef struct room {
+typedef struct room
+{
   pair_t position;
   pair_t size;
 } room_t;
 
-typedef struct dungeon {
+typedef struct dungeon
+{
   uint32_t num_rooms;
   room_t *rooms;
   terrain_type_t map[DUNGEON_Y][DUNGEON_X];
