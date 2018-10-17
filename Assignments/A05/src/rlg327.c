@@ -230,6 +230,13 @@ int main(int argc, char *argv[])
 
   init_dungeon(&d);
 
+  initscr();
+  raw();
+  noecho();
+  curs_set(0);
+  keypad(stdscr, TRUE);
+  refresh();
+
   if (do_load)
   {
     read_dungeon(&d, load_file);
@@ -247,26 +254,27 @@ int main(int argc, char *argv[])
   config_pc(&d);
   gen_monsters(&d);
   char dir;
-  initscr();
-  raw();
-  noecho();
-  curs_set(0);
-  keypad(stdscr, TRUE);
-  refresh();
 
   uint32_t pause = False;
 
   do
   {
     render_dungeon(&d);
+    mvprintw(0, 15, "Hello World1111!\n");
     dir = getchar();
     if (pause == True && dir == 27)
     {
       pause = False;
     }
+    else if (pause == True)
+    {
+      mvprintw(22, 10, "Hello World!\n");
+    }
     if (dir == 'm')
     {
       pause = True;
+
+      // showMonsters(&d);
     }
     do_moves(&d, dir, pause);
 
@@ -281,7 +289,7 @@ int main(int argc, char *argv[])
   //   usleep(330000);
   // }
 
-  render_dungeon(&d);
+  // render_dungeon(&d);
 
   if (do_save)
   {

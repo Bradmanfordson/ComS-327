@@ -670,45 +670,48 @@ void render_dungeon(dungeon_t *d)
 {
   pair_t p;
 
-  putchar('\n');
-  for (p[dim_y] = 0; p[dim_y] < DUNGEON_Y; p[dim_y]++)
+  int locx, locy;
+  locx = 0;
+  locy = 0;
+  for (p[dim_y] = 0; p[dim_y] < DUNGEON_Y; p[dim_y]++, locy++)
   {
-    for (p[dim_x] = 0; p[dim_x] < DUNGEON_X; p[dim_x]++)
+    for (p[dim_x] = 0; p[dim_x] < DUNGEON_X; p[dim_x]++, locx++)
     {
       if (charpair(p))
       {
-        putchar(charpair(p)->symbol);
+        mvaddch(locy + 1, locx, d->character[p[dim_y]][p[dim_x]]->symbol);
       }
       else
       {
         switch (mappair(p))
         {
-        case ter_stairs_down:
-          putchar('>');
-          break;
-        case ter_stairs_up:
-          putchar('<');
-          break;
         case ter_wall:
         case ter_wall_immutable:
-          putchar(' ');
+          mvaddch(locy + 1, locx, ' ');
           break;
         case ter_floor:
         case ter_floor_room:
-          putchar('.');
+          mvaddch(locy + 1, locx, '.');
           break;
         case ter_floor_hall:
-          putchar('#');
+          mvaddch(locy + 1, locx, '#');
           break;
         case ter_debug:
-          putchar('*');
-          fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
+          mvaddch(locy + 1, locx, '*');
+          // fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
+          break;
+        case ter_stairs_up:
+          mvaddch(locy + 1, locx, '<');
+          break;
+        case ter_stairs_down:
+          mvaddch(locy + 1, locx, '>');
           break;
         }
       }
     }
+    //putchar('\n');
+    locx = 0;
   }
-  putchar('\n');
   refresh();
 }
 
@@ -1283,24 +1286,83 @@ void render_tunnel_distance_map(dungeon_t *d)
   }
 }
 
+// void menu(dungeon_t *d)
+// {
+//   int index = 0;
+// }
+
 int make_stairs(dungeon_t *d)
 {
-  pair_t position;
+  pair_t pos;
   int room, type;
   type = rand_range(0, 1);
   room = rand_range(1, d->num_rooms - 1);
-  position[dim_y] = rand_range(d->rooms[room].position[dim_y],
-                               (d->rooms[room].position[dim_y] +
-                                d->rooms[room].size[dim_y] - 1));
-  position[dim_x] = rand_range(d->rooms[room].position[dim_x],
-                               (d->rooms[room].position[dim_x] +
-                                d->rooms[room].size[dim_x] - 1));
-  if (type)
+  pos[dim_y] = rand_range(d->rooms[room].position[dim_y],
+                          (d->rooms[room].position[dim_y] + d->rooms[room].size[dim_y] - 1));
+  pos[dim_x] = rand_range(d->rooms[room].position[dim_x],
+                          (d->rooms[room].position[dim_x] + d->rooms[room].size[dim_x] - 1));
+  if (type == 0)
   {
-    mappair(position) = ter_stairs_up;
+    mappair(pos) = ter_stairs_up;
   }
   else
-    mappair(position) = ter_stairs_down;
+    mappair(pos) = ter_stairs_down;
 
   return 0;
+}
+
+///// DOESNT WORK CORRECTLY BUT MAYBE CAN ALTER ///////
+void printMonsters(dungeon_t *d, int startNum)
+{
+  clear();
+  refresh();
+  move(0, 0);
+  int line = 1;
+  int endNum = MAX_MONSTERS < d->num_monsters - startNum
+                   ? startNum + MAX_MONSTERS - 1
+                   : d->num_monsters - 1;
+  for (int i = startNum; i <= endNum; i++)
+  {
+    move(line, 0);
+    int diffY = *(int *)d->character[i][dim_y] - d->pc.position[dim_y];
+    int diffX = *(int *)d->character[i][dim_x] - d->pc.position[dim_x];
+    printw("%c, %d %s %d %s Dead:%s",
+           d->character[i],
+           abs(diffY),
+           diffY >= 0 ? "north" : "south",
+           abs(diffX),
+           diffX >= 0 ? "east" : "west");
+    line++;
+    refresh();
+  }
+}
+
+void showMonsters(dungeon_t *d)
+{
+  int scrollIndex = 0;
+  int input = -1;
+  printMonsters(d, scrollIndex * MAX_MONSTERS);
+  while (input != 27)
+  {
+    input = getch();
+    switch (input)
+    {
+    case KEY_UP:
+      if (scrollIndex > 0)
+      {
+        scrollIndex--;
+      }
+      printMonsters(d, scrollIndex * MAX_MONSTERS);
+      break;
+    case KEY_DOWN:
+      if ((scrollIndex + 1) * MAX_MONSTERS < d->num_monsters)
+      {
+        scrollIndex++;
+      }
+      printMonsters(d, scrollIndex * MAX_MONSTERS);
+      break;
+    }
+  }
+  clear();
+  render_dungeon(d);
 }
