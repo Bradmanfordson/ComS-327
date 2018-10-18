@@ -382,6 +382,159 @@ Tuesday October 2, 2018 Lecture Notes:
             "call" whatever - runs the whatever code during debugging so we can test stuff
 
             
-Tuesday October 9th, 2018 - Test Review
----------------------------------------
+
+Thursday October 18:
+--------------------
+    C++ Introduction:
+    -----------------
+        - namespaces
+            - allow you to use the same name in multiple places without collision
+        - templates
+            - evil and suck
+        - new IO operators and functions
+
+        Things to like about C++:
+        -------------------------
+            - C++ has boolean
+            - Exceptions
+            - Objects
+            - New way to cast:
+                C: (int) i 
+                C++: int(i)
+                Runtime: dynamic_cast<int>(i)
+        
+        Things to NOT like:
+        -------------------
+            - Things require casts that didnt before
+            - LOTS of shitty error messages
+
+        Things that are NOT a part of C++:
+        ----------------------------------
+            - New first-class data types (like String)
+            - Bounds checking
+            - Garbage Collection
+                - new and delete instead of malloc and free for instances of classes
+                - can use new and delete for EVERYTHING if you want too
+            
+        Extras:
+        -------
+            - compile with g++
+            - standard files dont have ".h"
+            - tons of file extensions, typically use .cpp
+            - can compile with gcc but add -lstdc++
+            - const is used a shit-ton in C++, however const is SLIGHTLY different, use this kind of like a define, so cannot change at all, no hackery
+            - volatile: tell compiler "dont optimize this variable" so setting const volatile i = 3 then try to change with hackery works.
+            
+            - References:
+            -------------
+                - why do references exist? : they are "syntactic sugar" 
+                - use the address operator in a declaration
+                - Must initialize immediately
+                - int &r = i;
+                - after this r and i are 2 names for the exact same thing
+                - references are pointers that you dont have to dereference
+                impliment a couple of swap functions:
+                -------------------------------------
+
+                    #include <iostream>
+
+                    using namespace std;
+
+                    void c_swap(int *a, int *b){
+                        int tmp;
+
+                        tmp = *a;
+                        *a = *b;
+                        *b = tmp;
+                    }// C style swap
+
+                    void cpp_swap(int &a, int &b){
+                        int tmp;
+
+                        tmp = a;
+                        a = b;
+                        b = tmp;
+                    }// C++ style swap
+
+                    // These two functions accomplish 100% the exact same thing
+
+                    int main(int argc, char *argv[]){
+                        int x = 5;
+                        int y = 7;
+
+                        int *p;
+
+                        p = &x; // p and x point to the exact same place in memory
+                        *p = 8; // x is now 8
+                        p = &y; // p and y now point to the exact same place in memory
+                        *p = 10; // y is now 10
+                        
+                        const int &r = x; // cant change x through r
+                        
+
+                        cout << x << " " << y << endl;
+
+                        c_swap(x,y);
+
+                        cout << x << " " << y << endl;
+                        
+                        cpp_swap(x,y);
+
+                        cout << x << " " << y << endl;
+                        
+                        return 0;
+                    }
+
+
+        Hello World Code:
+        -----------------
+
+                #include <stdio.h>
+
+                int main(int argc, char *argv[]){
+
+                    printf("Hello world\n");
+
+                    return 0;
+                } // exact same as C
+
+                // Now the same thing but the C++ way... HOWEVER, both work prefectly in C++
+                #include <iostream>
+                // using namespace std; // Use this or use std::cout... however using namespace std; is bad form because you can have more namespace collisions
+                int main(int argc, char *argv[]){
+
+                    std::cout << "Hello World" << std::endl; // endl forces a buffer flush, and prints a new line
+
+                    return 0;
+                }
+        
+
+    Next Assignment:
+    ----------------
+        port to c++:
+        ------------
+            - change extensions
+            - change makefile
+            - fix errors
+        
+        Fog of War:
+        -----------
+            - remember what we have seen
+            - if something changes we wont know (ex. monster moves into a room that we have left)
+            - create another map of the dungeon that is waht the PC has seen.
+            - so when we render the dungeon we render the remembered terrain map instead of the pc map
+            - Instructors notes:
+              ------------------
+                - Need a new map "remembered terrain", which holds our terrain which the PC has seen.
+                - The remembered terrain map is rendered by the game
+            - display like 3 unit's up, down, left, right, diagonal (ie. square line of site)
+            - dont need to remember where monsters are (causes some issues, much easier to not remember monsters)
+            - DO NOT HAVE TO UPDATE monster list
+            - 
+
+        Teleport:
+        ---------
+        - my gosh, figure this out too
+
+
     
