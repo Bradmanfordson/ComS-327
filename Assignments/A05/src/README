@@ -1,0 +1,18 @@
+usage: ./rlg327
+
+Got everything working for this project. Had several problems getting the menu to display properly but
+it works except that it takes 2-3 ESC keys to fully exit the screen. Wasnt able to figure out why.
+
+To create the menu:
+-------------------
+I itterated through the entire dungeon and got all of the monsters and stored their symbol and coordinates
+in a monster_t struct i created. I then passed those monsters to a show_monsters function which also takes
+in user input and handles scrolling up and down while using print_monsters to actually print the list. It
+prints up to 12 monsters per page.
+
+Stairs:
+-------
+created a new ter_stairs_up and ter_stairs_down. When the user uses the stairs he is teleported to a completely
+new dungeon and cannot go back. There are only 1 stair per dungeon.
+
+Allen Bradley Roberts

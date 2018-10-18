@@ -21,8 +21,8 @@ typedef struct monster
   pair_t position;
 } monster_t;
 
-void printMonsters(dungeon_t *d, int startNum, monster_t monsters[], int count);
-void showMonsters(dungeon_t *d, monster_t monsters[], int input, int count);
+void print_monsters(dungeon_t *d, int startNum, monster_t monsters[], int count);
+void show_monsters(dungeon_t *d, monster_t monsters[], int input, int count);
 
 void clear_screen();
 void menu(dungeon_t *d, int input);
@@ -407,59 +407,59 @@ void menu(dungeon_t *d, int input)
       }
     }
   }
-  showMonsters(d, monsters, input, count);
+  show_monsters(d, monsters, input, count);
   //printMonsters(d, 0, monsters);
 }
 
-void printMonsters(dungeon_t *d, int startNum, monster_t monsters[], int count)
+void print_monsters(dungeon_t *d, int start, monster_t monsters[], int count)
 {
   clear();
   refresh();
   move(0, 0);
   int line = 2;
-  int endNum = MAX_MONSTERS < count - startNum
-                   ? startNum + MAX_MONSTERS - 1
-                   : count - 1;
+  int end = MAX_MONSTERS < count - start
+                ? start + MAX_MONSTERS - 1
+                : count - 1;
   mvprintw(0, 30, "Monsters List");
-  for (int i = startNum; i <= endNum; i++)
+  for (int i = start; i <= end; i++)
   {
     move(line, 0);
-    int diffY = monsters[i].position[dim_y] - d->pc.position[dim_y];
-    int diffX = monsters[i].position[dim_x] - d->pc.position[dim_x];
+    int y = monsters[i].position[dim_y] - d->pc.position[dim_y];
+    int x = monsters[i].position[dim_x] - d->pc.position[dim_x];
     mvprintw(line, 30, "%c, %d %s %d %s",
              monsters[i].symbol,
-             abs(diffY),
-             diffY >= 0 ? "north" : "south",
-             abs(diffX),
-             diffX >= 0 ? "east" : "west");
+             abs(y),
+             y >= 0 ? "north" : "south",
+             abs(x),
+             x >= 0 ? "east" : "west");
     line++;
     refresh();
   }
 }
 
-void showMonsters(dungeon_t *d, monster_t monsters[], int input, int count)
+void show_monsters(dungeon_t *d, monster_t monsters[], int input, int count)
 {
-  int scrollIndex = 0;
+  int scroll = 0;
   // int input = -1;
-  printMonsters(d, scrollIndex * MAX_MONSTERS, monsters, count);
+  print_monsters(d, scroll * MAX_MONSTERS, monsters, count);
   while (input != 27)
   {
     input = getch();
     switch (input)
     {
     case KEY_UP:
-      if (scrollIndex > 0)
+      if (scroll > 0)
       {
-        scrollIndex--;
+        scroll--;
       }
-      printMonsters(d, scrollIndex * MAX_MONSTERS, monsters, count);
+      print_monsters(d, scroll * MAX_MONSTERS, monsters, count);
       break;
     case KEY_DOWN:
-      if ((scrollIndex + 1) * MAX_MONSTERS < d->num_monsters)
+      if ((scroll + 1) * MAX_MONSTERS < d->num_monsters)
       {
-        scrollIndex++;
+        scroll++;
       }
-      printMonsters(d, scrollIndex * MAX_MONSTERS, monsters, count);
+      print_monsters(d, scroll * MAX_MONSTERS, monsters, count);
       break;
     }
   }
