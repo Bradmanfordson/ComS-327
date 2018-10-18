@@ -91,7 +91,7 @@ void render_hardness_map(dungeon_t *d);
 void render_movement_cost_map(dungeon_t *d);
 int make_stairs(dungeon_t *d);
 
-void printMonsters(dungeon_t *d, int startNum);
-void showMonsters(dungeon_t *d);
+// void printMonsters(dungeon_t *d, int startNum);
+// void showMonsters(dungeon_t *d);
 
 #endif

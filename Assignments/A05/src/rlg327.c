@@ -15,8 +15,17 @@
 #define True 0
 #define False 1
 
+typedef struct monster
+{
+  char symbol;
+  pair_t position;
+} monster_t;
+
+void printMonsters(dungeon_t *d, int startNum, monster_t monsters[], int count);
+void showMonsters(dungeon_t *d, monster_t monsters[], int input, int count);
+
 void clear_screen();
-void menu(dungeon_t *d);
+void menu(dungeon_t *d, int input);
 
 const char *victory =
     "\n                                       o\n"
@@ -268,28 +277,33 @@ int main(int argc, char *argv[])
     }
 
     dir = getchar();
+
     if (pause == True)
     {
-      if (dir == 27 && dir != KEY_UP)
+      if (dir == 27)
       {
         pause = False;
+        clear_screen();
+        render_dungeon(&d);
       }
-      menu(&d);
-      //mvprintw(10, 10, "Hello Worldaa!\n");
-      //showMonsters(&d);
+      else
+      {
+        menu(&d, dir);
+      }
       refresh();
     }
-    if (dir == 'm')
+    else
     {
-      pause = True;
-      clear_screen();
-      menu(&d);
-      //mvprintw(11, 10, "Hello Worldbb!\n");
-      //showMonsters(&d);
-      refresh();
+      if (dir == 'm')
+      {
+        // do_moves(&d, dir, pause);
+        pause = True;
+        clear_screen();
+        menu(&d, dir);
+        refresh();
+      }
+      do_moves(&d, dir, pause);
     }
-    do_moves(&d, dir, pause);
-
     if (!(pc_is_alive(&d) && dungeon_has_npcs(&d) && dir != 'Q'))
       endwin();
   } while (pc_is_alive(&d) && dungeon_has_npcs(&d) && dir != 'Q');
@@ -350,47 +364,105 @@ int main(int argc, char *argv[])
 
 void clear_screen()
 {
-  int i;
+  int i, j;
   for (i = 0; i < DUNGEON_Y; i++)
   {
-    mvprintw(i, 0, "\n");
+    for (j = 0; j < DUNGEON_X; j++)
+    {
+      mvprintw(i, j, " ");
+    }
   }
 }
 
-void menu(dungeon_t *d)
+void menu(dungeon_t *d, int input)
 {
-  //character_t *m = ;
   int i, j;
-  int y, x;
-  //char *monsters[];
   mvprintw(0, 30, "Num monsters = %d", d->num_monsters);
-  int count = 1;
+  int count = 0;
+
   for (j = 0; j < DUNGEON_Y; j++)
   {
     for (i = 0; i < DUNGEON_X; i++)
     {
       if (d->character[j][i] && d->character[j][i]->symbol != '@')
       {
-        move(count, 0);
-        y = d->pc.position[dim_y] - j;
-        x = d->pc.position[dim_x] - i;
-        // monsters[count] = "%c, %d %s %d %s",
-        //          d->character[j][i]->symbol,
-        //          abs(y),
-        //          y >= 0 ? "north" : "south",
-        //          abs(x),
-        //          x >= 0 ? "east" : "west");
-
-        mvprintw(2 + count, 30, "%c, %d %s %d %s",
-                 d->character[j][i]->symbol,
-                 abs(y),
-                 y >= 0 ? "north" : "south",
-                 abs(x),
-                 x >= 0 ? "east" : "west");
         count++;
       }
-      //mvprintw(3 + i, 30, "%c\n", d->character[]->symbol);
     }
   }
-  //for( i = 0; i < d->num_monsters)S
+
+  monster_t monsters[count];
+  count = 0;
+  for (j = 0; j < DUNGEON_Y; j++)
+  {
+    for (i = 0; i < DUNGEON_X; i++)
+    {
+      if (d->character[j][i] && d->character[j][i]->symbol != '@')
+      {
+        monsters[count].symbol = d->character[j][i]->symbol;
+        monsters[count].position[dim_x] = i;
+        monsters[count].position[dim_y] = j;
+
+        count++;
+      }
+    }
+  }
+  showMonsters(d, monsters, input, count);
+  //printMonsters(d, 0, monsters);
+}
+
+void printMonsters(dungeon_t *d, int startNum, monster_t monsters[], int count)
+{
+  clear();
+  refresh();
+  move(0, 0);
+  int line = 2;
+  int endNum = MAX_MONSTERS < count - startNum
+                   ? startNum + MAX_MONSTERS - 1
+                   : count - 1;
+  mvprintw(0, 30, "Monsters List");
+  for (int i = startNum; i <= endNum; i++)
+  {
+    move(line, 0);
+    int diffY = monsters[i].position[dim_y] - d->pc.position[dim_y];
+    int diffX = monsters[i].position[dim_x] - d->pc.position[dim_x];
+    mvprintw(line, 30, "%c, %d %s %d %s",
+             monsters[i].symbol,
+             abs(diffY),
+             diffY >= 0 ? "north" : "south",
+             abs(diffX),
+             diffX >= 0 ? "east" : "west");
+    line++;
+    refresh();
+  }
+}
+
+void showMonsters(dungeon_t *d, monster_t monsters[], int input, int count)
+{
+  int scrollIndex = 0;
+  // int input = -1;
+  printMonsters(d, scrollIndex * MAX_MONSTERS, monsters, count);
+  while (input != 27)
+  {
+    input = getch();
+    switch (input)
+    {
+    case KEY_UP:
+      if (scrollIndex > 0)
+      {
+        scrollIndex--;
+      }
+      printMonsters(d, scrollIndex * MAX_MONSTERS, monsters, count);
+      break;
+    case KEY_DOWN:
+      if ((scrollIndex + 1) * MAX_MONSTERS < d->num_monsters)
+      {
+        scrollIndex++;
+      }
+      printMonsters(d, scrollIndex * MAX_MONSTERS, monsters, count);
+      break;
+    }
+  }
+  // clear();
+  // render_dungeon(d);
 }

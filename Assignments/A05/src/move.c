@@ -289,23 +289,6 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir, uint32_t pause)
     }
   }
 
-  if (pause == True)
-  {
-    switch (dir)
-    {
-    // Scroll up while in monsters list
-    case KEY_UP: //up arrow, fix
-      break;
-
-    // Scroll down while in monsters list
-    case KEY_DOWN: // down arrow, fix
-      break;
-
-    default:
-      break;
-    }
-  }
-
   if (stairs)
   {
     return 0;

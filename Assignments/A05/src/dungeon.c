@@ -1312,57 +1312,57 @@ int make_stairs(dungeon_t *d)
 }
 
 ///// DOESNT WORK CORRECTLY BUT MAYBE CAN ALTER ///////
-void printMonsters(dungeon_t *d, int startNum)
-{
-  clear();
-  refresh();
-  move(0, 0);
-  int line = 1;
-  int endNum = MAX_MONSTERS < d->num_monsters - startNum
-                   ? startNum + MAX_MONSTERS - 1
-                   : d->num_monsters - 1;
-  for (int i = startNum; i <= endNum; i++)
-  {
-    move(line, 0);
-    int diffY = *(int *)d->character[i][dim_y] - d->pc.position[dim_y];
-    int diffX = *(int *)d->character[i][dim_x] - d->pc.position[dim_x];
-    mvprintw(line, 0, "%c, %d %s %d %s Dead:%s",
-             d->character[i],
-             abs(diffY),
-             diffY >= 0 ? "north" : "south",
-             abs(diffX),
-             diffX >= 0 ? "east" : "west");
-    line++;
-    refresh();
-  }
-}
+// void printMonsters(dungeon_t *d, int startNum)
+// {
+//   clear();
+//   refresh();
+//   move(0, 0);
+//   int line = 1;
+//   int endNum = MAX_MONSTERS < d->num_monsters - startNum
+//                    ? startNum + MAX_MONSTERS - 1
+//                    : d->num_monsters - 1;
+//   for (int i = startNum; i <= endNum; i++)
+//   {
+//     move(line, 0);
+//     int diffY = *(int *)d->character[i][dim_y] - d->pc.position[dim_y];
+//     int diffX = *(int *)d->character[i][dim_x] - d->pc.position[dim_x];
+//     mvprintw(line, 0, "%c, %d %s %d %s Dead:%s",
+//              d->character[i],
+//              abs(diffY),
+//              diffY >= 0 ? "north" : "south",
+//              abs(diffX),
+//              diffX >= 0 ? "east" : "west");
+//     line++;
+//     refresh();
+//   }
+// }
 
-void showMonsters(dungeon_t *d)
-{
-  int scrollIndex = 0;
-  int input = -1;
-  printMonsters(d, scrollIndex * MAX_MONSTERS);
-  while (input != 27)
-  {
-    input = getch();
-    switch (input)
-    {
-    case KEY_UP:
-      if (scrollIndex > 0)
-      {
-        scrollIndex--;
-      }
-      printMonsters(d, scrollIndex * MAX_MONSTERS);
-      break;
-    case KEY_DOWN:
-      if ((scrollIndex + 1) * MAX_MONSTERS < d->num_monsters)
-      {
-        scrollIndex++;
-      }
-      printMonsters(d, scrollIndex * MAX_MONSTERS);
-      break;
-    }
-  }
-  clear();
-  render_dungeon(d);
-}
+// void showMonsters(dungeon_t *d)
+// {
+//   int scrollIndex = 0;
+//   int input = -1;
+//   printMonsters(d, scrollIndex * MAX_MONSTERS);
+//   while (input != 27)
+//   {
+//     input = getch();
+//     switch (input)
+//     {
+//     case KEY_UP:
+//       if (scrollIndex > 0)
+//       {
+//         scrollIndex--;
+//       }
+//       printMonsters(d, scrollIndex * MAX_MONSTERS);
+//       break;
+//     case KEY_DOWN:
+//       if ((scrollIndex + 1) * MAX_MONSTERS < d->num_monsters)
+//       {
+//         scrollIndex++;
+//       }
+//       printMonsters(d, scrollIndex * MAX_MONSTERS);
+//       break;
+//     }
+//   }
+//   clear();
+//   render_dungeon(d);
+// }
