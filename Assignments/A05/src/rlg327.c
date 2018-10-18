@@ -15,6 +15,9 @@
 #define True 0
 #define False 1
 
+void clear_screen();
+void menu(dungeon_t *d);
+
 const char *victory =
     "\n                                       o\n"
     "                                      $\"\"$o\n"
@@ -259,22 +262,31 @@ int main(int argc, char *argv[])
 
   do
   {
-    render_dungeon(&d);
-    mvprintw(0, 15, "Hello World1111!\n");
-    dir = getchar();
-    if (pause == True && dir == 27)
+    if (pause == False)
     {
-      pause = False;
+      render_dungeon(&d);
     }
-    else if (pause == True)
+
+    dir = getchar();
+    if (pause == True)
     {
-      mvprintw(22, 10, "Hello World!\n");
+      if (dir == 27 && dir != KEY_UP)
+      {
+        pause = False;
+      }
+      menu(&d);
+      //mvprintw(10, 10, "Hello Worldaa!\n");
+      //showMonsters(&d);
+      refresh();
     }
     if (dir == 'm')
     {
       pause = True;
-
-      // showMonsters(&d);
+      clear_screen();
+      menu(&d);
+      //mvprintw(11, 10, "Hello Worldbb!\n");
+      //showMonsters(&d);
+      refresh();
     }
     do_moves(&d, dir, pause);
 
@@ -334,4 +346,51 @@ int main(int argc, char *argv[])
   delete_dungeon(&d);
 
   return 0;
+}
+
+void clear_screen()
+{
+  int i;
+  for (i = 0; i < DUNGEON_Y; i++)
+  {
+    mvprintw(i, 0, "\n");
+  }
+}
+
+void menu(dungeon_t *d)
+{
+  //character_t *m = ;
+  int i, j;
+  int y, x;
+  //char *monsters[];
+  mvprintw(0, 30, "Num monsters = %d", d->num_monsters);
+  int count = 1;
+  for (j = 0; j < DUNGEON_Y; j++)
+  {
+    for (i = 0; i < DUNGEON_X; i++)
+    {
+      if (d->character[j][i] && d->character[j][i]->symbol != '@')
+      {
+        move(count, 0);
+        y = d->pc.position[dim_y] - j;
+        x = d->pc.position[dim_x] - i;
+        // monsters[count] = "%c, %d %s %d %s",
+        //          d->character[j][i]->symbol,
+        //          abs(y),
+        //          y >= 0 ? "north" : "south",
+        //          abs(x),
+        //          x >= 0 ? "east" : "west");
+
+        mvprintw(2 + count, 30, "%c, %d %s %d %s",
+                 d->character[j][i]->symbol,
+                 abs(y),
+                 y >= 0 ? "north" : "south",
+                 abs(x),
+                 x >= 0 ? "east" : "west");
+        count++;
+      }
+      //mvprintw(3 + i, 30, "%c\n", d->character[]->symbol);
+    }
+  }
+  //for( i = 0; i < d->num_monsters)S
 }

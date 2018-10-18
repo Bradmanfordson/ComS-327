@@ -1326,12 +1326,12 @@ void printMonsters(dungeon_t *d, int startNum)
     move(line, 0);
     int diffY = *(int *)d->character[i][dim_y] - d->pc.position[dim_y];
     int diffX = *(int *)d->character[i][dim_x] - d->pc.position[dim_x];
-    printw("%c, %d %s %d %s Dead:%s",
-           d->character[i],
-           abs(diffY),
-           diffY >= 0 ? "north" : "south",
-           abs(diffX),
-           diffX >= 0 ? "east" : "west");
+    mvprintw(line, 0, "%c, %d %s %d %s Dead:%s",
+             d->character[i],
+             abs(diffY),
+             diffY >= 0 ? "north" : "south",
+             abs(diffX),
+             diffX >= 0 ? "east" : "west");
     line++;
     refresh();
   }
