@@ -19,9 +19,9 @@ $(BIN): $(OBJS)
 
 -include $(OBJS:.o=.d)
 
-%.o: %.c
-	@$(ECHO) Compiling $<
-	@$(CC) $(CFLAGS) -MMD -MF $*.d -c $<
+# %.o: %.c
+# 	@$(ECHO) Compiling $<
+# 	@$(CC) $(CFLAGS) -MMD -MF $*.d -c $<
 
 %.o: %.cpp
 	@$(ECHO) Compiling $<
