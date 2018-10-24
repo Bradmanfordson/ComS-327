@@ -244,6 +244,7 @@ void io_display(dungeon_t *d)
         {
         case ter_wall:
         case ter_wall_immutable:
+        case ter_unknown:
           mvaddch(y + 1, x, ' ');
           break;
         case ter_floor:
@@ -311,29 +312,95 @@ void io_display_monster_list(dungeon_t *d)
 uint32_t io_teleport_pc(dungeon_t *d)
 {
   /* Just for fun. */
-  pair_t dest;
+  // pair_t dest;
 
-  do
+  // do
+  // {
+  //   dest[dim_x] = rand_range(1, DUNGEON_X - 2);
+  //   dest[dim_y] = rand_range(1, DUNGEON_Y - 2);
+  // } while (charpair(dest));
+
+  // d->character_pos[d->pc.position[dim_y]][d->pc.position[dim_x]] = NULL;
+  // d->character_pos[dest[dim_y]][dest[dim_x]] = &d->pc;
+
+  // d->pc.position[dim_y] = dest[dim_y];
+  // d->pc.position[dim_x] = dest[dim_x];
+
+  // if (mappair(dest) < ter_floor)
+  // {
+  //   mappair(dest) = ter_floor;
+  // }
+  d->pc.symbol = '*';
+  while (1)
   {
-    dest[dim_x] = rand_range(1, DUNGEON_X - 2);
-    dest[dim_y] = rand_range(1, DUNGEON_Y - 2);
-  } while (charpair(dest));
+    switch (getch())
+    {
+    case '7':
+    case 'y':
+    case KEY_HOME:
+      d->pc.position[dim_x] -= 1;
+      d->pc.position[dim_y] -= 1;
+      //move_pc(d, 7);
+      break;
+    case '8':
+    case 'k':
+    case KEY_UP:
+      d->pc.position[dim_x] += 0;
+      d->pc.position[dim_y] -= 1;
+      //move_pc(d, 8);
+      break;
+    case '9':
+    case 'u':
+    case KEY_PPAGE:
+      d->pc.position[dim_x] += 1;
+      d->pc.position[dim_y] -= 1;
+      //move_pc(d, 9);
+      break;
+    case '6':
+    case 'l':
+    case KEY_RIGHT:
+      d->pc.position[dim_x] += 1;
+      d->pc.position[dim_y] += 0;
+      //move_pc(d, 6);
+      break;
+    case '3':
+    case 'n':
+    case KEY_NPAGE:
+      d->pc.position[dim_x] += 1;
+      d->pc.position[dim_y] += 1;
+      // move_pc(d, 3);
+      break;
+    case '2':
+    case 'j':
+    case KEY_DOWN:
+      d->pc.position[dim_x] += 0;
+      d->pc.position[dim_y] += 1;
+      //move_pc(d, 2);
+      break;
+    case '1':
+    case 'b':
+    case KEY_END:
+      d->pc.position[dim_x] -= 1;
+      d->pc.position[dim_y] += 1;
+      //move_pc(d, 1);
+      break;
+    case '4':
+    case 'h':
+    case KEY_LEFT:
+      d->pc.position[dim_x] -= 1;
+      d->pc.position[dim_y] += 0;
+      // move_pc(d, 4);
+      break;
+    case 'g':
+      dijkstra(d);
+      dijkstra_tunnel(d);
+      d->pc.symbol = '@';
+      io_display(d);
 
-  d->character_pos[d->pc.position[dim_y]][d->pc.position[dim_x]] = NULL;
-  d->character_pos[dest[dim_y]][dest[dim_x]] = &d->pc;
-
-  d->pc.position[dim_y] = dest[dim_y];
-  d->pc.position[dim_x] = dest[dim_x];
-
-  if (mappair(dest) < ter_floor)
-  {
-    mappair(dest) = ter_floor;
+      return 0;
+    }
+    io_display(d);
   }
-
-  dijkstra(d);
-  dijkstra_tunnel(d);
-
-  return 0;
 }
 /* Adjectives to describe our monsters */
 static const char *adjectives[] = {
@@ -575,7 +642,7 @@ void io_handle_input(dungeon_t *d)
     case 'g':
       /* Teleport the PC to a random place in the dungeon.              */
       io_teleport_pc(d);
-      fail_code = 0;
+      fail_code = 1;
       break;
     case 'm':
       io_list_monsters(d);

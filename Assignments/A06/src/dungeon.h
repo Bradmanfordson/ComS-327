@@ -32,6 +32,7 @@
 typedef enum __attribute__((__packed__)) terrain_type
 {
   ter_debug,
+  ter_unknown,
   ter_wall,
   ter_wall_immutable,
   ter_floor,
