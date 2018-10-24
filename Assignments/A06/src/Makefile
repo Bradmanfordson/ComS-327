@@ -11,11 +11,14 @@ BIN = rlg327
 OBJS = rlg327.o heap.o dungeon.o path.o utils.o pc.o \
        npc.o move.o event.o character.o io.o
 
-all: $(BIN) etags
+all: $(BIN) etags clean
 
 $(BIN): $(OBJS)
 	@$(ECHO) Linking $@
 	@$(CXX) $^ -o $@ $(LDFLAGS)
+	make clean
+	./rlg327 -n 5
+
 
 -include $(OBJS:.o=.d)
 
@@ -31,7 +34,7 @@ $(BIN): $(OBJS)
 
 clean:
 	@$(ECHO) Removing all generated files
-	@$(RM) *.o $(BIN) *.d TAGS core vgcore.* gmon.out
+	@$(RM) *.o *.d TAGS core vgcore.* gmon.out
 
 clobber: clean
 	@$(ECHO) Removing backup files
