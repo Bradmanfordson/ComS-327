@@ -180,28 +180,28 @@ void io_display_hardness(dungeon_t *d)
 
 static int compare_monster_distance(const void *v1, const void *v2)
 {
-  const character_t *const *c1 = (const character *const *)v1;
-  const character_t *const *c2 = (const character *const *)v2;
+  const character *const *c1 = (const character *const *)v1;
+  const character *const *c2 = (const character *const *)v2;
 
   return (dungeon->pc_distance[(*c1)->position[dim_y]][(*c1)->position[dim_x]] -
           dungeon->pc_distance[(*c2)->position[dim_y]][(*c2)->position[dim_x]]);
 }
 
-static character_t *io_nearest_visible_monster(dungeon_t *d)
+static character *io_nearest_visible_monster(dungeon_t *d)
 {
-  character_t **c, *n;
+  character **c, *n;
   uint32_t x, y, count, i;
 
-  c = (character_t **)malloc(d->num_monsters * sizeof(*c));
+  c = (character **)malloc(d->num_monsters * sizeof(*c));
 
   /* Get a linear list of monsters */
   for (count = 0, y = 1; y < DUNGEON_Y - 1; y++)
   {
     for (x = 1; x < DUNGEON_X - 1; x++)
     {
-      if (d->character[y][x] && d->character[y][x] != &d->pc)
+      if (d->character_pos[y][x] && d->character_pos[y][x] != &d->pc)
       {
-        c[count++] = d->character[y][x];
+        c[count++] = d->character_pos[y][x];
       }
     }
   }
@@ -227,16 +227,16 @@ static character_t *io_nearest_visible_monster(dungeon_t *d)
 void io_display(dungeon_t *d)
 {
   uint32_t y, x;
-  character_t *c;
+  character *c;
 
   clear();
   for (y = 0; y < 21; y++)
   {
     for (x = 0; x < 80; x++)
     {
-      if (d->character[y][x])
+      if (d->character_pos[y][x])
       {
-        mvaddch(y + 1, x, d->character[y][x]->symbol);
+        mvaddch(y + 1, x, d->character_pos[y][x]->symbol);
       }
       else
       {
@@ -319,8 +319,8 @@ uint32_t io_teleport_pc(dungeon_t *d)
     dest[dim_y] = rand_range(1, DUNGEON_Y - 2);
   } while (charpair(dest));
 
-  d->character[d->pc.position[dim_y]][d->pc.position[dim_x]] = NULL;
-  d->character[dest[dim_y]][dest[dim_x]] = &d->pc;
+  d->character_pos[d->pc.position[dim_y]][d->pc.position[dim_x]] = NULL;
+  d->character_pos[dest[dim_y]][dest[dim_x]] = &d->pc;
 
   d->pc.position[dim_y] = dest[dim_y];
   d->pc.position[dim_x] = dest[dim_x];
@@ -403,7 +403,7 @@ static void io_scroll_monster_list(char (*s)[40], uint32_t count)
 }
 
 static void io_list_monsters_display(dungeon_t *d,
-                                     character_t **c,
+                                     character **c,
                                      uint32_t count)
 {
   uint32_t i;
@@ -454,19 +454,19 @@ static void io_list_monsters_display(dungeon_t *d,
 
 static void io_list_monsters(dungeon_t *d)
 {
-  character_t **c;
+  character **c;
   uint32_t x, y, count;
 
-  c = (character_t **)malloc(d->num_monsters * sizeof(*c));
+  c = (character **)malloc(d->num_monsters * sizeof(*c));
 
   /* Get a linear list of monsters */
   for (count = 0, y = 1; y < DUNGEON_Y - 1; y++)
   {
     for (x = 1; x < DUNGEON_X - 1; x++)
     {
-      if (d->character[y][x] && d->character[y][x] != &d->pc)
+      if (d->character_pos[y][x] && d->character_pos[y][x] != &d->pc)
       {
-        c[count++] = d->character[y][x];
+        c[count++] = d->character_pos[y][x];
       }
     }
   }

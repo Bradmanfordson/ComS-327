@@ -45,7 +45,7 @@ void config_pc(dungeon_t *d)
   d->pc.npc = NULL;
   d->pc.kills[kill_direct] = d->pc.kills[kill_avenged] = 0;
 
-  d->character[d->pc.position[dim_y]][d->pc.position[dim_x]] = &d->pc;
+  d->character_pos[d->pc.position[dim_y]][d->pc.position[dim_x]] = &d->pc;
 
   dijkstra(d);
   dijkstra_tunnel(d);

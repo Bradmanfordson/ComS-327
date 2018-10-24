@@ -1,5 +1,5 @@
 #ifndef IO_H
-# define IO_H
+#define IO_H
 
 typedef struct dungeon dungeon_t;
 

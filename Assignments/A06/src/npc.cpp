@@ -57,10 +57,10 @@ void gen_monsters(dungeon_t *d)
       p[dim_x] = rand_range(d->rooms[room].position[dim_x],
                             (d->rooms[room].position[dim_x] +
                              d->rooms[room].size[dim_x] - 1));
-    } while (d->character[p[dim_y]][p[dim_x]]);
+    } while (d->character_pos[p[dim_y]][p[dim_x]]);
     m->position[dim_y] = p[dim_y];
     m->position[dim_x] = p[dim_x];
-    d->character[p[dim_y]][p[dim_x]] = m;
+    d->character_pos[p[dim_y]][p[dim_x]] = m;
     m->speed = rand_range(5, 20);
     m->alive = 1;
     m->sequence_number = ++d->character_sequence_number;
@@ -72,7 +72,7 @@ void gen_monsters(dungeon_t *d)
     m->npc->have_seen_pc = 0;
     m->kills[kill_direct] = m->kills[kill_avenged] = 0;
 
-    d->character[p[dim_y]][p[dim_x]] = m;
+    d->character_pos[p[dim_y]][p[dim_x]] = m;
 
     heap_insert(&d->events, new_event(d, event_character_turn, m, 0));
   }

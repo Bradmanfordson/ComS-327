@@ -1,13 +1,14 @@
 #ifndef PC_H
-# define PC_H
+#define PC_H
 
-# include <stdint.h>
+#include <stdint.h>
 
-# include "dims.h"
+#include "dims.h"
 
 typedef struct dungeon dungeon_t;
 
-typedef struct pc {
+typedef struct pc
+{
 } pc_t;
 
 void pc_delete(pc_t *pc);

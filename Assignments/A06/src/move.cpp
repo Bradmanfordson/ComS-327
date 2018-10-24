@@ -114,7 +114,7 @@ void do_combat(dungeon_t *d, character_t *atk, character_t *def)
   }
 }
 
-void move_character(dungeon_t *d, character_t *c, pair_t next)
+void move_character(dungeon_t *d, character *c, pair_t next)
 {
   if (charpair(next) &&
       ((next[dim_y] != c->position[dim_y]) ||
@@ -126,17 +126,17 @@ void move_character(dungeon_t *d, character_t *c, pair_t next)
   {
     /* No character in new position. */
 
-    d->character[c->position[dim_y]][c->position[dim_x]] = NULL;
+    d->character_pos[c->position[dim_y]][c->position[dim_x]] = NULL;
     c->position[dim_y] = next[dim_y];
     c->position[dim_x] = next[dim_x];
-    d->character[c->position[dim_y]][c->position[dim_x]] = c;
+    d->character_pos[c->position[dim_y]][c->position[dim_x]] = c;
   }
 }
 
 void do_moves(dungeon_t *d)
 {
   pair_t next;
-  character_t *c;
+  character *c;
   event_t *e;
 
   /* Remove the PC when it is PC turn.  Replace on next call.  This allows *
@@ -177,9 +177,9 @@ void do_moves(dungeon_t *d)
     }
     if (!c->alive)
     {
-      if (d->character[c->position[dim_y]][c->position[dim_x]] == c)
+      if (d->character_pos[c->position[dim_y]][c->position[dim_x]] == c)
       {
-        d->character[c->position[dim_y]][c->position[dim_x]] = NULL;
+        d->character_pos[c->position[dim_y]][c->position[dim_x]] = NULL;
       }
       if (c != &d->pc)
       {
