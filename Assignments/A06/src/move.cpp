@@ -19,51 +19,59 @@ void do_combat(dungeon_t *d, character_t *atk, character_t *def)
 {
   int can_see_atk, can_see_def;
   char *organs[] = {
-    "liver",                   /*  0 */
-    "pancreas",                /*  1 */
-    "heart",                   /*  2 */
-    "eye",                     /*  3 */
-    "arm",                     /*  4 */
-    "leg",                     /*  5 */
-    "intestines",              /*  6 */
-    "gall bladder",            /*  7 */
-    "lungs",                   /*  8 */
-    "hand",                    /*  9 */
-    "foot",                    /* 10 */
-    "spinal cord",             /* 11 */
-    "pituitary gland",         /* 12 */
-    "thyroid",                 /* 13 */
-    "tongue",                  /* 14 */
-    "bladder",                 /* 15 */
-    "diaphram",                /* 16 */
-    "stomach",                 /* 17 */
-    "pharynx",                 /* 18 */
-    "esophagus",               /* 19 */
-    "trachea",                 /* 20 */
-    "urethra",                 /* 21 */
-    "spleen",                  /* 22 */
-    "ganglia",                 /* 23 */
-    "ear",                     /* 24 */
-    "subcutaneous tissue"      /* 25 */
-    "cerebellum",              /* 26 */ /* Brain parts begin here */
-    "hippocampus",             /* 27 */
-    "frontal lobe",            /* 28 */
-    "brain",                   /* 29 */
+      (char *)"liver",               /*  0 */
+      (char *)"pancreas",            /*  1 */
+      (char *)"heart",               /*  2 */
+      (char *)"eye",                 /*  3 */
+      (char *)"arm",                 /*  4 */
+      (char *)"leg",                 /*  5 */
+      (char *)"intestines",          /*  6 */
+      (char *)"gall bladder",        /*  7 */
+      (char *)"lungs",               /*  8 */
+      (char *)"hand",                /*  9 */
+      (char *)"foot",                /* 10 */
+      (char *)"spinal cord",         /* 11 */
+      (char *)"pituitary gland",     /* 12 */
+      (char *)"thyroid",             /* 13 */
+      (char *)"tongue",              /* 14 */
+      (char *)"bladder",             /* 15 */
+      (char *)"diaphram",            /* 16 */
+      (char *)"stomach",             /* 17 */
+      (char *)"pharynx",             /* 18 */
+      (char *)"esophagus",           /* 19 */
+      (char *)"trachea",             /* 20 */
+      (char *)"urethra",             /* 21 */
+      (char *)"spleen",              /* 22 */
+      (char *)"ganglia",             /* 23 */
+      (char *)"ear",                 /* 24 */
+      (char *)"subcutaneous tissue", /* 25 */
+      (char *)"cerebellum",
+      /* 26 */                /* Brain parts begin here */
+      (char *)"hippocampus",  /* 27 */
+      (char *)"frontal lobe", /* 28 */
+      (char *)"brain",        /* 29 */
   };
   int part;
 
-  if (def->alive) {
+  if (def->alive)
+  {
     def->alive = 0;
     charpair(def->position) = NULL;
-    
-    if (def != &d->pc) {
+
+    if (def != &d->pc)
+    {
       d->num_monsters--;
-    } else {
-      if ((part = rand() % (sizeof (organs) / sizeof (organs[0]))) < 26) {
+    }
+    else
+    {
+      if ((part = rand() % (sizeof(organs) / sizeof(organs[0]))) < 26)
+      {
         io_queue_message("As the %c eats your %s, "
                          "you wonder if there is an afterlife.",
                          atk->symbol, organs[part]);
-      } else {
+      }
+      else
+      {
         io_queue_message("Your last thoughts fade away as "
                          "the %c eats your %s...",
                          atk->symbol, organs[part]);
@@ -74,27 +82,34 @@ void do_combat(dungeon_t *d, character_t *atk, character_t *def)
     }
     atk->kills[kill_direct]++;
     atk->kills[kill_avenged] += (def->kills[kill_direct] +
-                                  def->kills[kill_avenged]);
+                                 def->kills[kill_avenged]);
   }
 
-  if (atk == &d->pc) {
+  if (atk == &d->pc)
+  {
     io_queue_message("You smite the %c!", def->symbol);
   }
 
   can_see_atk = can_see(d, &d->pc, atk);
   can_see_def = can_see(d, &d->pc, def);
 
-  if (atk != &d->pc && def != &d->pc) {
-    if (can_see_atk && !can_see_def) {
+  if (atk != &d->pc && def != &d->pc)
+  {
+    if (can_see_atk && !can_see_def)
+    {
       io_queue_message("The %c callously murders some poor, "
-                       "defenseless creature.", atk->symbol);
+                       "defenseless creature.",
+                       atk->symbol);
     }
-    if (can_see_def && !can_see_atk) {
+    if (can_see_def && !can_see_atk)
+    {
       io_queue_message("Something kills the helpless %c.", def->symbol);
     }
-    if (can_see_atk && can_see_def) {
+    if (can_see_atk && can_see_def)
+    {
       io_queue_message("You watch in abject horror as the %c "
-                       "gruesomely murders the %c!", atk->symbol, def->symbol);
+                       "gruesomely murders the %c!",
+                       atk->symbol, def->symbol);
     }
   }
 }
@@ -103,9 +118,12 @@ void move_character(dungeon_t *d, character_t *c, pair_t next)
 {
   if (charpair(next) &&
       ((next[dim_y] != c->position[dim_y]) ||
-       (next[dim_x] != c->position[dim_x]))) {
+       (next[dim_x] != c->position[dim_x])))
+  {
     do_combat(d, c, charpair(next));
-  } else {
+  }
+  else
+  {
     /* No character in new position. */
 
     d->character[c->position[dim_y]][c->position[dim_x]] = NULL;
@@ -125,19 +143,22 @@ void do_moves(dungeon_t *d)
    * use to completely uninit the heap when generating a new level without *
    * worrying about deleting the PC.                                       */
 
-
-  if (pc_is_alive(d)) {
+  if (pc_is_alive(d))
+  {
     /* The PC always goes first one a tie, so we don't use new_event().  *
      * We generate one manually so that we can set the PC sequence       *
      * number to zero.                                                   */
-    e = malloc(sizeof (*e));
+    e = (event_t *)malloc(sizeof(*e));
     e->type = event_character_turn;
     /* Hack: New dungeons are marked.  Unmark and ensure PC goes at d->time, *
      * otherwise, monsters get a turn before the PC.                         */
-    if (d->is_new) {
+    if (d->is_new)
+    {
       d->is_new = 0;
       e->time = d->time;
-    } else {
+    }
+    else
+    {
       e->time = d->time + (1000 / d->pc.speed);
     }
     e->sequence = 0;
@@ -146,17 +167,22 @@ void do_moves(dungeon_t *d)
   }
 
   while (pc_is_alive(d) &&
-         (e = heap_remove_min(&d->events)) &&
-         ((e->type != event_character_turn) || (e->c != &d->pc))) {
+         (e = (event_t *)heap_remove_min(&d->events)) &&
+         ((e->type != event_character_turn) || (e->c != &d->pc)))
+  {
     d->time = e->time;
-    if (e->type == event_character_turn) {
+    if (e->type == event_character_turn)
+    {
       c = e->c;
     }
-    if (!c->alive) {
-      if (d->character[c->position[dim_y]][c->position[dim_x]] == c) {
+    if (!c->alive)
+    {
+      if (d->character[c->position[dim_y]][c->position[dim_x]] == c)
+      {
         d->character[c->position[dim_y]][c->position[dim_x]] = NULL;
       }
-      if (c != &d->pc) {
+      if (c != &d->pc)
+      {
         event_delete(e);
       }
       continue;
@@ -169,7 +195,8 @@ void do_moves(dungeon_t *d)
   }
 
   io_display(d);
-  if (pc_is_alive(d) && e->c == &d->pc) {
+  if (pc_is_alive(d) && e->c == &d->pc)
+  {
     c = e->c;
     d->time = e->time;
     /* Kind of kludgey, but because the PC is never in the queue when   *
@@ -185,10 +212,12 @@ void dir_nearest_wall(dungeon_t *d, character_t *c, pair_t dir)
 {
   dir[dim_x] = dir[dim_y] = 0;
 
-  if (c->position[dim_x] != 1 && c->position[dim_x] != DUNGEON_X - 2) {
+  if (c->position[dim_x] != 1 && c->position[dim_x] != DUNGEON_X - 2)
+  {
     dir[dim_x] = (c->position[dim_x] > DUNGEON_X - c->position[dim_x] ? 1 : -1);
   }
-  if (c->position[dim_y] != 1 && c->position[dim_y] != DUNGEON_Y - 2) {
+  if (c->position[dim_y] != 1 && c->position[dim_y] != DUNGEON_Y - 2)
+  {
     dir[dim_y] = (c->position[dim_y] > DUNGEON_Y - c->position[dim_y] ? 1 : -1);
   }
 }
@@ -196,12 +225,12 @@ void dir_nearest_wall(dungeon_t *d, character_t *c, pair_t dir)
 uint32_t against_wall(dungeon_t *d, character_t *c)
 {
   return ((mapxy(c->position[dim_x] - 1,
-                 c->position[dim_y]    ) == ter_wall_immutable) ||
+                 c->position[dim_y]) == ter_wall_immutable) ||
           (mapxy(c->position[dim_x] + 1,
-                 c->position[dim_y]    ) == ter_wall_immutable) ||
-          (mapxy(c->position[dim_x]    ,
+                 c->position[dim_y]) == ter_wall_immutable) ||
+          (mapxy(c->position[dim_x],
                  c->position[dim_y] - 1) == ter_wall_immutable) ||
-          (mapxy(c->position[dim_x]    ,
+          (mapxy(c->position[dim_x],
                  c->position[dim_y] + 1) == ter_wall_immutable));
 }
 
@@ -212,12 +241,12 @@ uint32_t in_corner(dungeon_t *d, character_t *c)
   num_immutable = 0;
 
   num_immutable += (mapxy(c->position[dim_x] - 1,
-                          c->position[dim_y]    ) == ter_wall_immutable);
+                          c->position[dim_y]) == ter_wall_immutable);
   num_immutable += (mapxy(c->position[dim_x] + 1,
-                          c->position[dim_y]    ) == ter_wall_immutable);
-  num_immutable += (mapxy(c->position[dim_x]    ,
+                          c->position[dim_y]) == ter_wall_immutable);
+  num_immutable += (mapxy(c->position[dim_x],
                           c->position[dim_y] - 1) == ter_wall_immutable);
-  num_immutable += (mapxy(c->position[dim_x]    ,
+  num_immutable += (mapxy(c->position[dim_x],
                           c->position[dim_y] + 1) == ter_wall_immutable);
 
   return num_immutable > 1;
@@ -228,7 +257,8 @@ static void new_dungeon_level(dungeon_t *d, uint32_t dir)
   /* Eventually up and down will be independantly meaningful. *
    * For now, simply generate a new dungeon.                  */
 
-  switch (dir) {
+  switch (dir)
+  {
   case '<':
   case '>':
     new_dungeon(d);
@@ -238,26 +268,24 @@ static void new_dungeon_level(dungeon_t *d, uint32_t dir)
   }
 }
 
-
 uint32_t move_pc(dungeon_t *d, uint32_t dir)
 {
   pair_t next;
   uint32_t was_stairs = 0;
   char *wallmsg[] = {
-    "There's a wall in the way.",
-    "BUMP!",
-    "Ouch!",
-    "You stub your toe.",
-    "You can't go that way.",
-    "You admire the engravings.",
-    "Are you drunk?"
-  };
+      (char *)"There's a wall in the way.",
+      (char *)"BUMP!",
+      (char *)"Ouch!",
+      (char *)"You stub your toe.",
+      (char *)"You can't go that way.",
+      (char *)"You admire the engravings.",
+      (char *)"Are you drunk?"};
 
   next[dim_y] = d->pc.position[dim_y];
   next[dim_x] = d->pc.position[dim_x];
 
-
-  switch (dir) {
+  switch (dir)
+  {
   case 1:
   case 2:
   case 3:
@@ -273,7 +301,8 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir)
     next[dim_y]--;
     break;
   }
-  switch (dir) {
+  switch (dir)
+  {
   case 1:
   case 4:
   case 7:
@@ -289,32 +318,38 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir)
     next[dim_x]++;
     break;
   case '<':
-    if (mappair(d->pc.position) == ter_stairs_up) {
+    if (mappair(d->pc.position) == ter_stairs_up)
+    {
       was_stairs = 1;
       new_dungeon_level(d, '<');
     }
     break;
   case '>':
-    if (mappair(d->pc.position) == ter_stairs_down) {
+    if (mappair(d->pc.position) == ter_stairs_down)
+    {
       was_stairs = 1;
       new_dungeon_level(d, '>');
     }
     break;
   }
 
-  if (was_stairs) {
+  if (was_stairs)
+  {
     return 0;
   }
 
-  if ((dir != '>') && (dir != '<') && (mappair(next) >= ter_floor)) {
+  if ((dir != '>') && (dir != '<') && (mappair(next) >= ter_floor))
+  {
     move_character(d, &d->pc, next);
     dijkstra(d);
     dijkstra_tunnel(d);
 
     return 0;
-  } else if (mappair(next) < ter_floor) {
-    io_queue_message(wallmsg[rand() % (sizeof (wallmsg) /
-                                       sizeof (wallmsg[0]))]);
+  }
+  else if (mappair(next) < ter_floor)
+  {
+    io_queue_message(wallmsg[rand() % (sizeof(wallmsg) /
+                                       sizeof(wallmsg[0]))]);
     io_display(d);
   }
 

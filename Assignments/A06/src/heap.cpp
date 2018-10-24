@@ -3,7 +3,8 @@
 
 #undef min
 
-struct heap_node {
+struct heap_node
+{
   heap_node_t *next;
   heap_node_t *prev;
   heap_node_t *parent;
@@ -14,7 +15,8 @@ struct heap_node {
 };
 
 #define splice_heap_node_lists(n1, n2) ({ \
-  if ((n1) && (n2)) {                     \
+  if ((n1) && (n2))                       \
+  {                                       \
     (n1)->next->prev = (n2)->prev;        \
     (n2)->prev->next = (n1)->next;        \
     (n1)->next = (n2);                    \
@@ -40,11 +42,13 @@ void print_heap_node(heap_node_t *n, unsigned indent,
   heap_node_t *nc;
 
   printf("%*s%s\n", indent, "", print(n->datum));
-  if (!(nc = n->child)) {
+  if (!(nc = n->child))
+  {
     return;
   }
 
-  do {
+  do
+  {
     print_heap_node(nc, indent + 2, print);
     nc = nc->next;
   } while (nc != n->child);
@@ -54,15 +58,19 @@ void print_heap(heap_t *h, char *(*print)(const void *v))
 {
   heap_node_t *n;
 
-  if (h->min) {
+  if (h->min)
+  {
     printf("size = %u\n", h->size);
     printf("min = ");
     n = h->min;
-    do {
+    do
+    {
       print_heap_node(n, 0, print);
       n = n->next;
     } while (n != h->min);
-  } else {
+  }
+  else
+  {
     printf("(null)\n");
   }
 }
@@ -71,12 +79,14 @@ void print_heap_node_list(heap_node_t *n)
 {
   heap_node_t *hn;
 
-  if (!n) {
+  if (!n)
+  {
     return;
   }
 
   hn = n;
-  do {
+  do
+  {
     printf("%p ", hn->datum);
     hn = hn->next;
   } while (hn != n);
@@ -98,12 +108,15 @@ void heap_node_delete(heap_t *h, heap_node_t *hn)
   heap_node_t *next;
 
   hn->prev->next = NULL;
-  while (hn) {
-    if (hn->child) {
+  while (hn)
+  {
+    if (hn->child)
+    {
       heap_node_delete(h, hn->child);
-    } 
+    }
     next = hn->next;
-    if (h->datum_delete) {
+    if (h->datum_delete)
+    {
       h->datum_delete(hn->datum);
     }
     free(hn);
@@ -113,7 +126,8 @@ void heap_node_delete(heap_t *h, heap_node_t *hn)
 
 void heap_delete(heap_t *h)
 {
-  if (h->min) {
+  if (h->min)
+  {
     heap_node_delete(h, h->min);
   }
   h->min = NULL;
@@ -126,15 +140,19 @@ heap_node_t *heap_insert(heap_t *h, void *v)
 {
   heap_node_t *n;
 
-  n = calloc(1, sizeof (*n));
+  n = (heap_node_t *)calloc(1, sizeof(*n));
   n->datum = v;
 
-  if (h->min) {
+  if (h->min)
+  {
     insert_heap_node_in_list(n, h->min);
-  } else {
+  }
+  else
+  {
     n->next = n->prev = n;
   }
-  if (!h->min || (h->compare(v, h->min->datum) < 0)) {
+  if (!h->min || (h->compare(v, h->min->datum) < 0))
+  {
     h->min = n;
   }
   h->size++;
@@ -150,9 +168,12 @@ void *heap_peek_min(heap_t *h)
 static void heap_link(heap_t *h, heap_node_t *node, heap_node_t *root)
 {
   /*  remove_heap_node_from_list(node);*/
-  if (root->child) {
+  if (root->child)
+  {
     insert_heap_node_in_list(node, root->child);
-  } else {
+  }
+  else
+  {
     root->child = node;
     node->next = node->prev = node;
   }
@@ -169,16 +190,19 @@ static void heap_consolidate(heap_t *h)
                        * to the limit of a 64-bit address space,  *
                        * and much faster than any lg calculation. */
 
-  memset(a, 0, sizeof (a));
+  memset(a, 0, sizeof(a));
 
   h->min->prev->next = NULL;
 
-  for (x = n = h->min; n; x = n) {
+  for (x = n = h->min; n; x = n)
+  {
     n = n->next;
 
-    while (a[x->degree]) {
+    while (a[x->degree])
+    {
       y = a[x->degree];
-      if (h->compare(x->datum, y->datum) > 0) {
+      if (h->compare(x->datum, y->datum) > 0)
+      {
         swap(x, y);
       }
       a[x->degree] = NULL;
@@ -187,14 +211,20 @@ static void heap_consolidate(heap_t *h)
     a[x->degree] = x;
   }
 
-  for (h->min = NULL, i = 0; i < 64; i++) {
-    if (a[i]) {
-      if (h->min) {
+  for (h->min = NULL, i = 0; i < 64; i++)
+  {
+    if (a[i])
+    {
+      if (h->min)
+      {
         insert_heap_node_in_list(a[i], h->min);
-        if (h->compare(a[i]->datum, h->min->datum) < 0) {
+        if (h->compare(a[i]->datum, h->min->datum) < 0)
+        {
           h->min = a[i];
         }
-      } else {
+      }
+      else
+      {
         h->min = a[i];
         a[i]->next = a[i]->prev = a[i];
       }
@@ -209,14 +239,20 @@ void *heap_remove_min(heap_t *h)
 
   v = NULL;
 
-  if (h->min) {
+  if (h->min)
+  {
     v = h->min->datum;
-    if (h->size == 1) {
+    if (h->size == 1)
+    {
       free(h->min);
       h->min = NULL;
-    } else {
-      if ((n = h->min->child)) {
-        for (; n->parent; n = n->next) {
+    }
+    else
+    {
+      if ((n = h->min->child))
+      {
+        for (; n->parent; n = n->next)
+        {
           n->parent = NULL;
         }
       }
@@ -240,38 +276,44 @@ void *heap_remove_min(heap_t *h)
 int heap_combine(heap_t *h, heap_t *h1, heap_t *h2)
 {
   if (h1->compare != h2->compare ||
-      h1->datum_delete != h2->datum_delete) {
+      h1->datum_delete != h2->datum_delete)
+  {
     return 1;
   }
 
   h->compare = h1->compare;
   h->datum_delete = h1->datum_delete;
 
-  if (!h1->min) {
+  if (!h1->min)
+  {
     h->min = h2->min;
     h->size = h2->size;
-  } else if (!h2->min) {
+  }
+  else if (!h2->min)
+  {
     h->min = h1->min;
     h->size = h1->size;
-  } else {
-    h->min = ((h->compare(h1->min->datum, h2->min->datum) < 0) ?
-              h1->min                                          :
-              h2->min);
+  }
+  else
+  {
+    h->min = ((h->compare(h1->min->datum, h2->min->datum) < 0) ? h1->min : h2->min);
     splice_heap_node_lists(h1->min, h2->min);
   }
 
-  memset(h1, 0, sizeof (*h1));
-  memset(h2, 0, sizeof (*h2));
+  memset(h1, 0, sizeof(*h1));
+  memset(h2, 0, sizeof(*h2));
 
   return 0;
 }
 
 static void heap_cut(heap_t *h, heap_node_t *n, heap_node_t *p)
 {
-  if (!--p->degree) {
+  if (!--p->degree)
+  {
     p->child = NULL;
   }
-  if (p->child == n) {
+  if (p->child == n)
+  {
     p->child = p->child->next;
   }
   remove_heap_node_from_list(n);
@@ -284,10 +326,14 @@ static void heap_cascading_cut(heap_t *h, heap_node_t *n)
 {
   heap_node_t *p;
 
-  if ((p = n->parent)) {
-    if (!n->mark) {
+  if ((p = n->parent))
+  {
+    if (!n->mark)
+    {
       n->mark = 1;
-    } else {
+    }
+    else
+    {
       heap_cut(h, n, p);
       heap_cascading_cut(h, n);
     }
@@ -296,11 +342,13 @@ static void heap_cascading_cut(heap_t *h, heap_node_t *n)
 
 int heap_decrease_key(heap_t *h, heap_node_t *n, void *v)
 {
-  if (h->compare(n->datum, v) <= 0) {
+  if (h->compare(n->datum, v) <= 0)
+  {
     return 1;
   }
 
-  if (h->datum_delete) {
+  if (h->datum_delete)
+  {
     h->datum_delete(n->datum);
   }
   n->datum = v;
@@ -319,11 +367,13 @@ int heap_decrease_key_no_replace(heap_t *h, heap_node_t *n)
 
   p = n->parent;
 
-  if (p && (h->compare(n->datum, p->datum) < 0)) {
+  if (p && (h->compare(n->datum, p->datum) < 0))
+  {
     heap_cut(h, n, p);
     heap_cascading_cut(h, p);
   }
-  if (h->compare(n->datum, h->min->datum) < 0) {
+  if (h->compare(n->datum, h->min->datum) < 0)
+  {
     h->min = n;
   }
 
@@ -334,14 +384,14 @@ int heap_decrease_key_no_replace(heap_t *h, heap_node_t *n)
 
 int32_t compare(const void *key, const void *with)
 {
-  return *((int *) key) - *((int *) with);
+  return *((int *)key) - *((int *)with);
 }
 
 char *print_int(const void *v)
 {
   static char out[640];
 
-  snprintf(out, 640, "%d", *((int *) v));
+  snprintf(out, 640, "%d", *((int *)v));
 
   return out;
 }
@@ -355,34 +405,39 @@ int main(int argc, char *argv[])
   int i, j;
   int n;
 
-  if (argc == 2) {
+  if (argc == 2)
+  {
     n = atoi(argv[1]);
-  } else {
+  }
+  else
+  {
     n = 20;
   }
 
-  keys = calloc(n, sizeof (*keys));
-  a = calloc(n, sizeof (*a));
+  keys = calloc(n, sizeof(*keys));
+  a = calloc(n, sizeof(*a));
 
   heap_init(&h, compare, free);
 
-  for (i = 0; i < n; i++) {
-    keys[i] = malloc(sizeof (*keys[i]));
+  for (i = 0; i < n; i++)
+  {
+    keys[i] = malloc(sizeof(*keys[i]));
     *keys[i] = i;
     a[i] = heap_insert(&h, keys[i]);
   }
 
   print_heap(&h, print_int);
   printf("------------------------------------\n");
-  
+
   heap_remove_min(&h);
-  keys[0] = malloc(sizeof (*keys[0]));
+  keys[0] = malloc(sizeof(*keys[0]));
   *keys[0] = 0;
   a[0] = heap_insert(&h, keys[0]);
-  for (i = 0; i < 100 * n; i++) {
+  for (i = 0; i < 100 * n; i++)
+  {
     j = rand() % n;
     /*    p = malloc (sizeof (*p));*/
-    (*(int *) a[j]->datum)--;
+    (*(int *)a[j]->datum)--;
     /*    (*p)--;*/
     heap_decrease_key_no_replace(&h, a[j]);
     print_heap(&h, print_int);
