@@ -79,6 +79,7 @@ typedef struct dungeon
   uint32_t time;
   uint32_t is_new;
   uint32_t quit;
+  char remembered_map[DUNGEON_Y][DUNGEON_X];
 } dungeon_t;
 
 void init_dungeon(dungeon_t *d);
@@ -89,5 +90,7 @@ void render_dungeon(dungeon_t *d);
 int write_dungeon(dungeon_t *d, char *file);
 int read_dungeon(dungeon_t *d, char *file);
 int read_pgm(dungeon_t *d, char *pgm);
+
+void reset_remembered_map(dungeon_t *d);
 
 #endif

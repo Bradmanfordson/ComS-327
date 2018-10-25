@@ -619,49 +619,75 @@ void io_display(dungeon_t *d)
   {
     for (x = 0; x < 80; x++)
     {
-      if ((pc_x - 5 <= (int)x && (int)x <= pc_x + 5) &&
-          (pc_y - 5 <= (int)y && (int)y <= pc_y + 5))
+      // if (d->remembered_map[y][x])
+      // {
+      //   mvaddch(y + 1, x, d->remembered_map[y][x]);
+      // }
+      if (d->remembered_map[y][x])
       {
-        if (d->character_pos[y][x])
+        if ((pc_x - 3 <= (int)x && (int)x <= pc_x + 3) &&
+            (pc_y - 3 <= (int)y && (int)y <= pc_y + 3))
         {
-          mvaddch(y + 1, x, d->character_pos[y][x]->symbol);
-        }
-        else
-        {
-          switch (mapxy(x, y))
+          if (d->character_pos[y][x])
           {
-          case ter_wall:
-          case ter_wall_immutable:
-          case ter_unknown:
-            mvaddch(y + 1, x, ' ');
-            break;
-          case ter_floor:
-          case ter_floor_room:
-            mvaddch(y + 1, x, '.');
-            break;
-          case ter_floor_hall:
-            mvaddch(y + 1, x, '#');
-            break;
-          case ter_debug:
-            mvaddch(y + 1, x, '*');
-            break;
-          case ter_stairs_up:
-            mvaddch(y + 1, x, '<');
-            break;
-          case ter_stairs_down:
-            mvaddch(y + 1, x, '>');
-            break;
-          default:
-            /* Use zero as an error symbol, since it stands out somewhat, and it's *
+            // mvaddch(y + 1, x, d->character_pos[y][x]->symbol);
+            d->remembered_map[y][x] = d->character_pos[y][x]->symbol;
+          }
+          else
+          {
+            switch (mapxy(x, y))
+            {
+            case ter_wall:
+            case ter_wall_immutable:
+            case ter_unknown:
+              // mvaddch(y + 1, x, ' ');
+              d->remembered_map[y][x] = ' ';
+              break;
+            case ter_floor:
+            case ter_floor_room:
+              // mvaddch(y + 1, x, '.');
+              d->remembered_map[y][x] = '.';
+              break;
+            case ter_floor_hall:
+              // mvaddch(y + 1, x, '#');
+              d->remembered_map[y][x] = '#';
+              break;
+            case ter_debug:
+              // mvaddch(y + 1, x, '*');
+              d->remembered_map[y][x] = '*';
+              break;
+            case ter_stairs_up:
+              // mvaddch(y + 1, x, '<');
+              d->remembered_map[y][x] = '<';
+              break;
+            case ter_stairs_down:
+              // mvaddch(y + 1, x, '>');
+              d->remembered_map[y][x] = '>';
+              break;
+            default:
+              /* Use zero as an error symbol, since it stands out somewhat, and it's *
   * not otherwise used.                                                 */
-            mvaddch(y + 1, x, '0');
+              // mvaddch(y + 1, x, '0');
+              d->remembered_map[y][x] = '0';
+            }
           }
         }
       }
       else
       {
-        mvaddch(y + 1, x, ' ');
+        // mvaddch(y + 1, x, ' ');
+        d->remembered_map[y][x] = ' ';
       }
+    }
+  }
+
+  d->remembered_map[pc_y][pc_x] = '@';
+
+  for (y = 0; y < 21; y++)
+  {
+    for (x = 0; x < 80; x++)
+    {
+      mvaddch(y + 1, x, d->remembered_map[y][x]);
     }
   }
 

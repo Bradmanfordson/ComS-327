@@ -322,6 +322,7 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir)
     {
       was_stairs = 1;
       new_dungeon_level(d, '<');
+      reset_remembered_map(d);
     }
     break;
   case '>':
@@ -329,6 +330,7 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir)
     {
       was_stairs = 1;
       new_dungeon_level(d, '>');
+      reset_remembered_map(d);
     }
     break;
   }

@@ -705,6 +705,19 @@ void init_dungeon(dungeon_t *d)
   empty_dungeon(d);
   memset(&d->events, 0, sizeof(d->events));
   heap_init(&d->events, compare_events, event_delete);
+  reset_remembered_map(d);
+}
+
+void reset_remembered_map(dungeon_t *d)
+{
+  int x, y;
+  for (y = 0; y < 21; y++)
+  {
+    for (x = 0; x < 80; x++)
+    {
+      d->remembered_map[y][x] = ' ';
+    }
+  }
 }
 
 int write_dungeon_map(dungeon_t *d, FILE *f)
