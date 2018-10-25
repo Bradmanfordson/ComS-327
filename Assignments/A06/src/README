@@ -1,0 +1,17 @@
+ Allen Bradley Roberts
+ 
+ I ported everything from C to C++ and turned Character into a Class. I also
+ turned NPC and PC into classes that inherit from Character. My biggest issue
+ with porting was correcting the errors but I was able to fix the errors within
+ a couple of hours.
+
+ I implemented a teleportation function so that when the player pressed 'g'
+ they were put into teleportation mode until they pressed 'g' again which 
+ exits normally or press 'r' which places them in a random position in the 
+ dungeon then exits. 
+
+ I am having trouble getting PC Fog of War working correctly. I need a bit more
+ time and assume the TA's wont close the submission until 11AM tomorrow.
+ However, I'm turning this solution in right now just to play it safe. 
+ Hopefully, I am able to turn in another copy later tonight or early tomorrow
+ morning with a correctly implemented Fog of War.
