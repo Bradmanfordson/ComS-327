@@ -544,6 +544,9 @@ Thursday October 25, 2018:
         - just parse monster descriptions from a file.... EZ
         - basically just parse data in and store it into a data structure
         - basically the assignment is just printing shit to the console... EZ
+        professor:
+        ----------
+            - has a vector of monsters and a vector of objects
 
     How do we parse things?
     -----------------------
@@ -580,6 +583,33 @@ Thursday October 25, 2018:
                     cout << s << endl; // prints "line"
 
 
+
+                    vector<int> v;
+
+                    for ( i = 0; i < 100; i++){
+                        v.push_back(i);
+                    }
+                    for( i = 0; i < 100; i++){
+                        cout << v[i] << endl;
+                    }
+
+                    vector<int>::iterator it;
+
+                    // begin() returns iterator referening first item in container
+                    // end() returns an iterator that occurs after the container (not in!)
+                    for( it = v.begin(); it != v.end(); it++ ){
+                        // overload dereference operator to get item referenced by iterator
+                        cout << *it << endl;
+                    } // basically this looks like it acts like a foreach
+
+                    cout << endl;
+
+                    for( i = 0; i < (int) v.size(); i++){
+                        cout << v[i] << " ";
+                    }
+                    cout << endl;
+
+
                     return 0;
                 }
 
@@ -597,7 +627,7 @@ Thursday October 25, 2018:
 
     Misc Notes:
     -----------
-    unsigned char;
-    signed char; <-| These two are not the same thing
-    char;        <-|      
+    unsigned char; <--\
+    signed char;   <-- |-- none of these are the same thing
+    char;          <--/      
     
