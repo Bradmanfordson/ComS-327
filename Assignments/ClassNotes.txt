@@ -537,4 +537,67 @@ Thursday October 18:
         - my gosh, figure this out too
 
 
+Thursday October 25, 2018:
+--------------------------
+    parsing monster descriptions:
+    -----------------------------
+        - just parse monster descriptions from a file.... EZ
+        - basically just parse data in and store it into a data structure
+        - basically the assignment is just printing shit to the console... EZ
+
+    How do we parse things?
+    -----------------------
+        - ifstream - C++ way to do parsing
+            ifstream i;
+            i.peek(); // lets you look at next chatacter in the stream without removing it form the stream
+            get(); // returns and consumes the next character
+            getline(); //dur
+
+        -Example code that does basic input:
+        ------------------------------------
+                #include <iostream>
+                #include <fstream>
+                #include <string>
+                
+                using namespace std;
+
+                int main(int argc, char *argv[]){
+                    ifstream f("input_file.txt"); // input file stream
+                    int i; // use an int to go through the file, every file contains EOF which is not a character
+
+                    i = f.get();
+                    cout << i << endl; // output is the character value of l: 108 (ascii value of l)
+                    cout << (char)i << endl; // output the character: l
+
+                    cout << (char) f.get() << endl; // prints the next value in the file.
+
+                    string s;
+
+                    getline(f, s);
+                    cout << s << endl; // prints the next line
+
+                    f >> s; // basically get input until it's a space ( ie. "line")
+                    cout << s << endl; // prints "line"
+
+
+                    return 0;
+                }
+
+                /* Textfile we're reading from: input_file.txt
+                ----------------------------------------------
+                line 1
+                line 2
+                line 3
+
+                line 5
+
+                line 7
+                */ 
+
+
+    Misc Notes:
+    -----------
+    unsigned char;
+    signed char; <-| These two are not the same thing
+    char;        <-|      
     
