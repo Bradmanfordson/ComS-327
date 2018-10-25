@@ -16,8 +16,8 @@ all: $(BIN) etags clean
 $(BIN): $(OBJS)
 	@$(ECHO) Linking $@
 	@$(CXX) $^ -o $@ $(LDFLAGS)
-	make clean
-	./rlg327 -n 5
+	# make clean
+	# ./rlg327 -n 5
 
 
 -include $(OBJS:.o=.d)
@@ -35,7 +35,7 @@ $(BIN): $(OBJS)
 clean:
 	@$(ECHO) Removing all generated files
 	@$(RM) *.o *.d TAGS core vgcore.* gmon.out
-	# @$(RM) $(BIN)
+	@$(RM) $(BIN)
 
 clobber: clean
 	@$(ECHO) Removing backup files

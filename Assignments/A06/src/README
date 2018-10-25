@@ -10,8 +10,8 @@
  exits normally or press 'r' which places them in a random position in the 
  dungeon then exits. 
 
- I am having trouble getting PC Fog of War working correctly. I need a bit more
- time and assume the TA's wont close the submission until 11AM tomorrow.
- However, I'm turning this solution in right now just to play it safe. 
- Hopefully, I am able to turn in another copy later tonight or early tomorrow
- morning with a correctly implemented Fog of War.
+ I was able to add the PC fog of war. Basically I made a char map and anything
+ the PC saw was added to the map and the map was what was rendered instead of
+ the normal dungeon. Seems to work flawlessly. It currently remembers monsters
+ however the monsters are shown several times if the monster chases the PC.
+ I don't think this is an issue though.

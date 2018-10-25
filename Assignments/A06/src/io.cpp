@@ -687,6 +687,43 @@ void io_display(dungeon_t *d)
   {
     for (x = 0; x < 80; x++)
     {
+      if (d->remembered_map[y][x] == '@' && ((int)x != pc_x || (int)y != pc_y))
+      {
+        switch (mapxy(x, y))
+        {
+        case ter_wall:
+        case ter_wall_immutable:
+        case ter_unknown:
+          // mvaddch(y + 1, x, ' ');
+          d->remembered_map[y][x] = ' ';
+          break;
+        case ter_floor:
+        case ter_floor_room:
+          // mvaddch(y + 1, x, '.');
+          d->remembered_map[y][x] = '.';
+          break;
+        case ter_floor_hall:
+          // mvaddch(y + 1, x, '#');
+          d->remembered_map[y][x] = '#';
+          break;
+        case ter_debug:
+          // mvaddch(y + 1, x, '*');
+          d->remembered_map[y][x] = '*';
+          break;
+        case ter_stairs_up:
+          // mvaddch(y + 1, x, '<');
+          d->remembered_map[y][x] = '<';
+          break;
+        case ter_stairs_down:
+          // mvaddch(y + 1, x, '>');
+          d->remembered_map[y][x] = '>';
+          break;
+        case ter_stairs:
+        default:
+          break;
+        }
+      }
+
       mvaddch(y + 1, x, d->remembered_map[y][x]);
     }
   }
