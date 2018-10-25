@@ -21,5 +21,6 @@ uint32_t in_corner(dungeon_t *d, character *c);
 uint32_t against_wall(dungeon_t *d, character *c);
 uint32_t move_pc(dungeon_t *d, uint32_t dir);
 void move_character(dungeon_t *d, character *c, pair_t next);
+uint32_t teleport_pc(dungeon_t *d, uint32_t dir);
 
 #endif

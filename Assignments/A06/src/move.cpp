@@ -355,3 +355,71 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir)
 
   return 1;
 }
+
+uint32_t teleport_pc(dungeon_t *d, uint32_t dir)
+{
+  pair_t next;
+  char *wallmsg[] = {
+      (char *)"There's a wall in the way.",
+      (char *)"BUMP!",
+      (char *)"Ouch!",
+      (char *)"You stub your toe.",
+      (char *)"You can't go that way.",
+      (char *)"You admire the engravings.",
+      (char *)"Are you drunk?"};
+
+  next[dim_y] = d->pc.position[dim_y];
+  next[dim_x] = d->pc.position[dim_x];
+
+  switch (dir)
+  {
+  case 1:
+  case 2:
+  case 3:
+    next[dim_y]++;
+    break;
+  case 4:
+  case 5:
+  case 6:
+    break;
+  case 7:
+  case 8:
+  case 9:
+    next[dim_y]--;
+    break;
+  }
+  switch (dir)
+  {
+  case 1:
+  case 4:
+  case 7:
+    next[dim_x]--;
+    break;
+  case 2:
+  case 5:
+  case 8:
+    break;
+  case 3:
+  case 6:
+  case 9:
+    next[dim_x]++;
+    break;
+  }
+
+  if ((dir != '>') && (dir != '<') && (mappair(next) != ter_wall_immutable))
+  {
+    move_character(d, &d->pc, next);
+    dijkstra(d);
+    dijkstra_tunnel(d);
+
+    return 0;
+  }
+  else if (mappair(next) == ter_wall_immutable)
+  {
+    io_queue_message(wallmsg[rand() % (sizeof(wallmsg) /
+                                       sizeof(wallmsg[0]))]);
+    io_display(d);
+  }
+
+  return 1;
+}
