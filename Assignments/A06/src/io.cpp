@@ -256,6 +256,7 @@ uint32_t io_teleport_pc_random(dungeon_t *d)
   }
   dijkstra(d);
   dijkstra_tunnel(d);
+  io_display(d);
 
   return 0;
 }
@@ -263,7 +264,7 @@ uint32_t io_teleport_pc_random(dungeon_t *d)
 uint32_t io_teleport_pc(dungeon_t *d)
 {
   d->pc.symbol = '*';
-  io_display(d);
+  io_display_all(d);
   while (1)
   {
     switch (getch())
@@ -318,7 +319,7 @@ uint32_t io_teleport_pc(dungeon_t *d)
 
       return 0;
     }
-    io_display(d);
+    io_display_all(d);
   }
 }
 

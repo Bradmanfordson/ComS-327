@@ -408,7 +408,7 @@ uint32_t teleport_pc(dungeon_t *d, uint32_t dir)
 
   if ((dir != '>') && (dir != '<') && (mappair(next) != ter_wall_immutable))
   {
-    move_character(d, &d->pc, next);
+    move_character_all(d, &d->pc, next);
     dijkstra(d);
     dijkstra_tunnel(d);
 
@@ -418,8 +418,102 @@ uint32_t teleport_pc(dungeon_t *d, uint32_t dir)
   {
     io_queue_message(wallmsg[rand() % (sizeof(wallmsg) /
                                        sizeof(wallmsg[0]))]);
-    io_display(d);
+    io_display_all(d);
   }
 
   return 1;
+}
+
+void move_character_all(dungeon_t *d, character *c, pair_t next)
+{
+  if (charpair(next) &&
+      ((next[dim_y] != c->position[dim_y]) ||
+       (next[dim_x] != c->position[dim_x])))
+  {
+    do_combat(d, c, charpair(next));
+  }
+  else
+  {
+    /* No character in new position. */
+
+    d->character_pos[c->position[dim_y]][c->position[dim_x]] = NULL;
+    c->position[dim_y] = next[dim_y];
+    c->position[dim_x] = next[dim_x];
+    d->character_pos[c->position[dim_y]][c->position[dim_x]] = c;
+  }
+}
+
+void do_moves_all(dungeon_t *d)
+{
+  pair_t next;
+  character *c;
+  event_t *e;
+
+  /* Remove the PC when it is PC turn.  Replace on next call.  This allows *
+   * use to completely uninit the heap when generating a new level without *
+   * worrying about deleting the PC.                                       */
+
+  if (pc_is_alive(d))
+  {
+    /* The PC always goes first one a tie, so we don't use new_event().  *
+     * We generate one manually so that we can set the PC sequence       *
+     * number to zero.                                                   */
+    e = (event_t *)malloc(sizeof(*e));
+    e->type = event_character_turn;
+    /* Hack: New dungeons are marked.  Unmark and ensure PC goes at d->time, *
+     * otherwise, monsters get a turn before the PC.                         */
+    if (d->is_new)
+    {
+      d->is_new = 0;
+      e->time = d->time;
+    }
+    else
+    {
+      e->time = d->time + (1000 / d->pc.speed);
+    }
+    e->sequence = 0;
+    e->c = &d->pc;
+    heap_insert(&d->events, e);
+  }
+
+  while (pc_is_alive(d) &&
+         (e = (event_t *)heap_remove_min(&d->events)) &&
+         ((e->type != event_character_turn) || (e->c != &d->pc)))
+  {
+    d->time = e->time;
+    if (e->type == event_character_turn)
+    {
+      c = e->c;
+    }
+    if (!c->alive)
+    {
+      if (d->character_pos[c->position[dim_y]][c->position[dim_x]] == c)
+      {
+        d->character_pos[c->position[dim_y]][c->position[dim_x]] = NULL;
+      }
+      if (c != &d->pc)
+      {
+        event_delete(e);
+      }
+      continue;
+    }
+
+    npc_next_pos(d, c, next);
+    move_character(d, c, next);
+
+    heap_insert(&d->events, update_event(d, e, 1000 / c->speed));
+  }
+
+  io_display_all(d);
+  if (pc_is_alive(d) && e->c == &d->pc)
+  {
+    c = e->c;
+    d->time = e->time;
+    /* Kind of kludgey, but because the PC is never in the queue when   *
+     * we are outside of this function, the PC event has to get deleted *
+     * and recreated every time we leave and re-enter this function.    */
+    e->c = NULL;
+    event_delete(e);
+    io_handle_input(d);
+  }
 }

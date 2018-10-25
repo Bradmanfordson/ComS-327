@@ -23,4 +23,7 @@ uint32_t move_pc(dungeon_t *d, uint32_t dir);
 void move_character(dungeon_t *d, character *c, pair_t next);
 uint32_t teleport_pc(dungeon_t *d, uint32_t dir);
 
+void do_moves_all(dungeon_t *d);
+void move_character_all(dungeon_t *d, character *c, pair_t next);
+
 #endif
