@@ -537,4 +537,117 @@ Thursday October 18:
         - my gosh, figure this out too
 
 
+Thursday October 25, 2018:
+--------------------------
+    parsing monster descriptions:
+    -----------------------------
+        - just parse monster descriptions from a file.... EZ
+        - basically just parse data in and store it into a data structure
+        - basically the assignment is just printing shit to the console... EZ
+        professor:
+        ----------
+            - has a vector of monsters and a vector of objects
+
+    How do we parse things?
+    -----------------------
+        - ifstream - C++ way to do parsing
+            ifstream i;
+            i.peek(); // lets you look at next chatacter in the stream without removing it form the stream
+            get(); // returns and consumes the next character
+            getline(); //dur
+
+        -Example code that does basic input:
+        ------------------------------------
+                #include <iostream>
+                #include <fstream>
+                #include <string>
+                
+                using namespace std;
+
+                int main(int argc, char *argv[]){
+                    ifstream f("input_file.txt"); // input file stream
+                    int i; // use an int to go through the file, every file contains EOF which is not a character
+
+                    i = f.get();
+                    cout << i << endl; // output is the character value of l: 108 (ascii value of l)
+                    cout << (char)i << endl; // output the character: l
+
+                    cout << (char) f.get() << endl; // prints the next value in the file.
+
+                    string s;
+
+                    getline(f, s);
+                    cout << s << endl; // prints the next line
+
+                    f >> s; // basically get input until it's a space ( ie. "line")
+                    cout << s << endl; // prints "line"
+
+
+
+                    vector<int> v;
+
+                    for ( i = 0; i < 100; i++){
+                        v.push_back(i);
+                    }
+                    for( i = 0; i < 100; i++){
+                        cout << v[i] << endl;
+                    }
+
+                    vector<int>::iterator it;
+
+                    // begin() returns iterator referening first item in container
+                    // end() returns an iterator that occurs after the container (not in!)
+                    for( it = v.begin(); it != v.end(); it++ ){
+                        // overload dereference operator to get item referenced by iterator
+                        cout << *it << endl;
+                    } // basically this looks like it acts like a foreach
+
+                    cout << endl;
+
+                    for( i = 0; i < (int) v.size(); i++){
+                        cout << v[i] << " ";
+                    }
+                    cout << endl;
+
+
+                    return 0;
+                }
+
+                /* Textfile we're reading from: input_file.txt
+                ----------------------------------------------
+                line 1
+                line 2
+                line 3
+
+                line 5
+
+                line 7
+                */ 
+
+
+    Misc Notes:
+    -----------
+    unsigned char; <--\
+    signed char;   <---|---- none of these are the same thing
+    char;          <--/    
+
+
+Tuesday, October 30th 2018:
+---------------------------
+    HW 07:
+    ------
+        - parse everything as far down aslong as it's useful
+        - store colors as integers, these are in ncurses.h
+            - ex: COLOR_BLACK
+        - abilities correspond with bits in a bit vector
+            - find the value of the bit it corresponds with and OR this with whatever
+        - If there is a line that is greater than 77 characters then reject the monster
+        Prof:
+        -----
+            - create a monster description class, Create a monster description instance, store it in a vector blah blah blah
+        
+    Class Notes:
+    ------------
+        - Basically we just implemented our own version of String with operators n shit
+        - can confirm, python is better.
     
