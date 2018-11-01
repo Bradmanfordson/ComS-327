@@ -1,8 +1,19 @@
-Usage: ./rlg327 <monster_description.txt>
+Usage: ./rlg327
 
 I created a parser.cpp which is an independent program from the rlg327 project.
+
+I created a simple dice class which holds 3 integer values based on what dice
+information is given in the monster description.
+
 I created a monster class which holds all of the appropriate values the monster
-needs. I then itterate through the given file and store the desired values in
-my monster class then I put the monster information into a vector<monster> 
-monster_list that I created. Once all of the monsters have been read in the 
-program prints the monsters to the screen and exits.
+needs as either a std::string, dice, or integer. 
+
+My program, parser.cpp, pulls the file $HOME/.rlg327/monster_desc.txt. It then
+itterates through the given file and stores the desired values in my monster 
+class then I put the monster information into a vector<monster> monster_list 
+that I created. Once all of the monsters have beenread in, the program prints 
+the monsters to the screen and exits.
+
+My program handles the very basic error checking that was required. I did NOT
+implement any further error checking, I'm under the impression that we don't 
+have too.
