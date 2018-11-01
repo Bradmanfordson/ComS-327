@@ -1,8 +1,0 @@
-Usage: ./rlg327 <monster_description.txt>
-
-I created a parser.cpp which is an independent program from the rlg327 project.
-I created a monster class which holds all of the appropriate values the monster
-needs. I then itterate through the given file and store the desired values in
-my monster class then I put the monster information into a vector<monster> 
-monster_list that I created. Once all of the monsters have been read in the 
-program prints the monsters to the screen and exits.

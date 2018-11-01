@@ -3,6 +3,16 @@
 #include <string>
 #include <vector>
 #include <ncurses.h>
+#include <sys/stat.h>
+#include <cstring>
+
+class dice
+{
+  public:
+    int base;
+    int number;
+    int sides;
+};
 
 class monster
 {
@@ -11,10 +21,10 @@ class monster
     std::string description;
     //    int color;
     std::string color;
-    std::string speed;
+    dice speed;
     std::string ability;
-    std::string health;
-    std::string damage;
+    dice health;
+    dice damage;
     char symbol;
     int rarity;
 
@@ -24,50 +34,63 @@ class monster
         description = "";
         //        color = NULL;
         color = "";
-        speed = "";
+        speed.base = -1;
+        speed.number = -1;
+        speed.sides = -1;
         ability = "";
-        health = "";
-        damage = "";
+        health.sides = -1;
+        health.base = -1;
+        health.number = -1;
+        damage.sides = -1;
+        damage.number = -1;
+        damage.base = -1;
         symbol = ' ';
         rarity = -1;
     }
 
     void print_monster()
     {
-        std::cout << "Name: " << name << std::endl;
-        std::cout << "Symbol: " << symbol << std::endl;
-        std::cout << "Speed: " << speed << std::endl;
-        std::cout << "Damage: " << damage << std::endl;
-        std::cout << "Ability: " << ability << std::endl;
-        std::cout << "Rarity: " << rarity << std::endl;
-        std::cout << "Health: " << health << std::endl;
-        std::cout << "Color: " << color << std::endl;
-        std::cout << "Description: " << std::endl
-                  << description << std::endl;
+        std::cout << name << std::endl;
+        std::cout << description;
+        std::cout << symbol << std::endl;
+        std::cout << color << std::endl;
+        std::cout << speed.base << "+" << speed.number << "d" << speed.sides << std::endl;
+        std::cout << ability << std::endl;
+        std::cout << health.base << "+" << health.number << "d" << health.sides << std::endl;
+        std::cout << damage.base << "+" << damage.number << "d" << damage.sides << std::endl;
+        std::cout << rarity << std::endl;
         std::cout << std::endl;
     }
 };
 
 int main(int argc, char *argv[])
 {
-    std::ifstream file;
+    std::string path = getenv("HOME");
+    path += "/.rlg327/monster_desc.txt";
 
-    if (!std::ifstream(argv[1]))
+    std::ifstream file(path);
+
+    //    if (!std::ifstream(argv[1])) {
+    //        std::cout << "File not found." << std::endl;
+    //        std::cout << "Usage: ./rlg327 <Monster_Description_File>" << std::endl;
+    //    } else {
+
+    //        file.open(argv[1]);
+
+    monster m;
+    std::string s;
+
+    std::vector<monster> monster_list;
+
+    getline(file, s);
+    //std::cout << s << std::endl;
+    if (s != "RLG327 MONSTER DESCRIPTION 1")
     {
-        std::cout << "File not found." << std::endl;
-        std::cout << "Usage: ./rlg327 <Monster_Description_File>" << std::endl;
+        std::cout << "Invalid file header." << std::endl;
+        //            std::cout << "Usage: ./rlg327 <Monster_Description_File>" << std::endl;
     }
     else
     {
-
-        file.open(argv[1]);
-
-        monster m;
-        std::string s;
-
-        std::vector<monster> monster_list;
-
-        getline(file, s);
         getline(file, s);
 
         char symbol;
@@ -83,10 +106,10 @@ int main(int argc, char *argv[])
                     file >> s;
                     if (s == "NAME")
                     {
-                        if (m.name == "")
+                        if (m.name.empty())
                         {
                             getline(file, s);
-                            m.name = s;
+                            m.name = s.substr(1, s.size());
                         }
                         else
                         {
@@ -109,10 +132,10 @@ int main(int argc, char *argv[])
                     }
                     else if (s == "COLOR")
                     {
-                        if (m.color == "")
+                        if (m.color.empty())
                         {
                             getline(file, s);
-                            m.color = s;
+                            m.color = s.substr(1, s.size());
                         }
                         else
                         {
@@ -122,7 +145,7 @@ int main(int argc, char *argv[])
                     }
                     else if (s == "DESC")
                     {
-                        if (m.description == "")
+                        if (m.description.empty())
                         {
                             getline(file, s); // this gets rid of the original end line after DESC
                             while (file.peek() != '.')
@@ -149,10 +172,12 @@ int main(int argc, char *argv[])
                     }
                     else if (s == "SPEED")
                     {
-                        if (m.speed == "")
+                        if (m.speed.base == -1 || m.speed.number == -1 || m.speed.sides == -1)
                         {
                             file >> s;
-                            m.speed = s;
+                            m.speed.base = std::stoi(s.substr(0, s.find('+')));
+                            m.speed.number = std::stoi(s.substr(s.find('+'), s.find('d')));
+                            m.speed.sides = std::stoi(s.substr(s.find('d') + 1, s.length()));
                         }
                         else
                         {
@@ -162,10 +187,12 @@ int main(int argc, char *argv[])
                     }
                     else if (s == "DAM")
                     {
-                        if (m.damage == "")
+                        if (m.damage.base == -1 || m.damage.number == -1 || m.damage.sides == -1)
                         {
                             file >> s;
-                            m.damage = s;
+                            m.damage.base = std::stoi(s.substr(0, s.find('+')));
+                            m.damage.number = std::stoi(s.substr(s.find('+'), s.find('d')));
+                            m.damage.sides = std::stoi(s.substr(s.find('d') + 1, s.length()));
                         }
                         else
                         {
@@ -175,10 +202,12 @@ int main(int argc, char *argv[])
                     }
                     else if (s == "HP")
                     {
-                        if (m.health == "")
+                        if (m.health.base == -1 || m.health.number == -1 || m.health.sides == -1)
                         {
                             file >> s;
-                            m.health = s;
+                            m.health.base = std::stoi(s.substr(0, s.find('+')));
+                            m.health.number = std::stoi(s.substr(s.find('+'), s.find('d')));
+                            m.health.sides = std::stoi(s.substr(s.find('d') + 1, s.length()));
                         }
                         else
                         {
@@ -188,10 +217,10 @@ int main(int argc, char *argv[])
                     }
                     else if (s == "ABIL")
                     {
-                        if (m.ability == "")
+                        if (m.ability.empty())
                         {
                             getline(file, s);
-                            m.ability = s;
+                            m.ability = s.substr(1, s.size());
                         }
                         else
                         {
@@ -217,15 +246,15 @@ int main(int argc, char *argv[])
                     {
                     }
                 }
-                if (m.name != "" &&
+                if (!m.name.empty() &&
                     m.rarity != -1 &&
-                    m.ability != "" &&
-                    m.health != "" &&
-                    m.description != "" &&
-                    m.color != "" &&
+                    !m.ability.empty() &&
+                    (m.health.base != -1 && m.health.number != -1 && m.health.sides != -1) &&
+                    !m.description.empty() &&
+                    !m.color.empty() &&
                     m.symbol != ' ' &&
-                    m.damage != "" &&
-                    m.speed != "")
+                    (m.damage.base != -1 && m.damage.number != -1 && m.damage.sides != -1) &&
+                    (m.speed.base != -1 && m.speed.number != -1 && m.speed.sides != -1))
                 {
                     monster_list.push_back(m);
                 }
@@ -240,10 +269,29 @@ int main(int argc, char *argv[])
             monster_list[i].print_monster();
         }
 
-        std::cout << "Number of Monsters: " << monster_list.size() << std::endl;
-
+        //            std::ofstream outFile;
+        //
+        //            mkdir(strcat(getenv("HOME"), "/.rlg327"), 0700);
+        //
+        //            outFile.open(path);
+        //
+        //            for (i = 0; i < (int) monster_list.size(); i++) {
+        //                outFile << monster_list[i].name << std::endl;
+        //                outFile << monster_list[i].description;
+        //                outFile << monster_list[i].symbol << std::endl;
+        //                outFile << monster_list[i].color << std::endl;
+        //                outFile << monster_list[i].speed.base << "+" << monster_list[i].speed.number << "d" << monster_list[i].speed.sides << std::endl;
+        //                outFile << monster_list[i].ability << std::endl;
+        //                outFile << monster_list[i].health.base << "+" << monster_list[i].health.number << "d" << monster_list[i].health.sides<< std::endl;
+        //                outFile << monster_list[i].damage.base << "+" << monster_list[i].damage.number << "d" << monster_list[i].damage.sides<< std::endl;
+        //                outFile << monster_list[i].rarity << std::endl;
+        //                outFile << std::endl;
+        //            }
+        //
+        //            outFile.close();
         file.close();
 
         return 0;
     }
 }
+//}
