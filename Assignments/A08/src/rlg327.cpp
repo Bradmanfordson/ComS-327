@@ -10,6 +10,7 @@
 #include "npc.h"
 #include "move.h"
 #include "io.h"
+#include "object.h"
 
 const char *victory =
     "\n                                       o\n"
@@ -88,9 +89,9 @@ int main(int argc, char *argv[])
   //////////////////////////////////////////////////////////////////////
   // May need to move these later. //
   parse_descriptions(&d);
-  //print_descriptions(&d);
+  // print_descriptions(&d);
   // destroy_descriptions(&d);
-  // //////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
 
   // return 0;
 
@@ -225,7 +226,6 @@ int main(int argc, char *argv[])
 
   srand(seed);
 
-  
   io_init_terminal();
   init_dungeon(&d);
 
@@ -245,6 +245,7 @@ int main(int argc, char *argv[])
   /* Ignoring PC position in saved dungeons.  Not a bug. */
   config_pc(&d);
   gen_monsters(&d);
+  // generate_objects(&d);
 
   io_display(&d);
   if (!do_load && !do_image)
@@ -303,6 +304,8 @@ int main(int argc, char *argv[])
     character_delete(d.PC);
   }
 
+  destroy_descriptions(&d);
+  // destroy_objects(&d);
   delete_dungeon(&d);
 
   return 0;

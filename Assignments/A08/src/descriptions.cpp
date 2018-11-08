@@ -1239,25 +1239,25 @@ npc *monster_description::gen_monster()
   return m;
 }
 
-object *object_description::gen_object()
-{
-  object *o;
-  o = new object();
+// object *object_description::gen_object()
+// {
+//   object *o;
+//   o = new object();
 
-  o->name = this->name.c_str();
-  o->description = this->description.c_str();
-  o->symbol = object_symbol[this->type];
-  o->type = this->type;
-  o->color = this->color;
-  o->damage = this->damage;
-  o->hit = this->hit.roll();
-  o->dodge = this->dodge.roll();
-  o->defense = this->defence.roll();
-  o->weight = this->weight.roll();
-  o->speed = this->speed.roll();
-  o->attribute = this->attribute.roll();
-  o->value = this->value.roll();
-  o->seen = false;
+//   o->name = this->name.c_str();
+//   o->description = this->description.c_str();
+//   o->symbol = object_symbol[this->type];
+//   o->type = this->type;
+//   o->color = this->color;
+//   o->damage = this->damage;
+//   o->hit = this->hit.roll();
+//   o->dodge = this->dodge.roll();
+//   o->defense = this->defence.roll();
+//   o->weight = this->weight.roll();
+//   o->speed = this->speed.roll();
+//   o->attribute = this->attribute.roll();
+//   o->value = this->value.roll();
+//   o->seen = false;
 
-  return o;
-}
+//   return o;
+// }

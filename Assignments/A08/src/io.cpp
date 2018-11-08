@@ -9,6 +9,7 @@
 #include "pc.h"
 #include "utils.h"
 #include "dungeon.h"
+#include "object.h"
 
 /* Same ugly hack we did in path.c */
 static dungeon *thedungeon;
@@ -242,6 +243,7 @@ void io_display(dungeon *d)
   int32_t visible_monsters;
 
   clear();
+  std::cout << "Num Objects: " << d->num_objects << std::endl;
   for (visible_monsters = -1, y = 0; y < 21; y++)
   {
     for (x = 0; x < 80; x++)
@@ -250,6 +252,10 @@ void io_display(dungeon *d)
       {
         attron(A_BOLD);
       }
+      // if (d->objmap[y][x])
+      // {
+      //   mvaddch(y + 1, x, d->objmap[y][x]->symbol);
+      // }
       if (d->character_map[y][x] &&
           can_see(d,
                   character_get_pos(d->PC),
@@ -261,6 +267,10 @@ void io_display(dungeon *d)
                 character_get_symbol(d->character_map[y][x]));
         attroff(COLOR_PAIR(d->character_map[y][x]->color));
         visible_monsters++;
+      }
+      else if (d->objmap[y][x])
+      {
+        std::cout << "Y: " << y << " X: " << x << std::endl;
       }
       else
       {
@@ -338,6 +348,10 @@ void io_display_no_fog(dungeon *d)
   {
     for (x = 0; x < 80; x++)
     {
+      // if (d->objmap[y][x])
+      // {
+      //   mvaddch(y + 1, x, d->objmap[y][x]->symbol);
+      // }
       if (d->character_map[y][x])
       {
         attron(COLOR_PAIR(d->character_map[y][x]->color));
@@ -345,6 +359,10 @@ void io_display_no_fog(dungeon *d)
                 character_get_symbol(d->character_map[y][x]));
         attroff(COLOR_PAIR(d->character_map[y][x]->color));
       }
+      // else if (d->objmap[y][x])
+      // {
+      //   mvaddch(y + 1, x, d->objmap[y][x]->symbol);
+      // }
       else
       {
         switch (mapxy(x, y))

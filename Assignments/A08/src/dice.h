@@ -1,19 +1,20 @@
 #ifndef DICE_H
-# define DICE_H
+#define DICE_H
 
-# include <stdint.h>
-# include <iostream>
+#include <stdint.h>
+#include <iostream>
 
-class dice {
- private:
+class dice
+{
+private:
   int32_t base;
   uint32_t number, sides;
- public:
+
+public:
   dice() : base(0), number(0), sides(0)
   {
   }
-  dice(int32_t base, uint32_t number, uint32_t sides) :
-  base(base), number(number), sides(sides)
+  dice(int32_t base, uint32_t number, uint32_t sides) : base(base), number(number), sides(sides)
   {
   }
   inline void set(int32_t base, uint32_t number, uint32_t sides)
