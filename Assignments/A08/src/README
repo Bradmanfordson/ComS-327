@@ -1,6 +1,13 @@
 Allen Roberts
 
-I started this assignment way to late on and have very little done. I started to create an object class
-and some other stuff that I've seen in other solutions to this problem. I'm going to continue working 
-throughout tonight and hopefully have it done by early morning to officially turn in. Just turning this
-in incase the submission closes earlier than it normally does. 
+I added functionality to generate monsters based on their descriptions in
+the monster_desc.txt file. I am currently generating all of the correctly 
+written monsters in monster_desc.txt to the dungeon.
+
+I was able to get monster colors working without too much issues. It displays
+when the PC can see the monsters as well as if the player shows the entire 
+map. 
+
+I was not able to get descriptions working correctly. I'm having some weird
+error with it that I'm not able to get past. I will continue to work on it 
+tomorrow and hopefully get it finished before submission closes.

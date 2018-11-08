@@ -123,3 +123,5 @@ November 7, 2018 6:00PM - Grabbed professors code and starting
 November 7, 2018 9:00PM - Started this assignment way too late... turning this in as something just incase submission closes early
 
 November 8, 2018 12:00AM - Finally got monsters to work correctly. Now need to do objects and colors.
+November 8, 2018 1:00AM - Colors are added. Colors were way easier than I thought they'd be
+November 8, 2018 3:00AM - Still unable to get objects correctly. Probably because I'm super tired. Problem is that I can't get them to display without a segfault and unable to get rid of them without a segfault... so omitting them for this turn in. Hopefully i can fix this before submission closes.
