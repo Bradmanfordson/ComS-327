@@ -1,7 +1,0 @@
-all: clean PROGRAM
-
-PROGRAM: PROGRAMFILE 
-	gcc -Wall PROGRAMFILE -o OUTPUT
-
-clean:
-	rm -rf OUTPUT
