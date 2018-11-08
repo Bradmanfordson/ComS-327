@@ -9,39 +9,41 @@
 #include "event.h"
 #include "pc.h"
 
-static uint32_t max_monster_cells(dungeon *d)
-{
-  uint32_t i;
-  uint32_t sum;
+// static uint32_t max_monster_cells(dungeon *d)
+// {
+//   uint32_t i;
+//   uint32_t sum;
 
-  for (i = sum = 0; i < d->num_rooms; i++)
-  {
-    if (!pc_in_room(d, i))
-    {
-      sum += d->rooms[i].size[dim_y] * d->rooms[i].size[dim_x];
-    }
-  }
+//   for (i = sum = 0; i < d->num_rooms; i++)
+//   {
+//     if (!pc_in_room(d, i))
+//     {
+//       sum += d->rooms[i].size[dim_y] * d->rooms[i].size[dim_x];
+//     }
+//   }
 
-  return sum;
-}
+//   return sum;
+// }
 
-void gen_monsters(dungeon *d)
+void gen_monsters(dungeon_t *d)
 {
   uint32_t i;
   npc *m;
   uint32_t room;
   pair_t p;
-  const static char symbol[] = "0123456789abcdef";
-  uint32_t num_cells;
+  // const static char symbol[] = "0123456789abcdef";
+  // uint32_t num_cells;
 
-  num_cells = max_monster_cells(d);
-  d->num_monsters = d->max_monsters < num_cells ? d->max_monsters : num_cells;
+  // num_cells = max_monster_cells(d);
 
-  for (i = 0; i < d->num_monsters; i++)
+  // d->num_monsters = d->max_monsters < num_cells ? d->max_monsters : num_cells;
+
+  std::vector<monster_description> &mv = d->monster_descriptions;
+  d->num_monsters = mv.size();
+
+  for (i = 0; i < mv.size(); i++)
   {
-    m = new npc;
-    memset(m, 0, sizeof(*m));
-
+    m = mv[i].gen_monster();
     do
     {
       room = rand_range(1, d->num_rooms - 1);
@@ -52,21 +54,12 @@ void gen_monsters(dungeon *d)
                             (d->rooms[room].position[dim_x] +
                              d->rooms[room].size[dim_x] - 1));
     } while (d->character_map[p[dim_y]][p[dim_x]]);
+    ;
+
     m->position[dim_y] = p[dim_y];
     m->position[dim_x] = p[dim_x];
     d->character_map[p[dim_y]][p[dim_x]] = m;
-    m->speed = rand_range(5, 20);
-    m->alive = 1;
-    m->sequence_number = ++d->character_sequence_number;
-    m->characteristics = rand() & 0x0000000f;
-    /*    m->npc->characteristics = 0xf;*/
-    m->symbol = symbol[m->characteristics];
-    m->have_seen_pc = 0;
-    m->kills[kill_direct] = m->kills[kill_avenged] = 0;
-
-    d->character_map[p[dim_y]][p[dim_x]] = m;
-
-    heap_insert(&d->events, new_event(d, event_characterurn, m, 0));
+    heap_insert(&d->events, new_event(d, event_character_turn, m, 0));
   }
 }
 

@@ -1,15 +1,17 @@
 #ifndef EVENT_H
-# define EVENT_H
+#define EVENT_H
 
-# include <stdint.h>
+#include <stdint.h>
 
-# include "dungeon.h"
+#include "dungeon.h"
 
-typedef enum eventype {
-  event_characterurn,
+typedef enum eventype
+{
+  event_character_turn,
 } eventype_t;
 
-struct event {
+struct event
+{
   eventype_t type;
   uint32_t time;
   uint32_t sequence;

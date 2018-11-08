@@ -1235,6 +1235,7 @@ npc *monster_description::gen_monster()
   m->health = this->hitpoints.roll();
   m->characteristics = this->abilities;
   m->damage = this->damage;
+  m->alive = 1;
   return m;
 }
 
