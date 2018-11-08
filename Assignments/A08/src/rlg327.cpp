@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
   parse_descriptions(&d);
   // print_descriptions(&d);
   // destroy_descriptions(&d);
-  //////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////////////////////////////////////////
 
   // return 0;
 
@@ -246,6 +246,7 @@ int main(int argc, char *argv[])
   config_pc(&d);
   gen_monsters(&d);
   // generate_objects(&d);
+  // generate_objects(&d);
 
   io_display(&d);
   if (!do_load && !do_image)
@@ -305,6 +306,7 @@ int main(int argc, char *argv[])
   }
 
   destroy_descriptions(&d);
+  // destroy_objects(&d);
   // destroy_objects(&d);
   delete_dungeon(&d);
 

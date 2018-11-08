@@ -54,7 +54,6 @@ void gen_monsters(dungeon_t *d)
                             (d->rooms[room].position[dim_x] +
                              d->rooms[room].size[dim_x] - 1));
     } while (d->character_map[p[dim_y]][p[dim_x]]);
-    ;
 
     m->position[dim_y] = p[dim_y];
     m->position[dim_x] = p[dim_x];

@@ -264,14 +264,15 @@ void io_display(dungeon *d)
       {
         attron(COLOR_PAIR(d->character_map[y][x]->color));
         mvaddch(y + 1, x,
-                character_get_symbol(d->character_map[y][x]));
+                d->character_map[y][x]->symbol);
         attroff(COLOR_PAIR(d->character_map[y][x]->color));
         visible_monsters++;
       }
-      else if (d->objmap[y][x])
-      {
-        std::cout << "Y: " << y << " X: " << x << std::endl;
-      }
+      // else if (d->objmap[y][x])
+      // {
+      //   // mvaddch(y + 1, x, d->objmap[y][x]->symbol);
+      //   // mvaddch(y + 1, x, '?');
+      // }
       else
       {
         switch (pc_learned_terrain(d->PC, y, x))
