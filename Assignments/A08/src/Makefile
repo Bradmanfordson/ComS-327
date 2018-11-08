@@ -16,6 +16,7 @@ all: $(BIN) etags
 $(BIN): $(OBJS)
 	@$(ECHO) Linking $@
 	@$(CXX) $^ -o $@ $(LDFLAGS)
+	make clean
 
 -include $(OBJS:.o=.d)
 
@@ -26,12 +27,14 @@ $(BIN): $(OBJS)
 %.o: %.cpp
 	@$(ECHO) Compiling $<
 	@$(CXX) $(CXXFLAGS) -MMD -MF $*.d -c $<
+	
 
 .PHONY: all clean clobber etags
 
 clean:
 	@$(ECHO) Removing all generated files
-	@$(RM) *.o $(BIN) *.d TAGS core vgcore.* gmon.out
+	# @$(RM) *.o $(BIN) *.d TAGS core vgcore.* gmon.out
+	@$(RM) *.o *.d TAGS core vgcore.* gmon.out
 
 clobber: clean
 	@$(ECHO) Removing backup files

@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
   char *pgm_file;
   //////////////////////////////////////////////////////////////////////
   // May need to move these later. //
-  // parse_descriptions(&d);
-  // print_descriptions(&d);
+  parse_descriptions(&d);
+  //print_descriptions(&d);
   // destroy_descriptions(&d);
   // //////////////////////////////////////////////////////////////////////
 

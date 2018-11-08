@@ -1,30 +1,31 @@
 #ifndef DUNGEON_H
-# define DUNGEON_H
+#define DUNGEON_H
 
-# include "heap.h"
-# include "macros.h"
-# include "dims.h"
-# include "character.h"
-# include "descriptions.h"
+#include "heap.h"
+#include "macros.h"
+#include "dims.h"
+#include "character.h"
+#include "descriptions.h"
+#include "object.h"
 
-#define DUNGEON_X              80
-#define DUNGEON_Y              21
-#define MIN_ROOMS              5
-#define MAX_ROOMS              9
-#define ROOM_MIN_X             4
-#define ROOM_MIN_Y             2
-#define ROOM_MAX_X             14
-#define ROOM_MAX_Y             8
-#define PC_VISUAL_RANGE        3
-#define NPC_VISUAL_RANGE       15
-#define PC_SPEED               10
-#define MAX_MONSTERS           12
-#define SAVE_DIR               ".rlg327"
-#define DUNGEON_SAVE_FILE      "dungeon"
-#define DUNGEON_SAVE_SEMANTIC  "RLG327-F2018"
-#define DUNGEON_SAVE_VERSION   0U
-#define MONSTER_DESC_FILE      "monster_desc.txt"
-#define OBJECT_DESC_FILE       "object_desc.txt"
+#define DUNGEON_X 80
+#define DUNGEON_Y 21
+#define MIN_ROOMS 5
+#define MAX_ROOMS 9
+#define ROOM_MIN_X 4
+#define ROOM_MIN_Y 2
+#define ROOM_MAX_X 14
+#define ROOM_MAX_Y 8
+#define PC_VISUAL_RANGE 3
+#define NPC_VISUAL_RANGE 15
+#define PC_SPEED 10
+#define MAX_MONSTERS 12
+#define SAVE_DIR ".rlg327"
+#define DUNGEON_SAVE_FILE "dungeon"
+#define DUNGEON_SAVE_SEMANTIC "RLG327-F2018"
+#define DUNGEON_SAVE_VERSION 0U
+#define MONSTER_DESC_FILE "monster_desc.txt"
+#define OBJECT_DESC_FILE "object_desc.txt"
 
 #define mappair(pair) (d->map[pair[dim_y]][pair[dim_x]])
 #define mapxy(x, y) (d->map[y][x])
@@ -33,7 +34,8 @@
 #define charpair(pair) (d->character_map[pair[dim_y]][pair[dim_x]])
 #define charxy(x, y) (d->character_map[y][x])
 
-enum __attribute__ ((__packed__)) terrain_type {
+enum __attribute__((__packed__)) terrain_type
+{
   ter_debug,
   ter_unknown,
   ter_wall,
@@ -46,20 +48,22 @@ enum __attribute__ ((__packed__)) terrain_type {
   ter_stairs_down
 };
 
-typedef struct room {
+typedef struct room
+{
   pair_t position;
   pair_t size;
 } room_t;
 
 class pc;
 
-class dungeon {
- public:
- dungeon() : num_rooms(0), rooms(0), map{ter_wall}, hardness{0},
-             pc_distance{0}, pc_tunnel{0}, character_map{0}, PC(0),
-             num_monsters(0), max_monsters(0), character_sequence_number(0),
-             time(0), is_new(0), quit(0), monster_descriptions(),
-             object_descriptions() {}
+class dungeon
+{
+public:
+  dungeon() : num_rooms(0), rooms(0), map{ter_wall}, hardness{0},
+              pc_distance{0}, pc_tunnel{0}, character_map{0}, PC(0),
+              num_monsters(0), max_monsters(0), character_sequence_number(0),
+              time(0), is_new(0), quit(0), monster_descriptions(),
+              object_descriptions() {}
   uint32_t num_rooms;
   room_t *rooms;
   terrain_type map[DUNGEON_Y][DUNGEON_X];
@@ -75,10 +79,12 @@ class dungeon {
   uint8_t pc_distance[DUNGEON_Y][DUNGEON_X];
   uint8_t pc_tunnel[DUNGEON_Y][DUNGEON_X];
   character *character_map[DUNGEON_Y][DUNGEON_X];
+  object *objmap[DUNGEON_Y][DUNGEON_X];
   pc *PC;
   heap_t events;
   uint16_t num_monsters;
   uint16_t max_monsters;
+  uint16_t num_objects;
   uint32_t character_sequence_number;
   /* Game time isn't strictly necessary.  It's implicit in the turn number *
    * of the most recent thing removed from the event queue; however,       *

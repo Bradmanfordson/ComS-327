@@ -1,11 +1,11 @@
 #ifndef DESCRIPTIONS_H
-# define DESCRIPTIONS_H
+#define DESCRIPTIONS_H
 
-# include <stdint.h>
-# undef swap
-# include <vector>
-# include <string>
-# include "dice.h"
+#include <stdint.h>
+#undef swap
+#include <vector>
+#include <string>
+#include "dice.h"
 
 typedef struct dungeon dungeon_t;
 
@@ -13,7 +13,8 @@ uint32_t parse_descriptions(dungeon_t *d);
 uint32_t print_descriptions(dungeon_t *d);
 uint32_t destroy_descriptions(dungeon_t *d);
 
-typedef enum object_type {
+typedef enum object_type
+{
   objtype_no_type,
   objtype_WEAPON,
   objtype_OFFHAND,
@@ -38,17 +39,22 @@ typedef enum object_type {
 
 extern const char object_symbol[];
 
-class monster_description {
- private:
+class npc;
+class object;
+
+class monster_description
+{
+private:
   std::string name, description;
   char symbol;
   std::vector<uint32_t> color;
   uint32_t abilities;
   dice speed, hitpoints, damage;
   uint32_t rarity;
- public:
-  monster_description() : name(),       description(), symbol(0),   color(0),
-                          abilities(0), speed(),       hitpoints(), damage(),
+
+public:
+  monster_description() : name(), description(), symbol(0), color(0),
+                          abilities(0), speed(), hitpoints(), damage(),
                           rarity(0)
   {
   }
@@ -63,21 +69,24 @@ class monster_description {
            const uint32_t rarity);
   std::ostream &print(std::ostream &o);
   char get_symbol() { return symbol; }
+  npc *gen_monster();
 };
 
-class object_description {
- private:
+class object_description
+{
+private:
   std::string name, description;
   object_type_t type;
   uint32_t color;
   dice hit, damage, dodge, defence, weight, speed, attribute, value;
   bool artifact;
   uint32_t rarity;
- public:
-  object_description() : name(),    description(), type(objtype_no_type),
-                         color(0),  hit(),         damage(),
-                         dodge(),   defence(),     weight(),
-                         speed(),   attribute(),   value(),
+
+public:
+  object_description() : name(), description(), type(objtype_no_type),
+                         color(0), hit(), damage(),
+                         dodge(), defence(), weight(),
+                         speed(), attribute(), value(),
                          artifact(false), rarity(0)
   {
   }
@@ -96,9 +105,13 @@ class object_description {
            const bool artifact,
            const uint32_t rarity);
   std::ostream &print(std::ostream &o);
+  object *gen_object();
   /* Need all these accessors because otherwise there is a *
    * circular dependancy that is difficult to get around.  */
-  inline const std::string &get_name() const { return name; }
+  inline const std::string &get_name() const
+  {
+    return name;
+  }
   inline const std::string &get_description() const { return description; }
   inline const object_type_t get_type() const { return type; }
   inline const uint32_t get_color() const { return color; }
