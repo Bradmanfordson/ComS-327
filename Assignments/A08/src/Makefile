@@ -16,7 +16,7 @@ all: $(BIN) etags
 $(BIN): $(OBJS)
 	@$(ECHO) Linking $@
 	@$(CXX) $^ -o $@ $(LDFLAGS)
-	make clean
+	# make clean
 
 -include $(OBJS:.o=.d)
 
@@ -33,8 +33,8 @@ $(BIN): $(OBJS)
 
 clean:
 	@$(ECHO) Removing all generated files
-	# @$(RM) *.o $(BIN) *.d TAGS core vgcore.* gmon.out
-	@$(RM) *.o *.d TAGS core vgcore.* gmon.out
+	@$(RM) *.o $(BIN) *.d TAGS core vgcore.* gmon.out
+	# @$(RM) *.o *.d TAGS core vgcore.* gmon.out
 
 clobber: clean
 	@$(ECHO) Removing backup files
