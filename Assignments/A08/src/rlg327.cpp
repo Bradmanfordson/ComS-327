@@ -225,6 +225,7 @@ int main(int argc, char *argv[])
 
   srand(seed);
 
+  
   io_init_terminal();
   init_dungeon(&d);
 
@@ -255,7 +256,6 @@ int main(int argc, char *argv[])
     do_moves(&d);
   }
   io_display(&d);
-
   io_reset_terminal();
 
   if (do_save)
