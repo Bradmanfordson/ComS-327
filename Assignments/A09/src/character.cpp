@@ -107,7 +107,8 @@ uint32_t can_see(dungeon *d, pair_t voyeur, pair_t exhibitionist,
   /* Monsters only use this to see the PC, so we can *
    * short circuit the tests when they are far away. */
   if ((abs(first[dim_x] - second[dim_x]) > visual_range) ||
-      (abs(first[dim_y] - second[dim_y]) > visual_range)) {
+      (abs(first[dim_y] - second[dim_y]) > visual_range))
+  {
     return 0;
   }
 
@@ -116,61 +117,82 @@ uint32_t can_see(dungeon *d, pair_t voyeur, pair_t exhibitionist,
   mappair(second) = ter_debug;
   */
 
-  if (second[dim_x] > first[dim_x]) {
+  if (second[dim_x] > first[dim_x])
+  {
     del[dim_x] = second[dim_x] - first[dim_x];
     f[dim_x] = 1;
-  } else {
+  }
+  else
+  {
     del[dim_x] = first[dim_x] - second[dim_x];
     f[dim_x] = -1;
   }
 
-  if (second[dim_y] > first[dim_y]) {
+  if (second[dim_y] > first[dim_y])
+  {
     del[dim_y] = second[dim_y] - first[dim_y];
     f[dim_y] = 1;
-  } else {
+  }
+  else
+  {
     del[dim_y] = first[dim_y] - second[dim_y];
     f[dim_y] = -1;
   }
 
-  if (del[dim_x] > del[dim_y]) {
+  if (del[dim_x] > del[dim_y])
+  {
     a = del[dim_y] + del[dim_y];
     c = a - del[dim_x];
     b = c - del[dim_x];
-    for (i = 0; i <= del[dim_x]; i++) {
-      if (learn) {
+    for (i = 0; i <= del[dim_x]; i++)
+    {
+      if (learn)
+      {
         pc_learn_terrain(d->PC, first, mappair(first));
         pc_see_object(d->PC, objpair(first));
       }
-      if ((mappair(first) < ter_floor) && i && (i != del[dim_x])) {
+      if ((mappair(first) < ter_floor) && i && (i != del[dim_x]))
+      {
         return 0;
       }
       /*      mappair(first) = ter_debug;*/
       first[dim_x] += f[dim_x];
-      if (c < 0) {
+      if (c < 0)
+      {
         c += a;
-      } else {
+      }
+      else
+      {
         c += b;
         first[dim_y] += f[dim_y];
       }
     }
     return 1;
-  } else {
+  }
+  else
+  {
     a = del[dim_x] + del[dim_x];
     c = a - del[dim_y];
     b = c - del[dim_y];
-    for (i = 0; i <= del[dim_y]; i++) {
-      if (learn) {
+    for (i = 0; i <= del[dim_y]; i++)
+    {
+      if (learn)
+      {
         pc_learn_terrain(d->PC, first, mappair(first));
         pc_see_object(d->PC, objpair(first));
       }
-      if ((mappair(first) < ter_floor) && i && (i != del[dim_y])) {
+      if ((mappair(first) < ter_floor) && i && (i != del[dim_y]))
+      {
         return 0;
       }
       /*      mappair(first) = ter_debug;*/
       first[dim_y] += f[dim_y];
-      if (c < 0) {
+      if (c < 0)
+      {
         c += a;
-      } else {
+      }
+      else
+      {
         c += b;
         first[dim_x] += f[dim_x];
       }

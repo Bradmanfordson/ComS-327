@@ -1,31 +1,31 @@
 #ifndef DUNGEON_H
-# define DUNGEON_H
+#define DUNGEON_H
 
-# include "heap.h"
-# include "macros.h"
-# include "dims.h"
-# include "character.h"
-# include "descriptions.h"
+#include "heap.h"
+#include "macros.h"
+#include "dims.h"
+#include "character.h"
+#include "descriptions.h"
 
-#define DUNGEON_X              80
-#define DUNGEON_Y              21
-#define MIN_ROOMS              5
-#define MAX_ROOMS              9
-#define ROOM_MIN_X             4
-#define ROOM_MIN_Y             2
-#define ROOM_MAX_X             14
-#define ROOM_MAX_Y             8
-#define PC_VISUAL_RANGE        3
-#define NPC_VISUAL_RANGE       15
-#define PC_SPEED               10
-#define MAX_MONSTERS           12
-#define MAX_OBJECTS            12
-#define SAVE_DIR               ".rlg327"
-#define DUNGEON_SAVE_FILE      "dungeon"
-#define DUNGEON_SAVE_SEMANTIC  "RLG327-F2018"
-#define DUNGEON_SAVE_VERSION   0U
-#define MONSTER_DESC_FILE      "monster_desc.txt"
-#define OBJECT_DESC_FILE       "object_desc.txt"
+#define DUNGEON_X 80
+#define DUNGEON_Y 21
+#define MIN_ROOMS 5
+#define MAX_ROOMS 9
+#define ROOM_MIN_X 4
+#define ROOM_MIN_Y 2
+#define ROOM_MAX_X 14
+#define ROOM_MAX_Y 8
+#define PC_VISUAL_RANGE 3
+#define NPC_VISUAL_RANGE 15
+#define PC_SPEED 10
+#define MAX_MONSTERS 12
+#define MAX_OBJECTS 12
+#define SAVE_DIR ".rlg327"
+#define DUNGEON_SAVE_FILE "dungeon"
+#define DUNGEON_SAVE_SEMANTIC "RLG327-F2018"
+#define DUNGEON_SAVE_VERSION 0U
+#define MONSTER_DESC_FILE "monster_desc.txt"
+#define OBJECT_DESC_FILE "object_desc.txt"
 
 #define mappair(pair) (d->map[pair[dim_y]][pair[dim_x]])
 #define mapxy(x, y) (d->map[y][x])
@@ -36,7 +36,8 @@
 #define objpair(pair) (d->objmap[pair[dim_y]][pair[dim_x]])
 #define objxy(x, y) (d->objmap[y][x])
 
-enum __attribute__ ((__packed__)) terrain_type {
+enum __attribute__((__packed__)) terrain_type
+{
   ter_debug,
   ter_unknown,
   ter_wall,
@@ -49,7 +50,8 @@ enum __attribute__ ((__packed__)) terrain_type {
   ter_stairs_down
 };
 
-typedef struct room {
+typedef struct room
+{
   pair_t position;
   pair_t size;
 } room_t;
@@ -57,13 +59,14 @@ typedef struct room {
 class pc;
 class object;
 
-class dungeon {
- public:
- dungeon() : num_rooms(0), rooms(0), map{ter_wall}, hardness{0},
-             pc_distance{0}, pc_tunnel{0}, character_map{0}, PC(0),
-             num_monsters(0), max_monsters(0), character_sequence_number(0),
-             time(0), is_new(0), quit(0), monster_descriptions(),
-             object_descriptions() {}
+class dungeon
+{
+public:
+  dungeon() : num_rooms(0), rooms(0), map{ter_wall}, hardness{0},
+              pc_distance{0}, pc_tunnel{0}, character_map{0}, PC(0),
+              num_monsters(0), max_monsters(0), character_sequence_number(0),
+              time(0), is_new(0), quit(0), monster_descriptions(),
+              object_descriptions() {}
   uint32_t num_rooms;
   room_t *rooms;
   terrain_type map[DUNGEON_Y][DUNGEON_X];

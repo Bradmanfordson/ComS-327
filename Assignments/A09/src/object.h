@@ -1,13 +1,14 @@
 #ifndef OBJECT_H
-# define OBJECT_H
+#define OBJECT_H
 
-# include <string>
+#include <string>
 
-# include "descriptions.h"
-# include "dims.h"
+#include "descriptions.h"
+#include "dims.h"
 
-class object {
- private:
+class object
+{
+private:
   const std::string &name;
   const std::string &description;
   object_type_t type;
@@ -18,7 +19,8 @@ class object {
   bool seen;
   object *next;
   object_description &od;
- public:
+
+public:
   object(object_description &o, pair_t p, object *next);
   ~object();
   inline int32_t get_damage_base() const

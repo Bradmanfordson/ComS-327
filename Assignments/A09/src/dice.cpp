@@ -10,8 +10,10 @@ int32_t dice::roll(void) const
 
   total = base;
 
-  if (sides) {
-    for (i = 0; i < number; i++) {
+  if (sides)
+  {
+    for (i = 0; i < number; i++)
+    {
       total += rand_range(1, sides);
     }
   }
