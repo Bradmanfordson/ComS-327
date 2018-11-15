@@ -13,5 +13,6 @@ void display_inventory(dungeon *d);
 void display_equipment(dungeon *d);
 void inspect_item(dungeon *d);
 void display_monster_desc(dungeon *d);
+void select_monster(dungeon *d);
 
 #endif
