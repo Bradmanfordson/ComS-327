@@ -1326,7 +1326,15 @@ void select_monster(dungeon *d)
   {
 
     //char tmp = d->character_map[dest[dim_y]][dest[dim_x]]->get_symbol();
-    // const char *name = d->character_map[dest[dim_y]][dest[dim_x]]->name?
+    std::string name = "Monster Description for ";
+    name += d->character_map[dest[dim_y]][dest[dim_x]]->name;
+    int i;
+    for (i = 0; i < 10; i++)
+    {
+      mvprintw(i, 0, "\n");
+    }
+
+    mvprintw(4, 9, name.c_str());
 
     io_queue_message("The monster here is: %s", d->character_map[dest[dim_y]][dest[dim_x]]->name);
   }
@@ -1343,5 +1351,5 @@ void select_monster(dungeon *d)
   dijkstra(d);
   dijkstra_tunnel(d);
 
-  io_display(d);
+  ///io_display(d);
 }
