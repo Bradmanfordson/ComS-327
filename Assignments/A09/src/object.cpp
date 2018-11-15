@@ -125,3 +125,40 @@ int32_t object::get_type()
 {
   return type;
 }
+
+uint32_t object::is_equipable()
+{
+  return type >= objtype_WEAPON && type <= objtype_RING;
+}
+
+uint32_t object::is_removable()
+{
+  return 1;
+}
+
+uint32_t object::is_dropable()
+{
+  return 1;
+}
+
+uint32_t object::is_destructable()
+{
+  return 1;
+}
+
+int32_t object::get_eq_slot_index()
+{
+  if (type < objtype_WEAPON ||
+      type > objtype_RING)
+  {
+    return -1;
+  }
+
+  return type - 1;
+}
+
+void object::to_pile(dungeon_t *d, pair_t location)
+{
+  next = (object *)d->objmap[location[dim_y]][location[dim_x]];
+  d->objmap[location[dim_y]][location[dim_x]] = this;
+}

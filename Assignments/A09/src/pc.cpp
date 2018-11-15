@@ -10,6 +10,60 @@
 #include "io.h"
 #include "object.h"
 
+const char *equip_inv_name[num_equip_inv] = {
+    "weapon",
+    "offhand",
+    "ranged",
+    "light",
+    "armor",
+    "helmet",
+    "cloak",
+    "gloves",
+    "boots",
+    "amulet",
+    "lh ring",
+    "rh ring"};
+
+pc::pc()
+{
+  uint32_t i;
+
+  for (i = 0; i < num_equip_inv; i++)
+  {
+    eq[i] = 0;
+  }
+
+  for (i = 0; i < INVENTORY_SIZE; i++)
+  {
+    in[i] = 0;
+  }
+
+  hp = 1000;
+}
+
+pc::~pc()
+{
+  uint32_t i;
+
+  for (i = 0; i < INVENTORY_SIZE; i++)
+  {
+    if (in[i])
+    {
+      delete in[i];
+      in[i] = NULL;
+    }
+  }
+
+  for (i = 0; i < num_equip_inv; i++)
+  {
+    if (eq[i])
+    {
+      delete eq[i];
+      eq[i] = NULL;
+    }
+  }
+}
+
 uint32_t pc_is_alive(dungeon *d)
 {
   return d->PC->alive;
@@ -292,4 +346,172 @@ void pc_see_object(character *the_pc, object *o)
   {
     o->has_been_seen();
   }
+}
+
+void pc::recalculate_speed()
+{
+  int i;
+
+  for (speed = PC_SPEED, i = 0; i < num_equip_inv; i++)
+  {
+    if (eq[i])
+    {
+      speed += eq[i]->get_speed();
+    }
+  }
+
+  if (speed <= 0)
+  {
+    speed = 1;
+  }
+}
+
+uint32_t pc::wear_in(uint32_t slot)
+{
+  object *tmp;
+  uint32_t i;
+
+  if (!in[slot] || !in[slot]->is_equipable())
+  {
+    return 1;
+  }
+
+  /* Rings are tricky since there are two slots.  We will alwas favor *
+   * an empty slot, and if there is no empty slot, we'll use the      *
+   * first slot.                                                      */
+  i = in[slot]->get_eq_slot_index();
+  if (eq[i] &&
+      ((eq[i]->get_type() == objtype_RING) &&
+       !eq[i + 1]))
+  {
+    i++;
+  }
+
+  tmp = in[slot];
+  in[slot] = eq[i];
+  eq[i] = tmp;
+
+  io_queue_message("You wear %s.", eq[i]->get_name());
+
+  recalculate_speed();
+
+  return 0;
+}
+
+uint32_t pc::has_open_inventory_slot()
+{
+  int i;
+
+  for (i = 0; i < INVENTORY_SIZE; i++)
+  {
+    if (!in[i])
+    {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int32_t pc::get_first_open_inventory_slot()
+{
+  int i;
+
+  for (i = 0; i < INVENTORY_SIZE; i++)
+  {
+    if (!in[i])
+    {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+uint32_t pc::remove_eq(uint32_t slot)
+{
+  if (!eq[slot] ||
+      !in[slot]->is_removable() ||
+      !has_open_inventory_slot())
+  {
+    io_queue_message("You can't remove %s, because you have nowhere to put it.",
+                     eq[slot]->get_name());
+
+    return 1;
+  }
+
+  io_queue_message("You remove %s.", eq[slot]->get_name());
+
+  in[get_first_open_inventory_slot()] = eq[slot];
+  eq[slot] = NULL;
+
+  recalculate_speed();
+
+  return 0;
+}
+
+uint32_t pc::drop_in(dungeon_t *d, uint32_t slot)
+{
+  if (!in[slot] || !in[slot]->is_dropable())
+  {
+    return 1;
+  }
+
+  io_queue_message("You drop %s.", in[slot]->get_name());
+
+  in[slot]->to_pile(d, position);
+  in[slot] = NULL;
+
+  return 0;
+}
+
+uint32_t pc::destroy_in(uint32_t slot)
+{
+  if (!in[slot] || !in[slot]->is_destructable())
+  {
+    return 1;
+  }
+
+  io_queue_message("You destroy %s.", in[slot]->get_name());
+
+  delete in[slot];
+  in[slot] = NULL;
+
+  return 0;
+}
+
+uint32_t pc::pick_up(dungeon_t *d)
+{
+  object *o;
+
+  while (has_open_inventory_slot() &&
+         d->objmap[position[dim_y]][position[dim_x]])
+  {
+    io_queue_message("You pick up %s.",
+                     d->objmap[position[dim_y]][position[dim_x]]->get_name());
+    in[get_first_open_inventory_slot()] =
+        from_pile(d, position);
+  }
+
+  for (o = d->objmap[position[dim_y]][position[dim_x]];
+       o;
+       o = o->get_next())
+  {
+    io_queue_message("You have no room for %s.", o->get_name());
+  }
+
+  return 0;
+}
+
+object *pc::from_pile(dungeon_t *d, pair_t pos)
+{
+  object *o;
+
+  if ((o = (object *)d->objmap[pos[dim_y]][pos[dim_x]]))
+  {
+    d->objmap[pos[dim_y]][pos[dim_x]] = o->get_next();
+    o->set_next(0);
+  }
+
+  return o;
 }

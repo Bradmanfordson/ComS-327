@@ -43,7 +43,7 @@ class npc;
 
 class monster_description
 {
-private:
+public:
   std::string name, description;
   char symbol;
   std::vector<uint32_t> color;

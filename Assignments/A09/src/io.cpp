@@ -1099,16 +1099,34 @@ void io_handle_input(dungeon *d)
       break;
       //////////////////////////////////////////////////////////////////////////////
     case 'i':
+      open_inventory(d);
+      fail_code = 1;
       break;
 
     case 'e':
+      show_equip_inventory(d);
+      fail_code = 1;
       break;
 
     case 'I':
+      look_at_inventory(d);
+      fail_code = 1;
       break;
 
     case 'L':
       select_monster(d);
+      break;
+
+    case 'w':
+      put_equip_on(d);
+      break;
+
+    case 't':
+      remove_equip(d);
+      break;
+
+    case 'x':
+      destroy_equip(d);
       break;
 
       //////////////////////////////////////////////////////////////////////////////
@@ -1150,23 +1168,6 @@ void io_handle_input(dungeon *d)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-
-void display_inventory(dungeon *d)
-{
-}
-
-void display_equipment(dungeon *d)
-{
-}
-
-void inspect_item(dungeon *d)
-{
-}
-
-void display_monster_desc(dungeon *d)
-{
-}
-
 void select_monster(dungeon *d)
 {
   pair_t dest;
@@ -1324,32 +1325,436 @@ void select_monster(dungeon *d)
 
   if (charpair(dest) && charpair(dest) != d->PC && c != 27)
   {
+    int y = dest[dim_y];
+    int x = dest[dim_x];
 
-    //char tmp = d->character_map[dest[dim_y]][dest[dim_x]]->get_symbol();
-    std::string name = "Monster Description for ";
-    name += d->character_map[dest[dim_y]][dest[dim_x]]->name;
+    std::string name = "Name: ";
+    name += d->character_map[y][x]->name;
+    name += "\nSymbol: ";
+    name += d->character_map[y][x]->symbol;
+    name += "\nDescription: ";
+    // TODO: Figure this out. 5+ hours on this already
     int i;
-    for (i = 0; i < 10; i++)
+    do
     {
-      mvprintw(i, 0, "\n");
-    }
+      for (i = 0; i < DUNGEON_Y; i++)
+      {
+        mvprintw(i, 0, "\n");
+      }
 
-    mvprintw(4, 9, name.c_str());
+      mvprintw(4, 0, name.c_str());
+      refresh();
 
-    io_queue_message("The monster here is: %s", d->character_map[dest[dim_y]][dest[dim_x]]->name);
-  }
-  else
-  {
-    // d->character_map[d->PC->position[dim_y]][d->PC->position[dim_x]] = NULL;
-    // d->character_map[dest[dim_y]][dest[dim_x]] = d->PC;
-
-    // d->PC->position[dim_y] = dest[dim_y];
-    // d->PC->position[dim_x] = dest[dim_x];
+    } while (!(c = getchar()));
   }
 
   pc_observe_terrain(d->PC, d);
   dijkstra(d);
   dijkstra_tunnel(d);
 
-  ///io_display(d);
+  io_display(d);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void io_object_to_string(object *o, char *s, uint32_t size)
+{
+  if (o)
+  {
+    snprintf(s, size, "%s (sp: %d, dmg: %d+%dd%d)",
+             o->get_name(), o->get_speed(), o->get_damage_base(),
+             o->get_damage_number(), o->get_damage_sides());
+  }
+  else
+  {
+    *s = '\0';
+  }
+}
+
+uint32_t put_equip_on(dungeon_t *d)
+{
+  uint32_t i, key;
+  char s[61];
+
+  for (i = 0; i < INVENTORY_SIZE; i++)
+  {
+    /* We'll write 12 lines, 10 of inventory, 1 blank, and 1 prompt. *
+     * We'll limit width to 60 characters, so very long object names *
+     * will be truncated.  In an 80x24 terminal, this gives offsets  *
+     * at 10 x and 6 y to start printing things.  Same principal in  *
+     * other functions, below.                                       */
+    io_object_to_string(d->PC->in[i], s, 61);
+    mvprintw(i, 0, " %c) %-55s ", '0' + i, s);
+  }
+  mvprintw(11, 0, "\n");
+  mvprintw(12, 0, "Select item to wear (ESC to cancel)");
+  mvprintw(13, 0, "\n");
+  refresh();
+
+  while (1)
+  {
+    if ((key = getch()) == 27)
+    {
+      io_display(d);
+      return 1;
+    }
+
+    if (key < '0' || key > '9')
+    {
+      mvprintw(14, 0, "Invalid input.  Enter 0-9 or ESC to cancel.");
+      refresh();
+      continue;
+    }
+
+    if (!d->PC->in[key - '0'])
+    {
+      mvprintw(14, 0, "Empty inventory slot.  Try again.");
+      continue;
+    }
+
+    if (!d->PC->wear_in(key - '0'))
+    {
+      return 0;
+    }
+
+    mvprintw(14, 0, "Can't equip %s.  Try again.",
+             d->PC->in[key - '0']->get_name());
+    mvprintw(15, 0, " %-58s ", s);
+    refresh();
+  }
+
+  return 1;
+}
+
+void open_inventory(dungeon_t *d)
+{
+  int i;
+  char s[78];
+
+  for (i = 0; i < INVENTORY_SIZE; i++)
+  {
+    io_object_to_string(d->PC->in[i], s, 78);
+    mvprintw(i, 0, " %c) %-55s ", '0' + i, s);
+  }
+  mvprintw(10, 0, "\n");
+  mvprintw(11, 0, "Hit any key to continue.\n\n");
+
+  refresh();
+  getch();
+  io_display(d);
+}
+
+uint32_t remove_equip(dungeon_t *d)
+{
+  uint32_t i, key;
+  char s[61], t[61];
+
+  for (i = 0; i < num_equip_inv; i++)
+  {
+    sprintf(s, "[%s]", equip_inv_name[i]);
+    io_object_to_string(d->PC->eq[i], t, 61);
+    mvprintw(i, 0, " %c %-9s) %-45s ", 'a' + i, s, t);
+  }
+  mvprintw(11, 0, "\n");
+  mvprintw(12, 0, "Take off which item (ESC to cancel)?");
+  mvprintw(13, 0, "\n");
+  refresh();
+
+  while (1)
+  {
+    if ((key = getch()) == 27 /* ESC */)
+    {
+      io_display(d);
+      return 1;
+    }
+
+    if (key < 'a' || key > 'l')
+    {
+      mvprintw(14, 0, "Invalid input.  Enter 0-9 or ESC to cancel.");
+      refresh();
+      continue;
+    }
+
+    if (!d->PC->eq[key - 'a'])
+    {
+      mvprintw(14, 0, "Empty equipment slot.  Try again.");
+      continue;
+    }
+
+    if (!d->PC->remove_eq(key - 'a'))
+    {
+      return 0;
+    }
+
+    mvprintw(14, 0, "Can't take off %s.  Try again.",
+             d->PC->eq[key - 'a']->get_name());
+  }
+
+  return 1;
+}
+
+void show_equip_inventory(dungeon_t *d)
+{
+  int i;
+  char s[78], t[78];
+
+  for (i = 0; i < num_equip_inv; i++)
+  {
+    sprintf(s, "[%s]", equip_inv_name[i]);
+    io_object_to_string(d->PC->eq[i], t, 61);
+    mvprintw(i, 0, " %c %-9s) %-45s ", 'a' + i, s, t);
+  }
+  mvprintw(10, 0, "\n");
+  mvprintw(11, 0, "Hit any key to continue.");
+
+  refresh();
+  getch();
+  io_display(d);
+}
+
+uint32_t look_at_inventory(dungeon_t *d)
+{
+  uint32_t i, key;
+  char s[78];
+
+  for (i = 0; i < INVENTORY_SIZE; i++)
+  {
+    io_object_to_string(d->PC->in[i], s, 61);
+    mvprintw(i, 0, " %c) %-55s ", '0' + i,
+             d->PC->in[i] ? d->PC->in[i]->get_name() : "");
+  }
+  mvprintw(10, 0, "\n");
+  mvprintw(11, 0, "Inspect which item (ESC to cancel, '/' for equipment)?");
+  mvprintw(12, 0, "\n");
+  mvprintw(13, 0, "\n");
+  refresh();
+
+  while (1)
+  {
+    if ((key = getch()) == 27)
+    {
+      io_display(d);
+      return 1;
+    }
+
+    if (key == '/')
+    {
+      io_display(d);
+      io_inspect_eq(d);
+      return 1;
+    }
+
+    if (key < '0' || key > '9')
+    {
+      mvprintw(14, 0, "Invalid input.  Enter 0-9 or ESC to cancel.");
+      refresh();
+      continue;
+    }
+
+    if (!d->PC->in[key - '0'])
+    {
+      mvprintw(14, 0, "Empty inventory slot.  Try again.");
+      refresh();
+      continue;
+    }
+
+    io_display(d);
+    io_display_obj_info(d->PC->in[key - '0']);
+    io_display(d);
+    return 1;
+  }
+
+  return 1;
+}
+
+uint32_t destroy_equip(dungeon_t *d)
+{
+  uint32_t i, key;
+
+  for (i = 0; i < INVENTORY_SIZE; i++)
+  {
+    /* We'll write 12 lines, 10 of inventory, 1 blank, and 1 prompt. *
+     * We'll limit width to 60 characters, so very long object names *
+     * will be truncated.  In an 80x24 terminal, this gives offsets  *
+     * at 10 x and 6 y to start printing things.                     */
+    mvprintw(i, 0, " %c) %-55s ", '0' + i,
+             d->PC->in[i] ? d->PC->in[i]->get_name() : "");
+  }
+  mvprintw(11, 0, "\n");
+  mvprintw(12, 0, "Destroy which item (ESC to cancel)?");
+  mvprintw(12, 0, "\n");
+  mvprintw(13, 0, "\n");
+  refresh();
+
+  while (1)
+  {
+    if ((key = getch()) == 27 /* ESC */)
+    {
+      io_display(d);
+      return 1;
+    }
+
+    if (key < '0' || key > '9')
+    {
+      mvprintw(14, 0, "Invalid input.  Enter 0-9 or ESC to cancel.");
+      refresh();
+      continue;
+    }
+
+    if (!d->PC->in[key - '0'])
+    {
+      mvprintw(14, 0, "Invalid input.  Enter 0-9 or ESC to cancel.");
+      refresh();
+      continue;
+    }
+
+    if (!d->PC->destroy_in(key - '0'))
+    {
+      io_display(d);
+      return 1;
+    }
+
+    mvprintw(14, 0, "Can't destroy %s.  Try again.",
+             d->PC->in[key - '0']->get_name());
+    refresh();
+  }
+
+  return 1;
+}
+
+uint32_t io_drop_in(dungeon_t *d)
+{
+  uint32_t i, key;
+
+  for (i = 0; i < INVENTORY_SIZE; i++)
+  {
+    mvprintw(i + 6, 10, " %c) %-55s ", '0' + i,
+             d->PC->in[i] ? d->PC->in[i]->get_name() : "");
+  }
+  mvprintw(11, 0, "\n");
+  mvprintw(12, 0, "Drop which item (ESC to cancel)?");
+  mvprintw(13, 0, "\n");
+  refresh();
+
+  while (1)
+  {
+    if ((key = getch()) == 27)
+    {
+      io_display(d);
+      return 1;
+    }
+
+    if (key < '0' || key > '9')
+    {
+      mvprintw(14, 0, "Invalid input.  Enter 0-9 or ESC to cancel.");
+      refresh();
+      continue;
+    }
+
+    if (!d->PC->in[key - '0'])
+    {
+      mvprintw(14, 0, "Empty inventory slot.  Try again.");
+      continue;
+    }
+
+    if (!d->PC->drop_in(d, key - '0'))
+    {
+      return 0;
+    }
+
+    mvprintw(14, 0, "Can't drop %s.  Try again.",
+             d->PC->in[key - '0']->get_name());
+    refresh();
+  }
+
+  return 1;
+}
+
+uint32_t io_display_obj_info(object *o)
+{
+  char s[80];
+  uint32_t i, l;
+  uint32_t n;
+
+  for (i = 0; i < 79; i++)
+  {
+    s[i] = ' ';
+  }
+  s[79] = '\0';
+
+  l = strlen(o->get_description());
+  for (i = n = 0; i < l; i++)
+  {
+    if (o->get_description()[i] == '\n')
+    {
+      n++;
+    }
+  }
+
+  for (i = 0; i < n + 4; i++)
+  {
+    mvprintw(i, 0, s);
+  }
+
+  io_object_to_string(o, s, 80);
+  mvprintw(1, 0, s);
+  mvprintw(3, 0, o->get_description());
+
+  mvprintw(n + 5, 0, "Hit any key to continue.");
+
+  refresh();
+  getch();
+
+  return 0;
+}
+
+uint32_t io_inspect_eq(dungeon_t *d)
+{
+  uint32_t i, key;
+  char s[61], t[61];
+
+  for (i = 0; i < num_equip_inv; i++)
+  {
+    sprintf(s, "[%s]", equip_inv_name[i]);
+    io_object_to_string(d->PC->eq[i], t, 61);
+    mvprintw(i, 0, " %c %-9s) %-45s ", 'a' + i, s, t);
+  }
+  mvprintw(11, 0, "\n");
+  mvprintw(12, 0, "Inspect which item (ESC to cancel, '/' for inventory)?");
+  refresh();
+
+  while (1)
+  {
+    if ((key = getch()) == 27)
+    {
+      io_display(d);
+      return 1;
+    }
+
+    if (key == '/')
+    {
+      io_display(d);
+      look_at_inventory(d);
+      return 1;
+    }
+
+    if (key < 'a' || key > 'l')
+    {
+      mvprintw(14, 0, "Invalid input.  Enter 0-9 or ESC to cancel.");
+      refresh();
+      continue;
+    }
+
+    if (!d->PC->eq[key - 'a'])
+    {
+      mvprintw(14, 0, "Empty equipment slot.  Try again.");
+      continue;
+    }
+
+    io_display(d);
+    io_display_obj_info(d->PC->eq[key - 'a']);
+    io_display(d);
+    return 1;
+  }
+
+  return 1;
 }
