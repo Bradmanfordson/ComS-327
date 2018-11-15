@@ -650,4 +650,19 @@ Tuesday, October 30th 2018:
     ------------
         - Basically we just implemented our own version of String with operators n shit
         - can confirm, python is better.
+        
+        
+        
+Thursday before thanksgiving
+----------------------------
+    - make nmap in c++
+    - freedom from the horrible, terrible, no good, very bad rogue-like game.
+    - he's doing a binary search tree... im ignoring this lecture because i'm just here for the Extra Credit from attendance.
+    
+    - going over throw - catch and null handling. His notes suck but they cover all of this. 
+    - didnt give extension, savage
+    
+    - he made some code to make weird functions like foo()()()()()()()()()
+    - ross hall 311 for speech meeting 
+    
     
