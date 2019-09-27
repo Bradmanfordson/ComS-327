@@ -1,7 +1,0 @@
-I grabbed the professors code for Dungeon Generation and changed everything from rlg327 to "dungeon".
-
-After learning how his code works (kindof), I created a script called Save_load.c (not in src).
-
-I used save_load.c as my base for reading and writing binary files until I was able to load all of the test files with no issues.
-I then used the code in Save_Load.C and placed it where it needed to go in the professors code. This took a while but I finally got it.
-Had a few bugs but it should work perfectly.
